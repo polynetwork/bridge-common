@@ -20,16 +20,16 @@
 package base
 
 var (
-	POLY_CROSSCHAIN_ID     uint64 = 0
-	ETHEREUM_CROSSCHAIN_ID        = 2
-	ONT_CROSSCHAIN_ID             = 3
-	NEO_CROSSCHAIN_ID             = 4
-	BSC_CROSSCHAIN_ID             = 6
-	HECO_CROSSCHAIN_ID            = 7
-	O3_CROSSCHAIN_ID              = 10
-	OK_CROSSCHAIN_ID              = 12
-	MATIC_CROSSCHAIN_ID           = 17
-	NEO3_CROSSCHAIN_ID            = 88
+	POLY  uint64 = 0
+	ETH   uint64 = 2
+	ONT   uint64 = 3
+	NEO   uint64 = 4
+	BSC   uint64 = 6
+	HECO  uint64 = 7
+	O3    uint64 = 10
+	OK    uint64 = 12
+	MATIC uint64 = 17
+	NEO3  uint64 = 88
 
 	ENV = "mainnet"
 )

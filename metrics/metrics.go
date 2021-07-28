@@ -53,6 +53,7 @@ func Record(value interface{}, key string, args ...interface{}) {
 	select {
 	case metrics.ch <- Metric{Key: fmt.Sprintf(key, args...), Value: value}:
 	default:
+		// We drop the metrics update here, so the routine wont be blocked
 	}
 }
 

@@ -1,5 +1,3 @@
-// +build testnet
-
 /*
  * Copyright (C) 2021 The poly network Authors
  * This file is part of The poly network library.
@@ -17,19 +15,20 @@
  * along with The poly network .  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package base
+package client
 
-var (
-	POLY  uint64 = 0
-	ETH   uint64 = 2
-	ONT   uint64 = 3
-	NEO   uint64 = 5
-	HECO  uint64 = 7
-	BSC   uint64 = 79
-	O3    uint64 = 82
-	NEO3  uint64 = 88
-	OK    uint64 = 200
-	MATIC uint64 = 202
+import (
+	"time"
 
-	ENV = "testnet"
+	"github.com/polynetwork/bridge-common/base"
+	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/chains/eth"
 )
+
+func New(chainID uint64, urls []string, interval time.Duration) (sdk *chains.ChainSDK, err error) {
+	switch chainID {
+	case base.ETH, base.HECO, base.OK, base.BSC, base.MATIC:
+		sdk, err = chains.New(chainID, urls, interval, eth.New)
+	}
+	return
+}
