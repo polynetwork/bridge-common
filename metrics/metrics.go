@@ -32,6 +32,7 @@ var (
 	metrics *Metrics
 
 	metricUpdates = make(chan []byte, 10)
+	controller    *MetricController
 )
 
 func Init(prefix string) {
@@ -71,10 +72,12 @@ func (m *Metrics) start() {
 }
 
 func NewMetrics(prefix string) *Metrics {
-	prefix = fmt.Sprintf("%s.%s", prefix, base.ENV)
-	m := &Metrics{state: map[string]string{}, ch: make(chan Metric, 1000), prefix: prefix}
-	go m.start()
-	return m
+	if metrics == nil {
+		prefix = fmt.Sprintf("%s.%s", prefix, base.ENV)
+		metrics = &Metrics{state: map[string]string{}, ch: make(chan Metric, 1000), prefix: prefix}
+		go metrics.start()
+	}
+	return metrics
 }
 
 type MetricController struct {
@@ -101,7 +104,9 @@ func (c *MetricController) start() {
 }
 
 func NewMetricController() *MetricController {
-	c := &MetricController{state: []byte("{}")}
-	go c.start()
-	return c
+	if controller != nil {
+		controller = &MetricController{state: []byte("{}")}
+		go controller.start()
+	}
+	return controller
 }

@@ -31,6 +31,29 @@ var (
 	DingUrl string
 )
 
+type CardEvent interface {
+	Format() (title string, keys []string, values []interface{}, buttons []map[string]string)
+}
+
+func PostCardEvent(ev CardEvent) error {
+	title, keys, values, buttons := ev.Format()
+	return PostDingCardKV(title, keys, values, buttons)
+}
+
+func PostDingCardKV(title string, keys []string, values []interface{}, btns []map[string]string) error {
+	content := fmt.Sprintf("## %s", title)
+	for i, k := range keys {
+		if len(values) > i {
+			content = fmt.Sprintf("%s\n- %s %v", content, k, values[i])
+		}
+	}
+	err := PostDingCard(title, content, btns)
+	if err != nil {
+		logs.Error("Post dingtalk error %s", err)
+	}
+	return err
+}
+
 func PostDingCardSimple(title string, body map[string]interface{}, btns []map[string]string) error {
 	content := fmt.Sprintf("## %s", title)
 	for k, v := range body {
