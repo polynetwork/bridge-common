@@ -104,7 +104,6 @@ func (c *MetricController) Metrics() {
 	metricState.RLock()
 	state := metricState.State
 	metricState.RUnlock()
-	c.ServeJSON()
 	c.Ctx.Output.Header("Content-Type", "application/json; charset=utf-8")
 	c.Ctx.Output.Body(state)
 }
