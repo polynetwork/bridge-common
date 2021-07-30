@@ -19,17 +19,12 @@ package metrics
 
 import "github.com/beego/beego/v2/server/web"
 
-func GetRouter() web.LinkNamespace {
-	ns := web.NSNamespace("/tools",
-		web.NSRouter("/metric/", NewMetricController(), "get:Metrics"),
-	)
-	return ns
-}
-
 func Setup() {
 	web.AddNamespace(
-		web.NewNamespace("/v1",
-			GetRouter(),
+		web.NewNamespace("/common",
+			web.NSNamespace("/tools",
+				web.NSRouter("/metric/", &MetricController{}, "*:Metrics"),
+			),
 		),
 	)
 }

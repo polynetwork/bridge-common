@@ -32,11 +32,27 @@ var (
 	metrics *Metrics
 
 	metricUpdates = make(chan []byte, 10)
-	controller    *MetricController
+	metricState   = &struct {
+		sync.RWMutex
+		State []byte
+	}{State: []byte("{}")}
 )
+
+// Flushing metric updates to state
+func start() {
+	go func() {
+		for update := range metricUpdates {
+			metricState.Lock()
+			metricState.State = update
+			metricState.Unlock()
+		}
+	}()
+}
 
 func Init(prefix string) {
 	metrics = NewMetrics(prefix)
+	start() // start metric update
+	Setup() // Setup route
 }
 
 type Metric struct {
@@ -81,32 +97,14 @@ func NewMetrics(prefix string) *Metrics {
 }
 
 type MetricController struct {
-	sync.RWMutex
-	state []byte
 	web.Controller
 }
 
 func (c *MetricController) Metrics() {
-	c.RLock()
-	state := c.state
-	c.RUnlock()
+	metricState.RLock()
+	state := metricState.State
+	metricState.RUnlock()
 	c.ServeJSON()
 	c.Ctx.Output.Header("Content-Type", "application/json; charset=utf-8")
 	c.Ctx.Output.Body(state)
-}
-
-func (c *MetricController) start() {
-	for update := range metricUpdates {
-		c.Lock()
-		c.state = update
-		c.Unlock()
-	}
-}
-
-func NewMetricController() *MetricController {
-	if controller != nil {
-		controller = &MetricController{state: []byte("{}")}
-		go controller.start()
-	}
-	return controller
 }
