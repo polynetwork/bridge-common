@@ -21,6 +21,7 @@ package base
 
 var (
 	POLY  uint64 = 0
+	BTC   uint64 = 1
 	ETH   uint64 = 2
 	ONT   uint64 = 3
 	NEO   uint64 = 5
