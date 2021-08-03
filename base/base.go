@@ -88,6 +88,8 @@ func GetChainName(id uint64) string {
 		return "Polygon"
 	case NEO3:
 		return "NEO3"
+	case SWITCHEO:
+		return "Switcheo"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}

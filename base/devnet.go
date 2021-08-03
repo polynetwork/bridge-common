@@ -32,5 +32,7 @@ var (
 	OK    uint64 = 90
 	MATIC uint64 = 13
 
+	SWITCHEO uint64 = 1000
+
 	ENV = "devnet"
 )

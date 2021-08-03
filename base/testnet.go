@@ -32,5 +32,7 @@ var (
 	OK    uint64 = 200
 	MATIC uint64 = 202
 
+	SWITCHEO uint64 = 1000
+
 	ENV = "testnet"
 )
