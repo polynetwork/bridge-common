@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/beego/beego/v2/core/logs"
 )
@@ -41,6 +42,8 @@ func PostCardEvent(ev CardEvent) error {
 }
 
 func PostDingCardKV(title string, keys []string, values []interface{}, btns []map[string]string) error {
+	keys = append(keys, "ReportTime")
+	values = append(values, time.Now())
 	content := fmt.Sprintf("## %s", title)
 	for i, k := range keys {
 		if len(values) > i {
