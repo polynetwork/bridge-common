@@ -30,6 +30,11 @@ import (
 	"github.com/polynetwork/bridge-common/chains/eth"
 )
 
+type Config struct {
+	ChainId           uint64
+	KeyStoreProviders []*KeyStoreProviderConfig
+}
+
 type IWallet interface {
 	Init() error
 	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error)
@@ -45,12 +50,30 @@ type Wallet struct {
 	sdk       *eth.SDK
 	accounts  []accounts.Account
 	cursor    int
+	config    *Config
 }
 
 type Provider interface {
 	SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error)
-	Init(accounts.Account) errror
+	Init(accounts.Account) error
 	Accounts() []accounts.Account
+}
+
+func New(config *Config, sdk *eth.SDK) *Wallet {
+	w := &Wallet{config: config, sdk: sdk, chainId: config.ChainId}
+	for _, c := range config.KeyStoreProviders {
+		w.AddProvider(NewKeyStoreProvider(c))
+	}
+	return w
+}
+
+func (w *Wallet) AddProvider(p Provider) {
+	w.Lock()
+	defer w.Unlock()
+
+	for _, a := range p.Accounts() {
+		w.providers[a] = p
+	}
 }
 
 func (w *Wallet) Init() (err error) {
@@ -63,7 +86,7 @@ func (w *Wallet) Init() (err error) {
 			return
 		}
 	}
-	if len(accounts) == 0 {
+	if len(w.accounts) == 0 {
 		return fmt.Errorf("No valid account provided")
 	}
 	w.account = w.accounts[0]
@@ -108,7 +131,7 @@ func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gas
 		return fmt.Errorf("Sign tx error %v", err)
 	}
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
-	// Check err here before update nonces
+	//TODO: Check err here before update nonces
 	nonces.Update(true)
 	return err
 }
@@ -140,5 +163,5 @@ func (w *Wallet) Select() (accounts.Account, Provider, NonceProvider) {
 	defer w.Unlock()
 	account := w.accounts[w.cursor]
 	w.cursor = (w.cursor + 1) % len(w.accounts)
-	return account, w.providers[account], w.Nonces[account]
+	return account, w.providers[account], w.nonces[account]
 }
