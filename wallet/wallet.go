@@ -38,6 +38,8 @@ type Config struct {
 type IWallet interface {
 	Init() error
 	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error)
+	SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error)
+	Accounts() []accounts.Account
 }
 
 type Wallet struct {
@@ -76,6 +78,12 @@ func (w *Wallet) AddProvider(p Provider) {
 	}
 }
 
+func (w *Wallet) Accounts() []accounts.Account {
+	w.RLock()
+	defer w.RUnlock()
+	return w.accounts
+}
+
 func (w *Wallet) Init() (err error) {
 	w.updateAccounts()
 	w.Lock()
@@ -94,7 +102,18 @@ func (w *Wallet) Init() (err error) {
 	return
 }
 
+func (w *Wallet) GetAccount(account accounts.Account) (provider Provider, nonces NonceProvider) {
+	w.RLock()
+	defer w.RUnlock()
+	return w.providers[account], w.nonces[account]
+}
+
 func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error) {
+	account, _, _ := w.Select()
+	return w.SendWithAccount(account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+}
+
+func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error) {
 	if gasPrice == nil || gasPrice.Sign() <= 0 {
 		gasPrice, err = w.GasPrice()
 		if err != nil {
@@ -105,7 +124,7 @@ func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gas
 		}
 	}
 
-	account, provider, nonces := w.Account()
+	provider, nonces := w.GetAccount(account)
 	nonce, err := nonces.Acquire()
 	if err != nil {
 		return err
@@ -143,7 +162,7 @@ func (w *Wallet) Account() (accounts.Account, Provider, NonceProvider) {
 }
 
 func (w *Wallet) GasPrice() (price *big.Int, err error) {
-	return
+	return w.sdk.Node().SuggestGasPrice(context.Background())
 }
 
 func (w *Wallet) updateAccounts() {
