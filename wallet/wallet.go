@@ -31,6 +31,7 @@ import (
 )
 
 type IWallet interface {
+	Init() error
 	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error)
 }
 
@@ -42,11 +43,32 @@ type Wallet struct {
 	account   accounts.Account                   // active account
 	nonces    map[accounts.Account]NonceProvider // account nonces
 	sdk       *eth.SDK
+	accounts  []accounts.Account
+	cursor    int
 }
 
 type Provider interface {
 	SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error)
+	Init(accounts.Account) errror
 	Accounts() []accounts.Account
+}
+
+func (w *Wallet) Init() (err error) {
+	w.updateAccounts()
+	w.Lock()
+	defer w.Unlock()
+	for a, p := range w.providers {
+		err = p.Init(a)
+		if err != nil {
+			return
+		}
+	}
+	if len(accounts) == 0 {
+		return fmt.Errorf("No valid account provided")
+	}
+	w.account = w.accounts[0]
+	w.provider = w.providers[w.account]
+	return
 }
 
 func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error) {
@@ -99,4 +121,24 @@ func (w *Wallet) Account() (accounts.Account, Provider, NonceProvider) {
 
 func (w *Wallet) GasPrice() (price *big.Int, err error) {
 	return
+}
+
+func (w *Wallet) updateAccounts() {
+	w.Lock()
+	defer w.Unlock()
+	accounts := []accounts.Account{}
+	for a, _ := range w.providers {
+		accounts = append(accounts, a)
+	}
+	w.accounts = accounts
+	w.cursor = 0
+}
+
+// Round robin
+func (w *Wallet) Select() (accounts.Account, Provider, NonceProvider) {
+	w.Lock()
+	defer w.Unlock()
+	account := w.accounts[w.cursor]
+	w.cursor = (w.cursor + 1) % len(w.accounts)
+	return account, w.providers[account], w.Nonces[account]
 }
