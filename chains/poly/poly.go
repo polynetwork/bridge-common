@@ -29,6 +29,10 @@ import (
 	psdk "github.com/polynetwork/poly-go-sdk"
 )
 
+var (
+	CCM_ADDRESS = utils.CrossChainManagerContractAddress.ToHexString()
+)
+
 type Rpc = psdk.PolySdk
 type Client struct {
 	*Rpc
