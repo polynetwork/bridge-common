@@ -18,9 +18,14 @@
 package poly
 
 import (
+	"encoding/binary"
 	"time"
 
+	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/cross_chain_manager"
 	"github.com/polynetwork/bridge-common/chains"
+	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
+	"github.com/polynetwork/poly/native/service/utils"
+
 	psdk "github.com/polynetwork/poly-go-sdk"
 )
 
@@ -46,6 +51,25 @@ func (c *Client) Address() string {
 func (c *Client) GetLatestHeight() (uint64, error) {
 	h, err := c.GetCurrentBlockHeight()
 	return uint64(h), err
+}
+
+func (c *Client) GetDoneTx(chainId uint64, ccId []byte) (data []byte, err error) {
+	return c.GetStorage(utils.CrossChainManagerContractAddress.ToHexString(),
+		append(append([]byte(cross_chain_manager.DONE_TX), utils.GetUint64Bytes(chainId)...), ccId...),
+	)
+}
+
+func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
+	var id [8]byte
+	binary.LittleEndian.PutUint64(id[:], chainId)
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CURRENT_HEADER_HEIGHT), id[:]...))
+	if err != nil {
+		return 0, err
+	}
+	if res != nil && len(res) > 0 {
+		height = binary.LittleEndian.Uint64(res)
+	}
+	return
 }
 
 type SDK struct {

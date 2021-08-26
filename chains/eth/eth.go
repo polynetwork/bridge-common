@@ -49,6 +49,13 @@ func (c *Client) Address() string {
 	return c.address
 }
 
+func (c *Client) GetProof(addr string, key string, height uint64) (proof *ETHProof, err error) {
+	heightHex := hexutil.EncodeBig(big.NewInt(int64(height)))
+	proof = &ETHProof{}
+	err = c.Rpc.CallContext(context.Background(), &proof, "eth_getProof", addr, []string{key}, heightHex)
+	return
+}
+
 func (c *Client) GetLatestHeight() (uint64, error) {
 	var result hexutil.Big
 	err := c.Rpc.CallContext(context.Background(), &result, "eth_blockNumber")

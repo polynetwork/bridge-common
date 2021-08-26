@@ -15,33 +15,20 @@
  * along with The poly network .  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package util
+package eth
 
-import "fmt"
-
-func Min(nums ...uint64) (min uint64) {
-	if len(nums) > 0 {
-		min = nums[0]
-	} else {
-		return
-	}
-	for _, num := range nums[1:] {
-		if num < min {
-			min = num
-		}
-	}
-	return
+type ETHProof struct {
+	Address       string         `json:"address"`
+	Balance       string         `json:"balance"`
+	CodeHash      string         `json:"codeHash"`
+	Nonce         string         `json:"nonce"`
+	StorageHash   string         `json:"storageHash"`
+	AccountProof  []string       `json:"accountProof"`
+	StorageProofs []StorageProof `json:"storageProof"`
 }
 
-func NonZeroMin(nums ...uint64) (min uint64) {
-	for _, num := range nums {
-		if min == 0 || (min > num && num != 0) {
-			min = num
-		}
-	}
-	return
-}
-
-func Fatal(tpl string, args ...interface{}) {
-	panic(fmt.Sprintf(tpl, args...))
+type StorageProof struct {
+	Key   string   `json:"key"`
+	Value string   `json:"value"`
+	Proof []string `json:"proof"`
 }

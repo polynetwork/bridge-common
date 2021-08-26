@@ -28,6 +28,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/polynetwork/bridge-common/chains/eth"
+	"github.com/polynetwork/bridge-common/util"
 )
 
 type Config struct {
@@ -99,7 +100,22 @@ func (w *Wallet) Init() (err error) {
 	}
 	w.account = w.accounts[0]
 	w.provider = w.providers[w.account]
+	if w.sdk != nil {
+		w.VerifyChainId()
+	}
 	return
+}
+
+func (w *Wallet) VerifyChainId() {
+	chainId, err := w.sdk.Node().ChainID(context.Background())
+	if err != nil {
+		util.Fatal("Failed to verfiy chain id %v", err)
+	}
+	id := uint64(chainId.Int64())
+	if w.chainId != 0 && w.chainId != id {
+		util.Fatal("ChainID does not match specified %v, on chain: %v", w.chainId, id)
+	}
+	w.chainId = id
 }
 
 func (w *Wallet) GetAccount(account accounts.Account) (provider Provider, nonces NonceProvider) {
