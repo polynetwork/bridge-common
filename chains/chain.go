@@ -19,15 +19,30 @@ package chains
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/beego/beego/v2/core/logs"
 )
 
+type Options struct {
+	ChainID  uint64
+	Nodes    []string
+	Interval time.Duration
+	MaxGap   uint64
+}
+
 type SDK interface {
 	GetLatestHeight() (uint64, error)
 	Address() string
+}
+
+type Nodes interface {
+	Height() uint64
+	WaitTillHeight(uint64, time.Duration) uint64
+	Available() bool
+	Node() SDK
 }
 
 type ChainSDK struct {
@@ -44,13 +59,21 @@ type ChainSDK struct {
 	sync.RWMutex
 }
 
+func (s *ChainSDK) Key() string {
+	nodes := make([]string, len(s.nodes))
+	for i, node := range s.nodes {
+		nodes[i] = node.Address()
+	}
+	return fmt.Sprintf("SDK:%v:%s", s.ChainID, strings.Join(nodes, ":"))
+}
+
 func (s *ChainSDK) Height() uint64 {
 	s.RLock()
 	defer s.RUnlock()
 	return s.height
 }
 
-func (s *ChainSDK) WaitTillHeight(height uint64, interval time.Duration) {
+func (s *ChainSDK) WaitTillHeight(height uint64, interval time.Duration) uint64 {
 	if interval == 0 {
 		interval = s.interval
 	}
@@ -59,7 +82,7 @@ func (s *ChainSDK) WaitTillHeight(height uint64, interval time.Duration) {
 		if err != nil {
 			logs.Error("Failed to get chain(%v) latest height err %v", s.ChainID, err)
 		} else if h >= height {
-			return
+			return h
 		}
 		time.Sleep(interval)
 	}

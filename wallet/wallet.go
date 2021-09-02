@@ -34,6 +34,7 @@ import (
 type Config struct {
 	ChainId           uint64
 	KeyStoreProviders []*KeyStoreProviderConfig
+	Nodes             []string
 }
 
 type IWallet interface {

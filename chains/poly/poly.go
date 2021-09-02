@@ -23,9 +23,11 @@ import (
 
 	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/cross_chain_manager"
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/util"
 	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
 	"github.com/polynetwork/poly/native/service/utils"
 
+	"github.com/beego/beego/v2/core/logs"
 	psdk "github.com/polynetwork/poly-go-sdk"
 )
 
@@ -57,9 +59,37 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 	return uint64(h), err
 }
 
+func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, err error) {
+	var h, current uint32
+	for count > 0 {
+		count--
+		h, err = c.GetBlockHeightByTxHash(hash)
+		if err == nil {
+			if blocks == 0 {
+				return uint64(h), nil
+			}
+			current, err = c.GetCurrentBlockHeight()
+			if err == nil && current >= h+uint32(blocks) {
+				return uint64(h), nil
+			}
+		}
+		if err != nil {
+			logs.Error("Wait poly tx %s confirmation error %v", hash, err)
+		}
+		time.Sleep(time.Second)
+	}
+	return
+}
+
 func (c *Client) GetDoneTx(chainId uint64, ccId []byte) (data []byte, err error) {
 	return c.GetStorage(utils.CrossChainManagerContractAddress.ToHexString(),
 		append(append([]byte(cross_chain_manager.DONE_TX), utils.GetUint64Bytes(chainId)...), ccId...),
+	)
+}
+
+func (c *Client) GetSideChainHeader(chainId uint64, height uint64) (hash []byte, err error) {
+	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
+		append(append([]byte(hcom.MAIN_CHAIN), utils.GetUint64Bytes(chainId)...), utils.GetUint64Bytes(height)...),
 	)
 }
 
@@ -78,7 +108,8 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 
 type SDK struct {
 	*chains.ChainSDK
-	nodes []*Client
+	nodes   []*Client
+	options *chains.Options
 }
 
 func (s *SDK) Node() *Client {
@@ -103,4 +134,20 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 		return nil, err
 	}
 	return &SDK{ChainSDK: sdk, nodes: clients}, nil
+}
+
+func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) *SDK {
+	return util.Single(&SDK{
+		options: &chains.Options{
+			ChainID:  chainID,
+			Nodes:    urls,
+			Interval: interval,
+			MaxGap:   maxGap,
+		},
+	}).(*SDK)
+}
+
+func (s *SDK) Create() interface{} {
+	sdk, _ := NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
+	return sdk
 }

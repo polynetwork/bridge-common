@@ -27,6 +27,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/util"
 )
 
 type Client struct {
@@ -67,7 +68,8 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 
 type SDK struct {
 	*chains.ChainSDK
-	nodes []*Client
+	nodes   []*Client
+	options *chains.Options
 }
 
 func (s *SDK) Node() *Client {
@@ -92,4 +94,20 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 		return nil, err
 	}
 	return &SDK{ChainSDK: sdk, nodes: clients}, nil
+}
+
+func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) *SDK {
+	return util.Single(&SDK{
+		options: &chains.Options{
+			ChainID:  chainID,
+			Nodes:    urls,
+			Interval: interval,
+			MaxGap:   maxGap,
+		},
+	}).(*SDK)
+}
+
+func (s *SDK) Create() interface{} {
+	sdk, _ := NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
+	return sdk
 }
