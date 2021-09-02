@@ -17,7 +17,11 @@
 
 package util
 
-import "fmt"
+import (
+	"encoding/hex"
+	"fmt"
+	"strings"
+)
 
 func Min(nums ...uint64) (min uint64) {
 	if len(nums) > 0 {
@@ -44,4 +48,23 @@ func NonZeroMin(nums ...uint64) (min uint64) {
 
 func Fatal(tpl string, args ...interface{}) {
 	panic(fmt.Sprintf(tpl, args...))
+}
+
+func Reverse(a []byte) (b []byte) {
+	size := len(a)
+	b = make([]byte, size)
+	for i, v := range a {
+		b[size-i-1] = v
+	}
+	return
+}
+
+func ReverseHex(a string) (b string) {
+	aa, _ := hex.DecodeString(a)
+	bb := Reverse(aa)
+	return hex.EncodeToString(bb)
+}
+
+func LowerHex(a string) string {
+	return strings.ToLower(strings.TrimPrefix(a, "0x"))
 }
