@@ -182,6 +182,10 @@ func (w *Wallet) GasPrice() (price *big.Int, err error) {
 	return w.sdk.Node().SuggestGasPrice(context.Background())
 }
 
+func (w *Wallet) GasTip() (price *big.Int, err error) {
+	return w.sdk.Node().SuggestGasTipCap(context.Background())
+}
+
 func (w *Wallet) updateAccounts() {
 	w.Lock()
 	defer w.Unlock()
@@ -200,4 +204,8 @@ func (w *Wallet) Select() (accounts.Account, Provider, NonceProvider) {
 	account := w.accounts[w.cursor]
 	w.cursor = (w.cursor + 1) % len(w.accounts)
 	return account, w.providers[account], w.nonces[account]
+}
+
+func (w *Wallet) Upgrade() *EthWallet {
+	return &EthWallet{*w}
 }
