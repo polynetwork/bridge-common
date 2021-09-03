@@ -16,6 +16,7 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579
 	github.com/mattn/go-colorable v0.1.7 // indirect
+	github.com/okex/exchain-go-sdk v0.18.2
 	github.com/ontio/ontology v1.11.1-0.20200812075204-26cf1fa5dd47
 	github.com/ontio/ontology-go-sdk v1.11.4
 	github.com/polynetwork/cosmos-poly-module v0.0.0-20200810030259-95d586518759
@@ -30,4 +31,12 @@ require (
 	github.com/status-im/keycard-go v0.0.0-20190424133014-d95853db0f48 // indirect
 	github.com/tendermint/tendermint v0.33.9
 	github.com/tendermint/tm-db v0.5.2 // indirect
+)
+
+replace (
+	github.com/cosmos/cosmos-sdk => github.com/okex/cosmos-sdk v0.39.2-exchain9
+	github.com/ethereum/go-ethereum => github.com/ethereum/go-ethereum v1.9.25
+	github.com/okex/exchain => github.com/okex/exchain v0.18.4
+	github.com/tendermint/iavl => github.com/okex/iavl v0.14.3-exchain
+	github.com/tendermint/tendermint => github.com/okex/tendermint v0.33.9-exchain6
 )
