@@ -17,6 +17,7 @@
 
 package wallet
 
+/*
 import (
 	"context"
 	"fmt"
@@ -27,12 +28,14 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )
+*/
 
 // London upgrade - support
 type EthWallet struct {
 	Wallet
 }
 
+/*
 // NOTE: gasPrice, gasPriceX used as gas tip here!
 func (w *EthWallet) SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error) {
 	if gasPrice == nil || gasPrice.Sign() <= 0 {
@@ -94,3 +97,4 @@ func (w *EthWallet) SendWithAccount(account accounts.Account, addr common.Addres
 	nonces.Update(true)
 	return err
 }
+*/

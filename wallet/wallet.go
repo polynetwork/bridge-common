@@ -182,9 +182,11 @@ func (w *Wallet) GasPrice() (price *big.Int, err error) {
 	return w.sdk.Node().SuggestGasPrice(context.Background())
 }
 
+/*
 func (w *Wallet) GasTip() (price *big.Int, err error) {
 	return w.sdk.Node().SuggestGasTipCap(context.Background())
 }
+*/
 
 func (w *Wallet) updateAccounts() {
 	w.Lock()
