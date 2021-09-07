@@ -30,6 +30,7 @@ var (
 	HECO     uint64 = 7
 	O3       uint64 = 10
 	OK       uint64 = 12
+	HAIMDALL uint64 = 15
 	MATIC    uint64 = 17
 	NEO3     uint64 = 88
 
