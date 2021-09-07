@@ -83,6 +83,11 @@ func (c *Client) Address() string {
 	return c.address
 }
 
+func (c *Client) MarshalHeader(header cosmos.CosmosHeader) (data []byte, err error) {
+	data, err = c.codec.MarshalBinaryBare(header)
+	return
+}
+
 func (c *Client) ComposeHeaderProof(height, hmHeight, spanId uint64, hp *cosmos.HeaderWithOptionalProof) (err error) {
 	_, err = c.GetLatestSpan(hmHeight)
 	if err != nil {
@@ -148,6 +153,23 @@ func (c *Client) GetLatestSpan(height uint64) (*htypes.Span, error) {
 		return nil, err
 	}
 
+	return span, nil
+}
+
+func (c *Client) GetSpan(id uint64) (*htypes.Span, error) {
+	res, err := c.ABCIQueryWithOptions(
+		"custom/bor/span",
+		GetSpanKey(id), client.ABCIQueryOptions{},
+	)
+	if err != nil {
+		return nil, err
+	}
+	var span = new(htypes.Span)
+	err = json.Unmarshal(res.Response.Value, &span)
+	if err != nil {
+		logs.Error("tendermint_client.GetSpan - unmarshal failed, spanId %d, %v", id, err)
+		return nil, err
+	}
 	return span, nil
 }
 
