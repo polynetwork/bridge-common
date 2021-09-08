@@ -29,6 +29,9 @@ type PolySignerConfig struct {
 }
 
 func NewPolySigner(config *PolySignerConfig) (signer *sdk.Account, err error) {
+	if config == nil {
+		return nil, fmt.Errorf("Missing poly wallet config")
+	}
 	s := sdk.NewPolySdk()
 	wallet, err := s.OpenWallet(config.Path)
 	if err != nil {
