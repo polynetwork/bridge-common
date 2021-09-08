@@ -31,25 +31,25 @@ type SingletonStore struct {
 	state map[string]interface{}
 }
 
-func (s *SingletonStore) Single(o Singleton) interface{} {
+func (s *SingletonStore) Single(o Singleton) (interface{}, error) {
 	s.Lock()
 	defer s.Unlock()
 	key := o.Key()
 	ins, ok := s.state[key]
 	if ok {
-		return ins
+		return ins, nil
 	}
 	logs.Info("Creating new singleton instance %v key: %s", reflect.TypeOf(o), key)
-	ins = o.Create()
+	ins, err := o.Create()
 	s.state[key] = ins
-	return ins
+	return ins, err
 }
 
 type Singleton interface {
 	Key() string
-	Create() interface{}
+	Create() (interface{}, error)
 }
 
-func Single(s Singleton) interface{} {
+func Single(s Singleton) (interface{}, error) {
 	return _INSTANCES.Single(s)
 }

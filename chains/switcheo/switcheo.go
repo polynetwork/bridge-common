@@ -28,6 +28,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	ontology_go_sdk "github.com/ontio/ontology-go-sdk"
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/util"
 	"github.com/polynetwork/cosmos-poly-module/btcx"
 	"github.com/polynetwork/cosmos-poly-module/ccm"
 	"github.com/polynetwork/cosmos-poly-module/ft"
@@ -128,4 +129,23 @@ func (s *SDK) Key() string {
 	} else {
 		panic("Unable to identify the sdk")
 	}
+}
+
+func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
+	sdk, err := util.Single(&SDK{
+		options: &chains.Options{
+			ChainID:  chainID,
+			Nodes:    urls,
+			Interval: interval,
+			MaxGap:   maxGap,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return sdk.(*SDK), nil
+}
+
+func (s *SDK) Create() (interface{}, error) {
+	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }

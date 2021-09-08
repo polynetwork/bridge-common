@@ -81,20 +81,23 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 	return &SDK{ChainSDK: sdk, nodes: clients}, nil
 }
 
-func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) *SDK {
-	return util.Single(&SDK{
+func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
+	sdk, err := util.Single(&SDK{
 		options: &chains.Options{
 			ChainID:  chainID,
 			Nodes:    urls,
 			Interval: interval,
 			MaxGap:   maxGap,
 		},
-	}).(*SDK)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return sdk.(*SDK), nil
 }
 
-func (s *SDK) Create() interface{} {
-	sdk, _ := NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
-	return sdk
+func (s *SDK) Create() (interface{}, error) {
+	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }
 
 func (s *SDK) Key() string {
