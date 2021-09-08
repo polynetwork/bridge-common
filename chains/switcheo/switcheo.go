@@ -122,7 +122,7 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 }
 
 func (s *SDK) Key() string {
-	if s.ChainSDK == nil {
+	if s.ChainSDK != nil {
 		return s.ChainSDK.Key()
 	} else if s.options != nil {
 		return s.options.Key()

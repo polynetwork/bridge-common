@@ -101,7 +101,7 @@ func (s *SDK) Create() (interface{}, error) {
 }
 
 func (s *SDK) Key() string {
-	if s.ChainSDK == nil {
+	if s.ChainSDK != nil {
 		return s.ChainSDK.Key()
 	} else if s.options != nil {
 		return s.options.Key()
