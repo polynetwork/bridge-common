@@ -113,7 +113,7 @@ func (s *ChainSDK) updateSelection() {
 	status := 1
 	if sdk == nil {
 		status = 0
-		logs.Warn("Temp unavailabitlity for all node of chain %s", s.ChainID)
+		logs.Warn("Temp unavailabitlity for all node of chain %d", s.ChainID)
 		if len(s.nodes) > 0 {
 			sdk = s.nodes[0]
 		}

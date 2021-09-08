@@ -135,10 +135,7 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 		clients[i] = client
 	}
 	sdk, err := chains.NewChainSDK(chainID, nodes, interval, maxGap)
-	if err != nil {
-		return nil, err
-	}
-	return &SDK{ChainSDK: sdk, nodes: clients}, nil
+	return &SDK{ChainSDK: sdk, nodes: clients}, err
 }
 
 func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) *SDK {
