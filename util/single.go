@@ -39,7 +39,7 @@ func (s *SingletonStore) Single(o Singleton) interface{} {
 	if ok {
 		return ins
 	}
-	logs.Info("Creating new singleton instance %v", reflect.TypeOf(o))
+	logs.Info("Creating new singleton instance %v key: %s", reflect.TypeOf(o), key)
 	ins = o.Create()
 	s.state[key] = ins
 	return ins
