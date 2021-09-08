@@ -44,6 +44,12 @@ type Client struct {
 func New(url string) *Client {
 	s := psdk.NewPolySdk()
 	s.NewRpcClient().SetAddress(url)
+	hdr, err := s.GetHeaderByHeight(0)
+	if err != nil {
+		logs.Error("Failed to initialize poly sdk, err %v", err)
+		return nil
+	}
+	s.SetChainId(hdr.ChainID)
 	return &Client{
 		Rpc:     s,
 		address: url,
