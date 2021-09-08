@@ -96,3 +96,13 @@ func (s *SDK) Create() interface{} {
 	sdk, _ := NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 	return sdk
 }
+
+func (s *SDK) Key() string {
+	if s.ChainSDK == nil {
+		return s.ChainSDK.Key()
+	} else if s.options != nil {
+		return s.options.Key()
+	} else {
+		panic("Unable to identify the sdk")
+	}
+}

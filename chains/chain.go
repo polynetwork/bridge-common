@@ -33,6 +33,10 @@ type Options struct {
 	MaxGap   uint64
 }
 
+func (o *Options) Key() string {
+	return fmt.Sprintf("SDK:%v:%s", o.ChainID, strings.Join(o.Nodes, ":"))
+}
+
 type SDK interface {
 	GetLatestHeight() (uint64, error)
 	Address() string

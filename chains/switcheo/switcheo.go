@@ -92,7 +92,8 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 
 type SDK struct {
 	*chains.ChainSDK
-	nodes []*Client
+	nodes   []*Client
+	options *chains.Options
 }
 
 func (s *SDK) Node() *Client {
@@ -117,4 +118,14 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 		return nil, err
 	}
 	return &SDK{ChainSDK: sdk, nodes: clients}, nil
+}
+
+func (s *SDK) Key() string {
+	if s.ChainSDK == nil {
+		return s.ChainSDK.Key()
+	} else if s.options != nil {
+		return s.options.Key()
+	} else {
+		panic("Unable to identify the sdk")
+	}
 }
