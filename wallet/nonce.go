@@ -17,7 +17,30 @@
 
 package wallet
 
+import (
+	"context"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/polynetwork/bridge-common/chains/eth"
+)
+
 type NonceProvider interface {
 	Acquire() (uint64, error)
 	Update(bool)
+}
+
+func NewRemoteNonceProvider(sdk *eth.SDK, address common.Address) *RemoteNonceProvider {
+	return &RemoteNonceProvider{sdk, address}
+}
+
+type RemoteNonceProvider struct {
+	sdk     *eth.SDK
+	address common.Address
+}
+
+func (p *RemoteNonceProvider) Acquire() (uint64, error) {
+	return p.sdk.Node().NonceAt(context.Background(), p.address, nil)
+}
+
+func (p *RemoteNonceProvider) Update(success bool) {
 }

@@ -196,6 +196,7 @@ func (w *Wallet) updateAccounts() {
 	accounts := []accounts.Account{}
 	for a, _ := range w.providers {
 		accounts = append(accounts, a)
+		w.nonces[a] = NewRemoteNonceProvider(w.sdk, a.Address)
 	}
 	w.accounts = accounts
 	w.cursor = 0
