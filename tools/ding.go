@@ -25,7 +25,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/polynetwork/bridge-common/log"
 )
 
 var (
@@ -52,7 +52,7 @@ func PostDingCardKV(title string, keys []string, values []interface{}, btns []ma
 	}
 	err := PostDingCard(title, content, btns)
 	if err != nil {
-		logs.Error("Post dingtalk error %s", err)
+		log.Error("Post dingtalk error", "err", err)
 	}
 	return err
 }
@@ -64,7 +64,7 @@ func PostDingCardSimple(title string, body map[string]interface{}, btns []map[st
 	}
 	err := PostDingCard(title, content, btns)
 	if err != nil {
-		logs.Error("Post dingtalk error %s", err)
+		log.Error("Post dingtalk error", "err", err)
 	}
 	return err
 }
@@ -99,6 +99,6 @@ func PostJson(url string, payload interface{}) error {
 	if err != nil {
 		return err
 	}
-	logs.Info("PostJson response Body:", string(respBody))
+	log.Info("PostJson response", "Body", string(respBody))
 	return nil
 }

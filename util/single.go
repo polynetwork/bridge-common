@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/polynetwork/bridge-common/log"
 )
 
 var _INSTANCES = &SingletonStore{state: map[string]interface{}{}}
@@ -39,7 +39,7 @@ func (s *SingletonStore) Single(o Singleton) (interface{}, error) {
 	if ok {
 		return ins, nil
 	}
-	logs.Info("Creating new singleton instance %v key: %s", reflect.TypeOf(o), key)
+	log.Info("Creating new singleton instance", "type", reflect.TypeOf(o), "key", key)
 	ins, err := o.Create()
 	s.state[key] = ins
 	return ins, err

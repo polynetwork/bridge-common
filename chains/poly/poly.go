@@ -27,7 +27,7 @@ import (
 	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
 	"github.com/polynetwork/poly/native/service/utils"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/polynetwork/bridge-common/log"
 	psdk "github.com/polynetwork/poly-go-sdk"
 )
 
@@ -46,7 +46,7 @@ func New(url string) *Client {
 	s.NewRpcClient().SetAddress(url)
 	hdr, err := s.GetHeaderByHeight(0)
 	if err != nil {
-		logs.Error("Failed to initialize poly sdk, err %v", err)
+		log.Error("Failed to initialize poly sdk", "err", err)
 		return nil
 	}
 	s.SetChainId(hdr.ChainID)
@@ -80,7 +80,7 @@ func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, 
 			}
 		}
 		if err != nil {
-			logs.Info("Wait(%d) poly tx %s confirmation error %v", count, hash, err)
+			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
 		time.Sleep(time.Second)
 	}

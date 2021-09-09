@@ -20,14 +20,13 @@ package switcheo
 import (
 	"time"
 
-	"github.com/beego/beego/v2/core/logs"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	ontology_go_sdk "github.com/ontio/ontology-go-sdk"
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
 	"github.com/polynetwork/cosmos-poly-module/btcx"
 	"github.com/polynetwork/cosmos-poly-module/ccm"
@@ -55,7 +54,7 @@ func New(url string) *Client {
 	config.SetBech32PrefixForConsensusNode("swthvalcons", "swthvalconspub")
 	rawClient, err := tmclient.New(url, "/websocket")
 	if err != nil {
-		logs.Error("Failed to connecto to cosmos ws %v", err)
+		log.Error("Failed to connecto to cosmos ws", "err", err)
 		return nil
 	}
 	cdc := codec.New()
@@ -84,7 +83,7 @@ func (c *Client) Address() string {
 func (c *Client) GetLatestHeight() (uint64, error) {
 	status, err := c.Status()
 	if err != nil {
-		logs.Error("Get cosmos current block status error %v", err)
+		log.Error("Get cosmos current block status error", "err", err)
 		return 0, err
 	}
 	res := status.SyncInfo.LatestBlockHeight

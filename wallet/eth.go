@@ -23,11 +23,11 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/beego/beego/v2/core/logs"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/polynetwork/bridge-common/log"
 )
 
 // London upgrade - support
@@ -68,7 +68,7 @@ func (w *EthWallet) SendWithAccount(account accounts.Account, addr common.Addres
 		if err != nil {
 			nonces.Update(false)
 			if strings.Contains(err.Error(), "has been executed") {
-				logs.Info("Transaction already executed")
+				log.Info("Transaction already executed")
 				return nil
 			}
 			return fmt.Errorf("Estimate gas limit error %v", err)
@@ -95,7 +95,7 @@ func (w *EthWallet) SendWithAccount(account accounts.Account, addr common.Addres
 		nonces.Update(false)
 		return fmt.Errorf("Sign tx error %v", err)
 	}
-	logs.Info("Compose dst chain tx with hash %s account %s", tx.Hash(), account)
+	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
