@@ -37,3 +37,7 @@ var (
 
 	ENV = "testnet"
 )
+
+var CHAINS = []uint64{
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3,
+}
