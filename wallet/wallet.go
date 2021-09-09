@@ -21,8 +21,10 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"strings"
 	"sync"
 
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
@@ -155,6 +157,11 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 		if err != nil {
 			nonces.Update(false)
+			if strings.Contains(err.Error(), "has been executed") {
+				logs.Info("Transaction already executed")
+				return nil
+			}
+
 			return fmt.Errorf("Estimate gas limit error %v", err)
 		}
 	}
@@ -170,6 +177,7 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 		nonces.Update(false)
 		return fmt.Errorf("Sign tx error %v", err)
 	}
+	logs.Info("Compose dst chain tx with hash %s account %s", tx.Hash(), account)
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
