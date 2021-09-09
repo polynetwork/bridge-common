@@ -80,7 +80,7 @@ func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, 
 			}
 		}
 		if err != nil {
-			logs.Error("Wait poly tx %s confirmation error %v", hash, err)
+			logs.Info("Wait(%d) poly tx %s confirmation error %v", count, hash, err)
 		}
 		time.Sleep(time.Second)
 	}

@@ -64,7 +64,11 @@ type Provider interface {
 }
 
 func New(config *Config, sdk *eth.SDK) *Wallet {
-	w := &Wallet{config: config, sdk: sdk, chainId: config.ChainId}
+	w := &Wallet{
+		config: config, sdk: sdk, chainId: config.ChainId, providers: map[accounts.Account]Provider{},
+		nonces:   map[accounts.Account]NonceProvider{},
+		accounts: []accounts.Account{},
+	}
 	for _, c := range config.KeyStoreProviders {
 		w.AddProvider(NewKeyStoreProvider(c))
 	}
