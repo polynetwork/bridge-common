@@ -19,6 +19,7 @@ package util
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -48,6 +49,16 @@ func NonZeroMin(nums ...uint64) (min uint64) {
 
 func Fatal(tpl string, args ...interface{}) {
 	panic(fmt.Sprintf(tpl, args...))
+}
+
+func Json(v interface{}) string {
+	b, _ := json.Marshal(v)
+	return string(b)
+}
+
+func Verbose(v interface{}) string {
+	b, _ := json.MarshalIndent(v, "", "  ")
+	return string(b)
 }
 
 func Reverse(a []byte) (b []byte) {
