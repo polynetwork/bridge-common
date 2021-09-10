@@ -19,6 +19,7 @@ package poly
 
 import (
 	"encoding/binary"
+	"sync/atomic"
 	"time"
 
 	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/cross_chain_manager"
@@ -36,12 +37,17 @@ import (
 
 var (
 	CCM_ADDRESS = utils.CrossChainManagerContractAddress.ToHexString()
+	_POLY_ID    uint64
 )
 
 type Rpc = psdk.PolySdk
 type Client struct {
 	*Rpc
 	address string
+}
+
+func ReadChainID() uint64 {
+	return atomic.LoadUint64(&_POLY_ID)
 }
 
 func New(url string) *Client {
@@ -52,6 +58,7 @@ func New(url string) *Client {
 		log.Error("Failed to initialize poly sdk", "err", err)
 		return nil
 	}
+	atomic.StoreUint64(&_POLY_ID, hdr.ChainID)
 	s.SetChainId(hdr.ChainID)
 	return &Client{
 		Rpc:     s,

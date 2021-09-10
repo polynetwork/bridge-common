@@ -37,12 +37,18 @@ type Config struct {
 	ChainId           uint64
 	KeyStoreProviders []*KeyStoreProviderConfig
 	Nodes             []string
+
+	// NEO wallet
+	Path     string
+	Password string
+	SysFee   float64
+	NetFee   float64
 }
 
 type IWallet interface {
 	Init() error
-	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error)
-	SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error)
+	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
+	SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	Accounts() []accounts.Account
 }
 
@@ -131,16 +137,17 @@ func (w *Wallet) GetAccount(account accounts.Account) (provider Provider, nonces
 	return w.providers[account], w.nonces[account]
 }
 
-func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error) {
+func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	account, _, _ := w.Select()
 	return w.SendWithAccount(account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
 }
 
-func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (err error) {
+func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if gasPrice == nil || gasPrice.Sign() <= 0 {
 		gasPrice, err = w.GasPrice()
 		if err != nil {
-			return fmt.Errorf("Get gas price error %v", err)
+			err = fmt.Errorf("Get gas price error %v", err)
+			return
 		}
 		if gasPriceX != nil {
 			gasPrice, _ = new(big.Float).Mul(new(big.Float).SetInt(gasPrice), gasPriceX).Int(nil)
@@ -150,7 +157,7 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 	provider, nonces := w.GetAccount(account)
 	nonce, err := nonces.Acquire()
 	if err != nil {
-		return err
+		return
 	}
 	if gasLimit == 0 {
 		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: big.NewInt(0), Data: data}
@@ -159,29 +166,32 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 			nonces.Update(false)
 			if strings.Contains(err.Error(), "has been executed") {
 				log.Info("Transaction already executed")
-				return nil
+				return "", nil
 			}
 
-			return fmt.Errorf("Estimate gas limit error %v", err)
+			err = fmt.Errorf("Estimate gas limit error %v", err)
+			return
 		}
 	}
 
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
 		nonces.Update(false)
-		return fmt.Errorf("Send tx estimated gas limit(%v) higher than max %v", gasLimit, limit)
+		err = fmt.Errorf("Send tx estimated gas limit(%v) higher than max %v", gasLimit, limit)
+		return
 	}
 	tx := types.NewTransaction(nonce, addr, amount, limit, gasPrice, data)
 	tx, err = provider.SignTx(account, tx, big.NewInt(int64(w.chainId)))
 	if err != nil {
 		nonces.Update(false)
-		return fmt.Errorf("Sign tx error %v", err)
+		err = fmt.Errorf("Sign tx error %v", err)
+		return
 	}
 	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
-	return err
+	return tx.Hash().String(), err
 }
 
 func (w *Wallet) Account() (accounts.Account, Provider, NonceProvider) {
