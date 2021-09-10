@@ -22,13 +22,16 @@ import (
 	"time"
 
 	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/cross_chain_manager"
-	"github.com/polynetwork/bridge-common/chains"
-	"github.com/polynetwork/bridge-common/util"
-	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
-	"github.com/polynetwork/poly/native/service/utils"
 
+	"github.com/polynetwork/bridge-common/base"
+	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/log"
+	"github.com/polynetwork/bridge-common/util"
 	psdk "github.com/polynetwork/poly-go-sdk"
+	"github.com/polynetwork/poly/common"
+	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
+	"github.com/polynetwork/poly/native/service/header_sync/neo"
+	"github.com/polynetwork/poly/native/service/utils"
 )
 
 var (
@@ -99,7 +102,32 @@ func (c *Client) GetSideChainHeader(chainId uint64, height uint64) (hash []byte,
 	)
 }
 
+func (c *Client) GetSideChainHeaderIndex(chainId uint64, height uint64) (hash []byte, err error) {
+	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
+		append(append([]byte(hcom.HEADER_INDEX), utils.GetUint64Bytes(chainId)...), utils.GetUint64Bytes(height)...),
+	)
+}
+
+func (c *Client) GetSideChainConsensusHeight(chainId uint64) (height uint64, err error) {
+	var id [8]byte
+	binary.LittleEndian.PutUint64(id[:], chainId)
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CONSENSUS_PEER), id[:]...))
+	if err != nil {
+		return
+	}
+	peer := new(neo.NeoConsensus)
+	err = peer.Deserialization(common.NewZeroCopySource(res))
+	if err != nil {
+		return
+	}
+	height = uint64(peer.Height)
+	return
+}
+
 func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
+	if chainId == base.NEO {
+		return c.GetSideChainConsensusHeight(chainId)
+	}
 	var id [8]byte
 	binary.LittleEndian.PutUint64(id[:], chainId)
 	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CURRENT_HEADER_HEIGHT), id[:]...))
