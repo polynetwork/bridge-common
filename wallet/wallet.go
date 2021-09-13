@@ -43,6 +43,10 @@ type Config struct {
 	Password string
 	SysFee   float64
 	NetFee   float64
+
+	// ONT wallet
+	GasPrice uint64
+	GasLimit uint64
 }
 
 type IWallet interface {

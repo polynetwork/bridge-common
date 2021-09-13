@@ -21,8 +21,12 @@ import (
 	"time"
 
 	ontology_go_sdk "github.com/ontio/ontology-go-sdk"
+	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/header_sync"
+	outils "github.com/ontio/ontology/smartcontract/service/native/utils"
+
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
+	"github.com/polynetwork/poly/native/service/utils"
 )
 
 type Rpc = ontology_go_sdk.OntologySdk
@@ -44,6 +48,12 @@ func New(url string) *Client {
 
 func (c *Client) Address() string {
 	return c.address
+}
+
+func (c *Client) GetSideChainHeaderIndex(chainId, height uint64) (data []byte, err error) {
+	return c.GetStorage(outils.HeaderSyncContractAddress.ToHexString(),
+		util.Concat([]byte(header_sync.HEADER_INDEX), utils.GetUint64Bytes(chainId), utils.GetUint32Bytes(uint32(height))),
+	)
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {

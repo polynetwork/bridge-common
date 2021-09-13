@@ -79,3 +79,10 @@ func ReverseHex(a string) (b string) {
 func LowerHex(a string) string {
 	return strings.ToLower(strings.TrimPrefix(a, "0x"))
 }
+
+func Concat(data ...[]byte) (b []byte) {
+	for _, d := range data {
+		b = append(b, d...)
+	}
+	return
+}

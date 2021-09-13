@@ -111,7 +111,7 @@ func (c *Client) GetSideChainHeader(chainId uint64, height uint64) (hash []byte,
 
 func (c *Client) GetSideChainHeaderIndex(chainId uint64, height uint64) (hash []byte, err error) {
 	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
-		append(append([]byte(hcom.HEADER_INDEX), utils.GetUint64Bytes(chainId)...), utils.GetUint64Bytes(height)...),
+		append(append([]byte(hcom.HEADER_INDEX), utils.GetUint64Bytes(chainId)...), utils.GetUint32Bytes(uint32(height))...),
 	)
 }
 
@@ -128,6 +128,24 @@ func (c *Client) GetSideChainConsensusHeight(chainId uint64) (height uint64, err
 		return
 	}
 	height = uint64(peer.Height)
+	return
+}
+
+func (c *Client) GetSideChainMsg(chainId, height uint64) (msg []byte, err error) {
+	return c.GetStorage(
+		utils.HeaderSyncContractAddress.ToHexString(),
+		util.Concat([]byte(hcom.CROSS_CHAIN_MSG), utils.GetUint64Bytes(chainId), utils.GetUint32Bytes(uint32(height))),
+	)
+}
+
+func (c *Client) GetSideChainMsgHeight(chainId uint64) (height uint64, err error) {
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CURRENT_MSG_HEIGHT), utils.GetUint64Bytes(chainId)...))
+	if err != nil {
+		return 0, err
+	}
+	if res != nil && len(res) > 0 {
+		height = uint64(utils.GetBytesUint32(res))
+	}
 	return
 }
 

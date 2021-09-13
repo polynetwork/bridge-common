@@ -17,10 +17,16 @@
 
 package wallet
 
+import (
+	"github.com/polynetwork/bridge-common/base"
+)
+
 var softGasLimits = map[uint64]uint64{}
 
 func HardGasLimit(chain uint64) uint64 {
 	switch chain {
+	case base.ETH:
+		return 300000
 	default:
 		return 10000000000000
 	}

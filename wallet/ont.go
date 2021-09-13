@@ -23,7 +23,12 @@ import (
 	sdk "github.com/ontio/ontology-go-sdk"
 )
 
-func NewOntSigner(config *Config) (signer *sdk.Account, err error) {
+type OntSigner struct {
+	*sdk.Account
+	Config *Config
+}
+
+func NewOntSigner(config *Config) (signer *OntSigner, err error) {
 	if config == nil {
 		return nil, fmt.Errorf("Missing ont wallet config")
 	}
@@ -33,14 +38,15 @@ func NewOntSigner(config *Config) (signer *sdk.Account, err error) {
 		err = fmt.Errorf("Open ont wallet error %v", err)
 		return nil, err
 	}
-	signer, err = wallet.GetDefaultAccount([]byte(config.Password))
-	if err != nil || signer == nil {
-		signer, err = wallet.NewDefaultSettingAccount([]byte(config.Password))
+	account, err := wallet.GetDefaultAccount([]byte(config.Password))
+	if err != nil || account == nil {
+		account, err = wallet.NewDefaultSettingAccount([]byte(config.Password))
 		if err != nil {
 			err = fmt.Errorf("Get ont default account error %v", err)
 			return
 		}
 		err = wallet.Save()
 	}
+	signer = &OntSigner{account, config}
 	return
 }
