@@ -19,20 +19,25 @@ package poly
 
 import (
 	"encoding/binary"
+	"sync/atomic"
 	"time"
 
 	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/cross_chain_manager"
-	"github.com/polynetwork/bridge-common/chains"
-	"github.com/polynetwork/bridge-common/util"
-	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
-	"github.com/polynetwork/poly/native/service/utils"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/polynetwork/bridge-common/base"
+	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/log"
+	"github.com/polynetwork/bridge-common/util"
 	psdk "github.com/polynetwork/poly-go-sdk"
+	"github.com/polynetwork/poly/common"
+	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
+	"github.com/polynetwork/poly/native/service/header_sync/neo"
+	"github.com/polynetwork/poly/native/service/utils"
 )
 
 var (
 	CCM_ADDRESS = utils.CrossChainManagerContractAddress.ToHexString()
+	_POLY_ID    uint64
 )
 
 type Rpc = psdk.PolySdk
@@ -41,9 +46,20 @@ type Client struct {
 	address string
 }
 
+func ReadChainID() uint64 {
+	return atomic.LoadUint64(&_POLY_ID)
+}
+
 func New(url string) *Client {
 	s := psdk.NewPolySdk()
 	s.NewRpcClient().SetAddress(url)
+	hdr, err := s.GetHeaderByHeight(0)
+	if err != nil {
+		log.Error("Failed to initialize poly sdk", "err", err)
+		return nil
+	}
+	atomic.StoreUint64(&_POLY_ID, hdr.ChainID)
+	s.SetChainId(hdr.ChainID)
 	return &Client{
 		Rpc:     s,
 		address: url,
@@ -74,7 +90,7 @@ func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, 
 			}
 		}
 		if err != nil {
-			logs.Error("Wait poly tx %s confirmation error %v", hash, err)
+			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
 		time.Sleep(time.Second)
 	}
@@ -93,7 +109,50 @@ func (c *Client) GetSideChainHeader(chainId uint64, height uint64) (hash []byte,
 	)
 }
 
+func (c *Client) GetSideChainHeaderIndex(chainId uint64, height uint64) (hash []byte, err error) {
+	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
+		append(append([]byte(hcom.HEADER_INDEX), utils.GetUint64Bytes(chainId)...), utils.GetUint32Bytes(uint32(height))...),
+	)
+}
+
+func (c *Client) GetSideChainConsensusHeight(chainId uint64) (height uint64, err error) {
+	var id [8]byte
+	binary.LittleEndian.PutUint64(id[:], chainId)
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CONSENSUS_PEER), id[:]...))
+	if err != nil {
+		return
+	}
+	peer := new(neo.NeoConsensus)
+	err = peer.Deserialization(common.NewZeroCopySource(res))
+	if err != nil {
+		return
+	}
+	height = uint64(peer.Height)
+	return
+}
+
+func (c *Client) GetSideChainMsg(chainId, height uint64) (msg []byte, err error) {
+	return c.GetStorage(
+		utils.HeaderSyncContractAddress.ToHexString(),
+		util.Concat([]byte(hcom.CROSS_CHAIN_MSG), utils.GetUint64Bytes(chainId), utils.GetUint32Bytes(uint32(height))),
+	)
+}
+
+func (c *Client) GetSideChainMsgHeight(chainId uint64) (height uint64, err error) {
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CURRENT_MSG_HEIGHT), utils.GetUint64Bytes(chainId)...))
+	if err != nil {
+		return 0, err
+	}
+	if res != nil && len(res) > 0 {
+		height = uint64(utils.GetBytesUint32(res))
+	}
+	return
+}
+
 func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
+	if chainId == base.NEO {
+		return c.GetSideChainConsensusHeight(chainId)
+	}
 	var id [8]byte
 	binary.LittleEndian.PutUint64(id[:], chainId)
 	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CURRENT_HEADER_HEIGHT), id[:]...))
@@ -104,6 +163,11 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 		height = binary.LittleEndian.Uint64(res)
 	}
 	return
+}
+
+func (c *Client) GetSideChainEpoch(chainId uint64) (data []byte, err error) {
+	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
+		append([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId)...))
 }
 
 type SDK struct {
@@ -130,24 +194,34 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 		clients[i] = client
 	}
 	sdk, err := chains.NewChainSDK(chainID, nodes, interval, maxGap)
-	if err != nil {
-		return nil, err
-	}
-	return &SDK{ChainSDK: sdk, nodes: clients}, nil
+	return &SDK{ChainSDK: sdk, nodes: clients}, err
 }
 
-func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) *SDK {
-	return util.Single(&SDK{
+func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
+	sdk, err := util.Single(&SDK{
 		options: &chains.Options{
 			ChainID:  chainID,
 			Nodes:    urls,
 			Interval: interval,
 			MaxGap:   maxGap,
 		},
-	}).(*SDK)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return sdk.(*SDK), nil
 }
 
-func (s *SDK) Create() interface{} {
-	sdk, _ := NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
-	return sdk
+func (s *SDK) Create() (interface{}, error) {
+	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
+}
+
+func (s *SDK) Key() string {
+	if s.ChainSDK != nil {
+		return s.ChainSDK.Key()
+	} else if s.options != nil {
+		return s.options.Key()
+	} else {
+		panic("Unable to identify the sdk")
+	}
 }

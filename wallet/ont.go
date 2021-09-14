@@ -18,29 +18,35 @@
 package wallet
 
 import (
-	"context"
+	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/polynetwork/bridge-common/chains/eth"
+	sdk "github.com/ontio/ontology-go-sdk"
 )
 
-type NonceProvider interface {
-	Acquire() (uint64, error)
-	Update(bool)
+type OntSigner struct {
+	*sdk.Account
+	Config *Config
 }
 
-func NewRemoteNonceProvider(sdk *eth.SDK, address common.Address) *RemoteNonceProvider {
-	return &RemoteNonceProvider{sdk, address}
-}
-
-type RemoteNonceProvider struct {
-	sdk     *eth.SDK
-	address common.Address
-}
-
-func (p *RemoteNonceProvider) Acquire() (uint64, error) {
-	return p.sdk.Node().NonceAt(context.Background(), p.address, nil)
-}
-
-func (p *RemoteNonceProvider) Update(success bool) {
+func NewOntSigner(config *Config) (signer *OntSigner, err error) {
+	if config == nil {
+		return nil, fmt.Errorf("Missing ont wallet config")
+	}
+	s := sdk.NewOntologySdk()
+	wallet, err := s.OpenWallet(config.Path)
+	if err != nil {
+		err = fmt.Errorf("Open ont wallet error %v", err)
+		return nil, err
+	}
+	account, err := wallet.GetDefaultAccount([]byte(config.Password))
+	if err != nil || account == nil {
+		account, err = wallet.NewDefaultSettingAccount([]byte(config.Password))
+		if err != nil {
+			err = fmt.Errorf("Get ont default account error %v", err)
+			return
+		}
+		err = wallet.Save()
+	}
+	signer = &OntSigner{account, config}
+	return
 }

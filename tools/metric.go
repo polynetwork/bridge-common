@@ -23,7 +23,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/polynetwork/bridge-common/log"
 )
 
 type Metric struct {
@@ -135,7 +135,7 @@ func NewMetricWriter(url string) (mw MetricWriter, err error) {
 						continue
 					}
 				}
-				logs.Error("Metric writer connection is unavailable err %v", err)
+				log.Error("Metric writer connection is unavailable", "err", err)
 				time.Sleep(time.Second * 2)
 				conn, err = net.Dial("udp", url)
 			}

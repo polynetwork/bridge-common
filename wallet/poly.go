@@ -29,6 +29,9 @@ type PolySignerConfig struct {
 }
 
 func NewPolySigner(config *PolySignerConfig) (signer *sdk.Account, err error) {
+	if config == nil {
+		return nil, fmt.Errorf("Missing poly wallet config")
+	}
 	s := sdk.NewPolySdk()
 	wallet, err := s.OpenWallet(config.Path)
 	if err != nil {
@@ -36,9 +39,13 @@ func NewPolySigner(config *PolySignerConfig) (signer *sdk.Account, err error) {
 		return nil, err
 	}
 	signer, err = wallet.GetDefaultAccount([]byte(config.Password))
-	if err != nil {
-		err = fmt.Errorf("Get poly default account error %v", err)
-		return
+	if err != nil || signer == nil {
+		signer, err = wallet.NewDefaultSettingAccount([]byte(config.Password))
+		if err != nil {
+			err = fmt.Errorf("Get poly default account error %v", err)
+			return
+		}
+		err = wallet.Save()
 	}
 	return
 }

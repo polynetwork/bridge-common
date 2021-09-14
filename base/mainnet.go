@@ -30,8 +30,13 @@ var (
 	HECO     uint64 = 7
 	O3       uint64 = 10
 	OK       uint64 = 12
+	HEIMDALL uint64 = 15
 	MATIC    uint64 = 17
 	NEO3     uint64 = 88
 
 	ENV = "mainnet"
 )
+
+var CHAINS = []uint64{
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3,
+}

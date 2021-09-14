@@ -19,6 +19,7 @@ package util
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -50,6 +51,16 @@ func Fatal(tpl string, args ...interface{}) {
 	panic(fmt.Sprintf(tpl, args...))
 }
 
+func Json(v interface{}) string {
+	b, _ := json.Marshal(v)
+	return string(b)
+}
+
+func Verbose(v interface{}) string {
+	b, _ := json.MarshalIndent(v, "", "  ")
+	return string(b)
+}
+
 func Reverse(a []byte) (b []byte) {
 	size := len(a)
 	b = make([]byte, size)
@@ -67,4 +78,11 @@ func ReverseHex(a string) (b string) {
 
 func LowerHex(a string) string {
 	return strings.ToLower(strings.TrimPrefix(a, "0x"))
+}
+
+func Concat(data ...[]byte) (b []byte) {
+	for _, d := range data {
+		b = append(b, d...)
+	}
+	return
 }

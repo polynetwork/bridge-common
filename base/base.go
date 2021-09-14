@@ -94,3 +94,20 @@ func GetChainName(id uint64) string {
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
 }
+
+func BlocksToWait(chainId uint64) uint64 {
+	switch chainId {
+	case ETH:
+		return 12
+	case BSC, HECO:
+		return 21
+	case ONT, NEO, NEO3, OK, SWITCHEO:
+		return 1
+	case O3:
+		return 12
+	case MATIC:
+		return 128
+	default:
+		return 100000000
+	}
+}
