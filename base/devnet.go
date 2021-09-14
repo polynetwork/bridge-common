@@ -36,3 +36,4 @@ var (
 
 	ENV = "devnet"
 )
+var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC}

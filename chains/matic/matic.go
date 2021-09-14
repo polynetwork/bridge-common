@@ -26,7 +26,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/beego/beego/v2/core/logs"
 	abcitypes "github.com/christianxiao/tendermint/abci/types"
 	amino "github.com/christianxiao/tendermint/crypto/encoding/amino"
 	"github.com/christianxiao/tendermint/crypto/merkle"
@@ -35,6 +34,7 @@ import (
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/chains/matic/cosmos"
 	htypes "github.com/polynetwork/bridge-common/chains/matic/heimdall/types"
+	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
 )
 
@@ -71,6 +71,11 @@ func New(url string) *Client {
 			},
 		}
 		tclient = client.NewHTTPWithClient(url, "/websocket", cc)
+	}
+	err := tclient.Start()
+	if err != nil {
+		log.Error("Failed to start heimdall client", "err", err)
+		return nil
 	}
 	return &Client{
 		address: url,
@@ -142,14 +147,14 @@ func (c *Client) GetLatestSpan(height uint64) (*htypes.Span, error) {
 		nil,
 		client.ABCIQueryOptions{Prove: true, Height: int64(height)})
 	if err != nil {
-		logs.Error("tendermint_client.GetSpanRes - failed, block %d, %v", height, err)
+		log.Error("tendermint_client.GetSpanRes failed", "block", height, "err", err)
 		return nil, err
 	}
 
 	var span = new(htypes.Span)
 	err = json.Unmarshal(res.Response.Value, &span)
 	if err != nil {
-		logs.Error("tendermint_client.GetLatestSpan - unmarshal failed, block %d, %v", height, err)
+		log.Error("tendermint_client.GetLatestSpan - unmarshal failed", "height", height, "err", err)
 		return nil, err
 	}
 
@@ -167,7 +172,7 @@ func (c *Client) GetSpan(id uint64) (*htypes.Span, error) {
 	var span = new(htypes.Span)
 	err = json.Unmarshal(res.Response.Value, &span)
 	if err != nil {
-		logs.Error("tendermint_client.GetSpan - unmarshal failed, spanId %d, %v", id, err)
+		log.Error("tendermint_client.GetSpan - unmarshal failed", "spanId", id, "err", err)
 		return nil, err
 	}
 	return span, nil
@@ -237,18 +242,21 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 	return &SDK{ChainSDK: sdk, nodes: clients}, nil
 }
 
-func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) *SDK {
-	return util.Single(&SDK{
+func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
+	sdk, err := util.Single(&SDK{
 		options: &chains.Options{
 			ChainID:  chainID,
 			Nodes:    urls,
 			Interval: interval,
 			MaxGap:   maxGap,
 		},
-	}).(*SDK)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return sdk.(*SDK), nil
 }
 
-func (s *SDK) Create() interface{} {
-	sdk, _ := NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
-	return sdk
+func (s *SDK) Create() (interface{}, error) {
+	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }

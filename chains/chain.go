@@ -23,7 +23,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/beego/beego/v2/core/logs"
+	"github.com/polynetwork/bridge-common/log"
 )
 
 type Options struct {
@@ -31,6 +31,10 @@ type Options struct {
 	Nodes    []string
 	Interval time.Duration
 	MaxGap   uint64
+}
+
+func (o *Options) Key() string {
+	return fmt.Sprintf("SDK:%v:%s", o.ChainID, strings.Join(o.Nodes, ":"))
 }
 
 type SDK interface {
@@ -80,7 +84,7 @@ func (s *ChainSDK) WaitTillHeight(height uint64, interval time.Duration) uint64 
 	for {
 		h, err := s.Node().GetLatestHeight()
 		if err != nil {
-			logs.Error("Failed to get chain(%v) latest height err %v", s.ChainID, err)
+			log.Error("Failed to get chain latest height err ", "chain", s.ChainID, "err", err)
 		} else if h >= height {
 			return h
 		}
@@ -96,7 +100,7 @@ func (s *ChainSDK) updateSelection() {
 	for i, s := range s.nodes {
 		h, err := s.GetLatestHeight()
 		if err != nil {
-			logs.Error("Node(%s) error %v", s.Address(), err)
+			log.Error("Ping node error", "url", s.Address(), "err", err)
 		} else {
 			state[i] = h
 			if h > height {
@@ -109,7 +113,7 @@ func (s *ChainSDK) updateSelection() {
 	status := 1
 	if sdk == nil {
 		status = 0
-		logs.Warn("Temp unavailabitlity for all node of chain %s", s.ChainID)
+		log.Warn("Temp unavailabitlity for all node", "chain", s.ChainID)
 		if len(s.nodes) > 0 {
 			sdk = s.nodes[0]
 		}
@@ -168,7 +172,7 @@ func (s *ChainSDK) monitor(interval time.Duration) {
 }
 
 func (s *ChainSDK) Init() error {
-	logs.Info("Initializing chain sdk for %v", s.ChainID)
+	log.Info("Initializing chain sdk", "chainID", s.ChainID)
 	s.updateSelection()
 	if !s.Available() {
 		return fmt.Errorf("All the nodes are unavailable for chain %v", s.ChainID)

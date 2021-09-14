@@ -21,7 +21,8 @@ require (
 	github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579
 	github.com/karalabe/usb v0.0.0-20191104083709-911d15fe12a9 // indirect
 	github.com/maticnetwork/bor v0.2.2-0.20200807103547-4d42b15906aa
-	github.com/mattn/go-colorable v0.1.7 // indirect
+	github.com/mattn/go-colorable v0.1.7
+	github.com/mattn/go-isatty v0.0.12
 	github.com/ontio/ontology v1.11.1-0.20200812075204-26cf1fa5dd47
 	github.com/ontio/ontology-go-sdk v1.11.4
 	github.com/pkg/errors v0.9.1
