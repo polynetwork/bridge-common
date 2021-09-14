@@ -170,6 +170,12 @@ func (c *Client) GetSideChainEpoch(chainId uint64) (data []byte, err error) {
 		append([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId)...))
 }
 
+func (c *Client) GetSideChainEpochWithHeight(chainId, height uint64) (data []byte, err error) {
+	return c.GetStorage(utils.CrossChainManagerContractAddress.ToHexString(),
+		util.Concat([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId), utils.GetUint64Bytes(height)),
+	)
+}
+
 type SDK struct {
 	*chains.ChainSDK
 	nodes   []*Client
