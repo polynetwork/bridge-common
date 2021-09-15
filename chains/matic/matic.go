@@ -75,7 +75,6 @@ func New(url string) *Client {
 	err := tclient.Start()
 	if err != nil {
 		log.Error("Failed to start heimdall client", "err", err)
-		return nil
 	}
 	return &Client{
 		address: url,
