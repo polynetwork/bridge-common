@@ -159,8 +159,12 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 	if err != nil {
 		return 0, err
 	}
-	if res != nil && len(res) > 0 {
-		height = binary.LittleEndian.Uint64(res)
+	if res != nil {
+		if len(res) > 7 {
+			height = binary.LittleEndian.Uint64(res)
+		} else {
+			height = uint64(binary.LittleEndian.Uint32(res))
+		}
 	}
 	return
 }
@@ -168,6 +172,12 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 func (c *Client) GetSideChainEpoch(chainId uint64) (data []byte, err error) {
 	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
 		append([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId)...))
+}
+
+func (c *Client) GetSideChainEpochWithHeight(chainId, height uint64) (data []byte, err error) {
+	return c.GetStorage(utils.CrossChainManagerContractAddress.ToHexString(),
+		util.Concat([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId), utils.GetUint64Bytes(height)),
+	)
 }
 
 type SDK struct {
