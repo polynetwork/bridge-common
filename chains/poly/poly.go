@@ -159,8 +159,12 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 	if err != nil {
 		return 0, err
 	}
-	if res != nil && len(res) > 0 {
-		height = binary.LittleEndian.Uint64(res)
+	if res != nil {
+		if len(res) > 7 {
+			height = binary.LittleEndian.Uint64(res)
+		} else {
+			height = uint64(binary.LittleEndian.Uint32(res))
+		}
 	}
 	return
 }
