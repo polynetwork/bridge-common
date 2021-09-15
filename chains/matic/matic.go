@@ -260,3 +260,13 @@ func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap u
 func (s *SDK) Create() (interface{}, error) {
 	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }
+
+func (s *SDK) Key() string {
+	if s.ChainSDK != nil {
+		return s.ChainSDK.Key()
+	} else if s.options != nil {
+		return s.options.Key()
+	} else {
+		panic("Unable to identify the sdk")
+	}
+}
