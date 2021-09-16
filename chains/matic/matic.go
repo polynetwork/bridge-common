@@ -153,7 +153,7 @@ func (c *Client) GetLatestSpan(height uint64) (*htypes.Span, error) {
 	var span = new(htypes.Span)
 	err = json.Unmarshal(res.Response.Value, &span)
 	if err != nil {
-		log.Error("tendermint_client.GetLatestSpan - unmarshal failed", "height", height, "err", err)
+		log.Error("tendermint_client.GetLatestSpan - unmarshal failed", "height", height, "err", err, "data", string(res.Response.Value))
 		return nil, err
 	}
 
@@ -171,7 +171,7 @@ func (c *Client) GetSpan(id uint64) (*htypes.Span, error) {
 	var span = new(htypes.Span)
 	err = json.Unmarshal(res.Response.Value, &span)
 	if err != nil {
-		log.Error("tendermint_client.GetSpan - unmarshal failed", "spanId", id, "err", err)
+		log.Error("tendermint_client.GetSpan - unmarshal failed", "spanId", id, "err", err, "data", string(res.Response.Value))
 		return nil, err
 	}
 	return span, nil
