@@ -38,6 +38,10 @@ require (
 	github.com/status-im/keycard-go v0.0.0-20191119114148-6dd40a46baa0 // indirect
 	github.com/tendermint/go-amino v0.15.1
 	github.com/tendermint/tendermint v0.33.9
+	github.com/tendermint/tm-db v0.5.2 // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
+	golang.org/x/mod v0.5.0 // indirect
+	golang.org/x/sys v0.0.0-20210915083310-ed5796bab164 // indirect
+	golang.org/x/tools v0.1.5 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )
