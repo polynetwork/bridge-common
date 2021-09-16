@@ -162,8 +162,8 @@ func (c *Client) GetLatestSpan(height uint64) (*htypes.Span, error) {
 
 func (c *Client) GetSpan(id uint64) (*htypes.Span, error) {
 	res, err := c.ABCIQueryWithOptions(
-		"custom/bor/span",
-		GetSpanKey(id), client.ABCIQueryOptions{},
+		fmt.Sprintf("custom/bor/span/%d", id),
+		[]byte("{}"), client.ABCIQueryOptions{},
 	)
 	if err != nil {
 		return nil, err
