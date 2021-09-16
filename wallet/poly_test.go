@@ -18,37 +18,28 @@
 package wallet
 
 import (
-	"fmt"
-
-	sdk "github.com/polynetwork/poly-go-sdk"
+	"os"
+	"testing"
 )
 
-type PolySignerConfig struct {
-	Path     string
-	Password string
-}
-
-func NewPolySigner(config *PolySignerConfig) (signer *sdk.Account, err error) {
-	if config == nil {
-		return nil, fmt.Errorf("Missing poly wallet config")
+func TestNewPolySigner(t *testing.T) {
+	type args struct {
+		config *PolySignerConfig
 	}
-	s := sdk.NewPolySdk()
-	wallet, err := s.OpenWallet(config.Path)
-	if err != nil {
-		err = fmt.Errorf("Open poly wallet error %v", err)
-		return nil, err
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"TestPolySigner", args{&PolySignerConfig{"../../poly.dat", os.Getenv("POLY_PASS")}}, false},
 	}
-	signer, err = wallet.GetDefaultAccount([]byte(config.Password))
-	if err != nil || signer == nil {
-		return nil, fmt.Errorf("Failed to load default account %v", err)
-		/*
-			signer, err = wallet.NewDefaultSettingAccount([]byte(config.Password))
-			if err != nil {
-				err = fmt.Errorf("Get poly default account error %v", err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := NewPolySigner(tt.args.config)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("NewPolySigner() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			err = wallet.Save()
-		*/
+		})
 	}
-	return
 }
