@@ -40,12 +40,15 @@ func NewPolySigner(config *PolySignerConfig) (signer *sdk.Account, err error) {
 	}
 	signer, err = wallet.GetDefaultAccount([]byte(config.Password))
 	if err != nil || signer == nil {
-		signer, err = wallet.NewDefaultSettingAccount([]byte(config.Password))
-		if err != nil {
-			err = fmt.Errorf("Get poly default account error %v", err)
-			return
-		}
-		err = wallet.Save()
+		return nil, fmt.Errorf("Failed to load default account %v", err)
+		/*
+			signer, err = wallet.NewDefaultSettingAccount([]byte(config.Password))
+			if err != nil {
+				err = fmt.Errorf("Get poly default account error %v", err)
+				return
+			}
+			err = wallet.Save()
+		*/
 	}
 	return
 }
