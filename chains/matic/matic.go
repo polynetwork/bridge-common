@@ -33,6 +33,7 @@ import (
 	tmtypes "github.com/christianxiao/tendermint/types"
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/chains/matic/cosmos"
+	btypes "github.com/polynetwork/bridge-common/chains/matic/heimdall/bor/types"
 	htypes "github.com/polynetwork/bridge-common/chains/matic/heimdall/types"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
@@ -161,9 +162,10 @@ func (c *Client) GetLatestSpan(height uint64) (*htypes.Span, error) {
 }
 
 func (c *Client) GetSpan(id uint64) (*htypes.Span, error) {
+	spanId, _ := c.codec.MarshalJSON(btypes.NewQuerySpanParams(id))
 	res, err := c.ABCIQueryWithOptions(
-		fmt.Sprintf("custom/bor/span/%d", id),
-		[]byte("{}"), client.ABCIQueryOptions{},
+		fmt.Sprintf("custom/bor/span"),
+		spanId, client.ABCIQueryOptions{},
 	)
 	if err != nil {
 		return nil, err
