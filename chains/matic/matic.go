@@ -20,6 +20,7 @@ package matic
 import (
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -42,6 +43,8 @@ import (
 const (
 	SPRINT_SIZE uint64 = 64
 )
+
+var ERR_SPAN_TOO_NEW = errors.New("SpanNotReady")
 
 type Rpc = client.HTTP
 
@@ -94,14 +97,19 @@ func (c *Client) MarshalHeader(header cosmos.CosmosHeader) (data []byte, err err
 }
 
 func (c *Client) ComposeHeaderProof(height, hmHeight, spanId uint64, hp *cosmos.HeaderWithOptionalProof) (err error) {
-	_, err = c.GetLatestSpan(hmHeight)
-	if err != nil {
-		return err
-	}
+	/*
+		_, err = c.GetLatestSpan(hmHeight)
+		if err != nil {
+			return err
+		}
+	*/
 
 	spanRes, _, err := c.GetSpanRes(spanId, hmHeight-1)
 	if err != nil {
 		return err
+	}
+	if spanRes == nil {
+		return ERR_SPAN_TOO_NEW
 	}
 
 	cosmosHeader, err := c.GetCosmosHeader(hmHeight)
@@ -134,7 +142,9 @@ func (c *Client) GetSpanRes(id uint64, height uint64) (*abcitypes.ResponseQuery,
 		return nil, nil, err
 	}
 	if len(res.Response.Value) == 0 || len(res.Response.Proof.GetOps()) == 0 || len(res.Response.Key) == 0 {
-		return nil, nil, fmt.Errorf("Heimdall height (%d), Span(%d) too new?", height, id)
+		log.Debug("GetSpanRes got empty", "err", *res)
+		log.Warn("Heimdall span too new?", "height", height, "span", id)
+		return nil, nil, nil
 	}
 	span := new(htypes.Span)
 	err = c.codec.UnmarshalBinaryBare(res.Response.Value[:], span)
@@ -154,6 +164,7 @@ func (c *Client) GetLatestSpan(height uint64) (*htypes.Span, error) {
 	var span = new(htypes.Span)
 	err = json.Unmarshal(res.Response.Value, &span)
 	if err != nil {
+		log.Debug("GetLatestSpan got empty:", "res", *res)
 		log.Error("tendermint_client.GetLatestSpan - unmarshal failed", "height", height, "err", err, "data", string(res.Response.Value))
 		return nil, err
 	}
@@ -173,6 +184,7 @@ func (c *Client) GetSpan(id uint64) (*htypes.Span, error) {
 	var span = new(htypes.Span)
 	err = json.Unmarshal(res.Response.Value, &span)
 	if err != nil {
+		log.Debug("GetSpan got empty", "res", *res)
 		log.Error("tendermint_client.GetSpan - unmarshal failed", "spanId", id, "err", err, "data", string(res.Response.Value))
 		return nil, err
 	}
