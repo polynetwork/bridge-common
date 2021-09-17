@@ -143,7 +143,7 @@ func (c *Client) GetSpanRes(id uint64, height uint64) (*abcitypes.ResponseQuery,
 	}
 	if len(res.Response.Value) == 0 || len(res.Response.Proof.GetOps()) == 0 || len(res.Response.Key) == 0 {
 		log.Debug("GetSpanRes got empty", "err", *res)
-		log.Warn("Heimdall span too new?", "height", height, "span", id)
+		log.Warn("Heimdall span too new?", "height", height, "span", id, "verbose", *res)
 		return nil, nil, nil
 	}
 	span := new(htypes.Span)
