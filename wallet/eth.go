@@ -17,19 +17,9 @@
 
 package wallet
 
-import (
-	"context"
-	"fmt"
-	"math/big"
-	"strings"
+type EthWallet = Wallet
 
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/polynetwork/bridge-common/log"
-)
-
+/*
 // London upgrade - support
 type EthWallet struct {
 	Wallet
@@ -103,3 +93,4 @@ func (w *EthWallet) SendWithAccount(account accounts.Account, addr common.Addres
 	nonces.Update(true)
 	return tx.Hash().String(), err
 }
+*/
