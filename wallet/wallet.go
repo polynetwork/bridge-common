@@ -178,6 +178,7 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 		}
 	}
 
+	gasLimit = uint64(1.3 * float32(gasLimit))
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
 		nonces.Update(false)
