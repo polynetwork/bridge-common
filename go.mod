@@ -14,7 +14,7 @@ require (
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/golang/mock v1.5.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579
+	github.com/joeqian10/neo-gogogo v1.4.0
 	github.com/mattn/go-colorable v0.1.7
 	github.com/mattn/go-isatty v0.0.12
 	github.com/ontio/ontology v1.11.1-0.20200812075204-26cf1fa5dd47
