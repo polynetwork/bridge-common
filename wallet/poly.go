@@ -23,12 +23,7 @@ import (
 	sdk "github.com/polynetwork/poly-go-sdk"
 )
 
-type PolySignerConfig struct {
-	Path     string
-	Password string
-}
-
-func NewPolySigner(config *PolySignerConfig) (signer *sdk.Account, err error) {
+func NewPolySigner(config *Config) (signer *sdk.Account, err error) {
 	if config == nil {
 		return nil, fmt.Errorf("Missing poly wallet config")
 	}
