@@ -86,6 +86,8 @@ func GetChainName(id uint64) string {
 		return "OK"
 	case MATIC:
 		return "Polygon"
+	case HEIMDALL:
+		return "Heimdall"
 	case NEO3:
 		return "NEO3"
 	case SWITCHEO:

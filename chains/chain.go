@@ -18,6 +18,7 @@
 package chains
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -44,7 +45,7 @@ type SDK interface {
 
 type Nodes interface {
 	Height() uint64
-	WaitTillHeight(uint64, time.Duration) uint64
+	WaitTillHeight(context.Context, uint64, time.Duration) (uint64, bool)
 	Available() bool
 	Node() SDK
 }
@@ -77,7 +78,7 @@ func (s *ChainSDK) Height() uint64 {
 	return s.height
 }
 
-func (s *ChainSDK) WaitTillHeight(height uint64, interval time.Duration) uint64 {
+func (s *ChainSDK) WaitTillHeight(ctx context.Context, height uint64, interval time.Duration) (uint64, bool) {
 	if interval == 0 {
 		interval = s.interval
 	}
@@ -86,9 +87,13 @@ func (s *ChainSDK) WaitTillHeight(height uint64, interval time.Duration) uint64 
 		if err != nil {
 			log.Error("Failed to get chain latest height err ", "chain", s.ChainID, "err", err)
 		} else if h >= height {
-			return h
+			return h, true
 		}
-		time.Sleep(interval)
+		select {
+		case <-ctx.Done():
+			return h, false
+		case <-time.After(interval):
+		}
 	}
 }
 
