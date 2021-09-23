@@ -443,6 +443,8 @@ github.com/joeqian10/neo-gogogo v0.0.0-20200716075409-923bd4879b43 h1:KkErIktuwC
 github.com/joeqian10/neo-gogogo v0.0.0-20200716075409-923bd4879b43/go.mod h1:1fVDp4U1ROZQBRIooecbGNHHJpfs3bG9528sqlZ096g=
 github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579 h1:diVeeijS1ZG6xxaOIBTVYvOX/OZR/1PXwFtkg0MzO18=
 github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579/go.mod h1:1fVDp4U1ROZQBRIooecbGNHHJpfs3bG9528sqlZ096g=
+github.com/joeqian10/neo-gogogo v1.4.0 h1:MPCzSpndFAvnVnS+uEbIhnfBkEJIEaGj7tNtAK9MdAQ=
+github.com/joeqian10/neo-gogogo v1.4.0/go.mod h1:1fVDp4U1ROZQBRIooecbGNHHJpfs3bG9528sqlZ096g=
 github.com/jonboulle/clockwork v0.1.0 h1:VKV+ZcuP6l3yW9doeqz6ziZGgcynBVQO+obU0+0hcPo=
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/jrick/logrotate v1.0.0/go.mod h1:LNinyqDIJnpAur+b8yyulnQw/wDuN1+BYKlTRt3OuAQ=

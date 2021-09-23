@@ -51,6 +51,10 @@ func (w *NeoWallet) Invoke(script []byte, attributes []*tx.TransactionAttribute)
 	return w.SendInvocation(script, attributes, w.config.SysFee, w.config.NetFee)
 }
 
+func (w *NeoWallet) InvokeWithAccount(account *wallet.Account, script []byte, attributes []*tx.TransactionAttribute) (hash string, err error) {
+	return w.SendInvocationWithAccount(account, script, attributes, w.config.SysFee, w.config.NetFee)
+}
+
 func (w *NeoWallet) SendInvocation(
 	script []byte, attributes []*tx.TransactionAttribute, sysFee, netFee float64,
 ) (hash string, err error) {
