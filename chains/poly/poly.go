@@ -19,6 +19,7 @@ package poly
 
 import (
 	"encoding/binary"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -89,7 +90,7 @@ func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, 
 				return uint64(h), nil
 			}
 		}
-		if err != nil {
+		if err != nil && !strings.Contains(err.Error(), "INVALID PARAMS") {
 			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
 		time.Sleep(time.Second)
