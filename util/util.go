@@ -18,6 +18,7 @@
 package util
 
 import (
+	"context"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -88,7 +89,7 @@ func Concat(data ...[]byte) (b []byte) {
 	return
 }
 
-func Retry(f func() error, interval time.Duration, count int) error {
+func Retry(ctx context.Context, f func() error, interval time.Duration, count int) error {
 	c := 0
 	var err error
 	for {
@@ -103,6 +104,10 @@ func Retry(f func() error, interval time.Duration, count int) error {
 		if err == nil {
 			return nil
 		}
-		time.Sleep(interval)
+		select {
+		case <-time.After(interval):
+		case <-ctx.Done():
+			return err
+		}
 	}
 }
