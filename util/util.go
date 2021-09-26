@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 )
 
 func Min(nums ...uint64) (min uint64) {
@@ -85,4 +86,23 @@ func Concat(data ...[]byte) (b []byte) {
 		b = append(b, d...)
 	}
 	return
+}
+
+func Retry(f func() error, interval time.Duration, count int) error {
+	c := 0
+	var err error
+	for {
+		if count > 0 {
+			if c > count {
+				return err
+			} else {
+				c++
+			}
+		}
+		err = f()
+		if err == nil {
+			return nil
+		}
+		time.Sleep(interval)
+	}
 }
