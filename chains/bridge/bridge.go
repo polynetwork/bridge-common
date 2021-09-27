@@ -18,6 +18,7 @@
 package bridge
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/polynetwork/bridge-common/chains"
@@ -91,8 +92,7 @@ func (s *SDK) Create() (interface{}, error) {
 	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }
 
-func (s *SDK) Key() string {
-	key := ""
+func (s *SDK) Key() (key string) {
 	if s.ChainSDK != nil {
 		key = s.ChainSDK.Key()
 	} else if s.options != nil {
@@ -100,5 +100,5 @@ func (s *SDK) Key() string {
 	} else {
 		panic("Unable to identify the sdk")
 	}
-	return "Bridge-Client" + key
+	return fmt.Sprintf("Bridge-Client%s", key)
 }
