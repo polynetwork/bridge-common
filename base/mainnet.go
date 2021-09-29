@@ -28,6 +28,7 @@ var (
 	SWITCHEO uint64 = 5
 	BSC      uint64 = 6
 	HECO     uint64 = 7
+	PLT      uint64 = 8
 	O3       uint64 = 10
 	OK       uint64 = 12
 	HEIMDALL uint64 = 15
@@ -38,5 +39,5 @@ var (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT,
 }
