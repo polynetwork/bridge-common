@@ -17,6 +17,7 @@
 
 package wallet
 
+/*
 import (
 	"fmt"
 
@@ -50,3 +51,4 @@ func NewOntSigner(config *Config) (signer *OntSigner, err error) {
 	signer = &OntSigner{account, config}
 	return
 }
+*/

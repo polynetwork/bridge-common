@@ -14,6 +14,7 @@ require (
 	github.com/golang/mock v1.5.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/joeqian10/neo-gogogo v1.4.0
+	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.7
 	github.com/mattn/go-isatty v0.0.13
 	github.com/ontio/ontology v1.14.0-beta.0.20210818114002-fedaf66010a7
@@ -33,3 +34,5 @@ require (
 	golang.org/x/mod v0.5.0 // indirect
 	golang.org/x/sys v0.0.0-20210915083310-ed5796bab164 // indirect
 )
+
+replace github.com/ethereum/go-ethereum => github.com/dylenfu/palette v0.0.0-20210817120114-6e0ae4f73447

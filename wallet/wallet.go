@@ -26,6 +26,7 @@ import (
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/polynetwork/bridge-common/chains/eth"
@@ -147,22 +148,12 @@ func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gas
 }
 
 func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
-	if gasPrice == nil || gasPrice.Sign() <= 0 {
-		gasPrice, err = w.GasPrice()
-		if err != nil {
-			err = fmt.Errorf("Get gas price error %v", err)
-			return
-		}
-		if gasPriceX != nil {
-			gasPrice, _ = new(big.Float).Mul(new(big.Float).SetInt(gasPrice), gasPriceX).Int(nil)
-		}
-	}
-
 	provider, nonces := w.GetAccount(account)
 	nonce, err := nonces.Acquire()
 	if err != nil {
 		return
 	}
+	gasPrice = big.NewInt(0)
 	if gasLimit == 0 {
 		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: big.NewInt(0), Data: data}
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
@@ -193,7 +184,7 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 		return
 	}
 	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
-	err = w.sdk.Node().SendTransaction(context.Background(), tx)
+	err = w.sdk.Node().SendTransaction(context.Background(), tx, bind.PrivateTxArgs{})
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
 	return tx.Hash().String(), err
