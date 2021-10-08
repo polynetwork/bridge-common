@@ -18,17 +18,29 @@
 package log
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"os"
+	"strconv"
 
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
 )
 
+const (
+	FATAL = log.LvlCrit
+	ERROR = log.LvlError
+	WARN  = log.LvlWarn
+	INFO  = log.LvlInfo
+	DEBUG = log.LvlDebug
+	TRACE = log.LvlTrace
+)
+
 var (
 	JSON      = false
-	VERBOSITY = 0
+	VERBOSITY = INFO
 	VMODULE   = ""
 
 	glogger *log.GlogHandler
@@ -47,7 +59,11 @@ var (
 
 func init() {
 	glogger = log.NewGlogHandler(log.StreamHandler(os.Stderr, log.TerminalFormat(false)))
-	glogger.Verbosity(log.LvlInfo)
+	verbosity, _ := strconv.Atoi(os.Getenv("LOG"))
+	if verbosity > 0 {
+		VERBOSITY = log.Lvl(verbosity)
+	}
+	glogger.Verbosity(VERBOSITY)
 	log.Root().SetHandler(glogger)
 }
 
@@ -66,7 +82,7 @@ func Init() {
 	glogger.SetHandler(ostream)
 
 	// logging
-	if VERBOSITY != 0 {
+	if VERBOSITY > 0 {
 		glogger.Verbosity(log.Lvl(VERBOSITY))
 	}
 	if VMODULE != "" {
@@ -85,4 +101,11 @@ func Init() {
 	*/
 
 	log.Root().SetHandler(glogger)
+}
+
+func Json(lvl log.Lvl, body interface{}) {
+	v, _ := json.Marshal(body)
+	if lvl <= VERBOSITY {
+		fmt.Println(string(v))
+	}
 }
