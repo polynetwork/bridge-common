@@ -46,7 +46,7 @@ func (r *CheckFeeRequest) Skip() bool {
 }
 
 func (r *CheckFeeRequest) Missing() bool {
-	return r != nil || r.Status == MISSING
+	return r == nil || r.Status == MISSING
 }
 
 func (c *Client) CheckFee(req map[string]*CheckFeeRequest) (err error) {
