@@ -102,3 +102,30 @@ func PostJson(url string, payload interface{}) error {
 	logs.Info("PostJson response Body:", string(respBody))
 	return nil
 }
+
+func PostJsonFor(url string, payload interface{}, result interface{}) error {
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(respBody, result)
+	if err != nil {
+		logs.Error("PostJson response %s", string(respBody))
+	} else {
+		logs.Debug("PostJson response %s", string(respBody))
+	}
+	return nil
+}
