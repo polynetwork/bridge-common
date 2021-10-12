@@ -19,36 +19,19 @@ package bridge
 
 import "github.com/polynetwork/bridge-common/tools"
 
-type CheckFeeStatus int
-
-const (
-	SKIP     CheckFeeStatus = -2 // Skip since not our tx
-	NOT_PAID CheckFeeStatus = -1 // Not paid or paid too low
-	MISSING  CheckFeeStatus = 0  // Tx not received yet
-	PAID     CheckFeeStatus = 1  // Paid and enough pass
-)
-
-type CheckFeeRequest struct {
-	ChainId  uint64
-	TxId     string
-	PolyHash string
-	Paid     float64
-	Min      float64
-	Status   CheckFeeStatus
+type TokenBasic struct {
+	Price     string
+	Precision int
 }
 
-func (r *CheckFeeRequest) Pass() bool {
-	return r != nil && r.Status == PAID
+type TokenRequest struct {
+	ChainId        uint64
+	Hash           string
+	Name           string      `json:",omitempty"`
+	TokenBasicName string      `json:",omitempty"`
+	TokenBasic     *TokenBasic `json:",omitempty"`
 }
 
-func (r *CheckFeeRequest) Skip() bool {
-	return r != nil && r.Status == SKIP
-}
-
-func (r *CheckFeeRequest) Missing() bool {
-	return r == nil || r.Status == MISSING
-}
-
-func (c *Client) CheckFee(req map[string]*CheckFeeRequest) (err error) {
-	return tools.PostJsonFor(c.address+"/newcheckfee", req, &req)
+func (c *Client) Token(req *TokenRequest) (err error) {
+	return tools.PostJsonFor(c.address+"/token/", req, req)
 }
