@@ -99,6 +99,19 @@ func GetChainName(id uint64) string {
 	}
 }
 
+func BlocksToSkip(chainId uint64) uint64 {
+	switch chainId {
+	case MATIC:
+		return 64
+	case ETH:
+		return 3
+	case BSC, HECO, O3:
+		return 2
+	default:
+		return 1
+	}
+}
+
 func BlocksToWait(chainId uint64) uint64 {
 	switch chainId {
 	case ETH:

@@ -525,6 +525,7 @@ github.com/jmhodges/levigo v1.0.0/go.mod h1:Q6Qx+uH3RAqyK4rFQroq9RL7mdkABMcfhEI+
 github.com/joeqian10/neo-gogogo v0.0.0-20200611102831-c17de5e1f0f8/go.mod h1:1fVDp4U1ROZQBRIooecbGNHHJpfs3bG9528sqlZ096g=
 github.com/joeqian10/neo-gogogo v0.0.0-20200716075409-923bd4879b43 h1:KkErIktuwCqqZYWV8iBbD7NEsgIbyGw6xxtuylqdyu0=
 github.com/joeqian10/neo-gogogo v0.0.0-20200716075409-923bd4879b43/go.mod h1:1fVDp4U1ROZQBRIooecbGNHHJpfs3bG9528sqlZ096g=
+github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579/go.mod h1:1fVDp4U1ROZQBRIooecbGNHHJpfs3bG9528sqlZ096g=
 github.com/joeqian10/neo-gogogo v1.4.0 h1:MPCzSpndFAvnVnS+uEbIhnfBkEJIEaGj7tNtAK9MdAQ=
 github.com/joeqian10/neo-gogogo v1.4.0/go.mod h1:1fVDp4U1ROZQBRIooecbGNHHJpfs3bG9528sqlZ096g=
 github.com/jonboulle/clockwork v0.1.0 h1:VKV+ZcuP6l3yW9doeqz6ziZGgcynBVQO+obU0+0hcPo=
