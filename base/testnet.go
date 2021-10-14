@@ -30,9 +30,11 @@ var (
 	O3       uint64 = 82
 	NEO3     uint64 = 88
 	PLT      uint64 = 107
+	ZILLIQA  uint64 = 111
 	OK       uint64 = 200
 	HEIMDALL uint64 = 201
 	MATIC    uint64 = 202
+	ARBITRUM uint64 = 205
 
 	SWITCHEO uint64 = 1000
 
