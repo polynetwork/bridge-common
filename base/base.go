@@ -111,6 +111,8 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 3
 	case BSC, HECO, O3:
 		return 2
+	case PLT:
+		return 5
 	default:
 		return 1
 	}
