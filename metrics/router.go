@@ -17,14 +17,8 @@
 
 package metrics
 
-import "github.com/beego/beego/v2/server/web"
+import "net/http"
 
 func Setup() {
-	web.AddNamespace(
-		web.NewNamespace("/common",
-			web.NSNamespace("/tools",
-				web.NSRouter("/metric/", &MetricController{}, "*:Metrics"),
-			),
-		),
-	)
+	http.HandleFunc("/common/tools/metric/", Metrics)
 }
