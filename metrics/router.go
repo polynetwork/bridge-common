@@ -20,5 +20,5 @@ package metrics
 import "net/http"
 
 func Setup() {
-	http.HandleFunc("/common/tools/metric/", Metrics)
+	http.HandleFunc("/common/tools/metric/", GetMetrics)
 }

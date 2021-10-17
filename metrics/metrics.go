@@ -95,7 +95,7 @@ func NewMetrics(prefix string) *Metrics {
 	return metrics
 }
 
-func Metrics(w http.ResponseWriter, _ *http.Request) {
+func GetMetrics(w http.ResponseWriter, _ *http.Request) {
 	metricState.RLock()
 	state := metricState.State
 	metricState.RUnlock()
