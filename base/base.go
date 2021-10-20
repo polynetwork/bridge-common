@@ -98,6 +98,8 @@ func GetChainName(id uint64) string {
 		return "Arbitrum"
 	case ZILLIQA:
 		return "Zilliqa"
+	case XDAI:
+		return "Xdai"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
