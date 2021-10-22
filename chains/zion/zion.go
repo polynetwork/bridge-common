@@ -15,54 +15,62 @@
  * along with The poly network .  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package poly
+package zion
 
 import (
+	"context"
 	"encoding/binary"
-	"strings"
+	"math/big"
 	"sync/atomic"
 	"time"
 
-	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/cross_chain_manager"
+	ccom "github.com/devfans/zion-sdk/contracts/native/cross_chain_manager/common"
+	hcom "github.com/devfans/zion-sdk/contracts/native/header_sync/common"
+	"github.com/devfans/zion-sdk/contracts/native/utils"
+	"github.com/devfans/zion-sdk/core/state"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/rpc"
 
-	"github.com/polynetwork/bridge-common/base"
+	// "github.com/polynetwork/bridge-common/base"
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
-	psdk "github.com/polynetwork/poly-go-sdk"
-	"github.com/polynetwork/poly/common"
-	hcom "github.com/polynetwork/poly/native/service/header_sync/common"
-	"github.com/polynetwork/poly/native/service/header_sync/neo"
-	"github.com/polynetwork/poly/native/service/utils"
 )
 
 var (
-	CCM_ADDRESS = utils.CrossChainManagerContractAddress.ToHexString()
-	_POLY_ID    uint64
+	CCM_ADDRESS = utils.CrossChainManagerContractAddress
+	_ZION_ID    uint64
 )
 
-type Rpc = psdk.PolySdk
 type Client struct {
-	*Rpc
+	Rpc *rpc.Client
+	*ethclient.Client
 	address string
 }
 
 func ReadChainID() uint64 {
-	return atomic.LoadUint64(&_POLY_ID)
+	return atomic.LoadUint64(&_ZION_ID)
 }
 
 func New(url string) *Client {
-	s := psdk.NewPolySdk()
-	s.NewRpcClient().SetAddress(url)
-	hdr, err := s.GetHeaderByHeight(0)
+	rpcClient, _ := rpc.Dial(url)
+	rawClient, err := ethclient.Dial(url)
 	if err != nil {
-		log.Error("Failed to initialize poly sdk", "err", err)
+		log.Error("Failed to init zion client", "url", url)
 		return nil
 	}
-	atomic.StoreUint64(&_POLY_ID, hdr.ChainID)
-	s.SetChainId(hdr.ChainID)
+	id, err := rawClient.NetworkID(context.Background())
+	if err != nil {
+		log.Error("Failed to get network id", "url", url, "err", err)
+		return nil
+	}
+	atomic.StoreUint64(&_ZION_ID, id.Uint64())
+
 	return &Client{
-		Rpc:     s,
+		Rpc:     rpcClient,
+		Client:  rawClient,
 		address: url,
 	}
 }
@@ -72,12 +80,24 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
-	h, err := c.GetCurrentBlockHeight()
-	return uint64(h), err
+	var result hexutil.Big
+	err := c.Rpc.CallContext(context.Background(), &result, "eth_blockNumber")
+	for err != nil {
+		return 0, err
+	}
+	return (*big.Int)(&result).Uint64(), err
 }
 
-func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, err error) {
-	var h, current uint32
+func (c *Client) GetBlockHeightByTxHash(hash common.Hash) (uint64, error) {
+	receipt, err := c.TransactionReceipt(context.Background(), hash)
+	if err != nil {
+		return 0, err
+	}
+	return receipt.BlockNumber.Uint64(), nil
+}
+
+func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height uint64, err error) {
+	var h, current uint64
 	for count > 0 {
 		count--
 		h, err = c.GetBlockHeightByTxHash(hash)
@@ -85,12 +105,14 @@ func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, 
 			if blocks == 0 {
 				return uint64(h), nil
 			}
-			current, err = c.GetCurrentBlockHeight()
-			if err == nil && current >= h+uint32(blocks) {
+			current, err = c.GetLatestHeight()
+			if err == nil && current >= h+blocks {
 				return uint64(h), nil
 			}
 		}
-		if err != nil && !strings.Contains(err.Error(), "INVALID PARAMS") {
+		// TODO: Check confirm here
+		// if err != nil && !strings.Contains(err.Error(), "INVALID PARAMS") {
+		if err != nil {
 			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
 		time.Sleep(time.Second)
@@ -98,40 +120,45 @@ func (c *Client) Confirm(hash string, blocks uint64, count int) (height uint64, 
 	return
 }
 
+func (c *Client) GetStorage(contract common.Address, key []byte) (data []byte, err error) {
+	return c.StorageAt(context.Background(), contract, state.Key2Slot(key), nil)
+}
+
 func (c *Client) GetDoneTx(chainId uint64, ccId []byte) (data []byte, err error) {
-	return c.GetStorage(utils.CrossChainManagerContractAddress.ToHexString(),
-		append(append([]byte(cross_chain_manager.DONE_TX), utils.GetUint64Bytes(chainId)...), ccId...),
+	return c.GetStorage(utils.CrossChainManagerContractAddress,
+		append(append([]byte(ccom.DONE_TX), utils.GetUint64Bytes(chainId)...), ccId...),
 	)
 }
 
 func (c *Client) GetSideChainHeader(chainId uint64, height uint64) (hash []byte, err error) {
-	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
+	return c.GetStorage(utils.HeaderSyncContractAddress,
 		append(append([]byte(hcom.MAIN_CHAIN), utils.GetUint64Bytes(chainId)...), utils.GetUint64Bytes(height)...),
 	)
 }
 
 func (c *Client) GetSideChainHeaderIndex(chainId uint64, height uint64) (hash []byte, err error) {
-	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
+	return c.GetStorage(utils.HeaderSyncContractAddress,
 		append(append([]byte(hcom.HEADER_INDEX), utils.GetUint64Bytes(chainId)...), utils.GetUint32Bytes(uint32(height))...),
 	)
 }
 
 func (c *Client) GetSideChainConsensusBlockHeight(chainId uint64) (height uint64, err error) {
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER_BLOCK_HEIGHT), utils.GetUint64Bytes(chainId))
-	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), key)
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress, key)
 	height = utils.GetBytesUint64(res)
 	return
 }
 
 func (c *Client) GetSideChainConsensusPeer(chainId uint64) (data []byte, err error) {
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER), utils.GetUint64Bytes(chainId))
-	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), key)
+	return c.GetStorage(utils.HeaderSyncContractAddress, key)
 }
 
+/*
 func (c *Client) GetSideChainConsensusHeight(chainId uint64) (height uint64, err error) {
 	var id [8]byte
 	binary.LittleEndian.PutUint64(id[:], chainId)
-	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CONSENSUS_PEER), id[:]...))
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress, append([]byte(hcom.CONSENSUS_PEER), id[:]...))
 	if err != nil {
 		return
 	}
@@ -143,16 +170,17 @@ func (c *Client) GetSideChainConsensusHeight(chainId uint64) (height uint64, err
 	height = uint64(peer.Height)
 	return
 }
+*/
 
 func (c *Client) GetSideChainMsg(chainId, height uint64) (msg []byte, err error) {
 	return c.GetStorage(
-		utils.HeaderSyncContractAddress.ToHexString(),
+		utils.HeaderSyncContractAddress,
 		util.Concat([]byte(hcom.CROSS_CHAIN_MSG), utils.GetUint64Bytes(chainId), utils.GetUint32Bytes(uint32(height))),
 	)
 }
 
 func (c *Client) GetSideChainMsgHeight(chainId uint64) (height uint64, err error) {
-	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CURRENT_MSG_HEIGHT), utils.GetUint64Bytes(chainId)...))
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress, append([]byte(hcom.CURRENT_MSG_HEIGHT), utils.GetUint64Bytes(chainId)...))
 	if err != nil {
 		return 0, err
 	}
@@ -163,12 +191,14 @@ func (c *Client) GetSideChainMsgHeight(chainId uint64) (height uint64, err error
 }
 
 func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
-	if chainId == base.NEO {
-		return c.GetSideChainConsensusHeight(chainId)
-	}
+	/*
+		if chainId == base.NEO {
+			return c.GetSideChainConsensusHeight(chainId)
+		}
+	*/
 	var id [8]byte
 	binary.LittleEndian.PutUint64(id[:], chainId)
-	res, err := c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(), append([]byte(hcom.CURRENT_HEADER_HEIGHT), id[:]...))
+	res, err := c.GetStorage(utils.HeaderSyncContractAddress, append([]byte(hcom.CURRENT_HEADER_HEIGHT), id[:]...))
 	if err != nil {
 		return 0, err
 	}
@@ -183,12 +213,12 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 }
 
 func (c *Client) GetSideChainEpoch(chainId uint64) (data []byte, err error) {
-	return c.GetStorage(utils.HeaderSyncContractAddress.ToHexString(),
+	return c.GetStorage(utils.HeaderSyncContractAddress,
 		append([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId)...))
 }
 
 func (c *Client) GetSideChainEpochWithHeight(chainId, height uint64) (data []byte, err error) {
-	return c.GetStorage(utils.CrossChainManagerContractAddress.ToHexString(),
+	return c.GetStorage(utils.CrossChainManagerContractAddress,
 		util.Concat([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId), utils.GetUint64Bytes(height)),
 	)
 }
