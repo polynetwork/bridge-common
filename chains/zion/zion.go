@@ -24,30 +24,35 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
+
 	ccom "github.com/devfans/zion-sdk/contracts/native/cross_chain_manager/common"
+	"github.com/devfans/zion-sdk/contracts/native/governance/node_manager"
 	hcom "github.com/devfans/zion-sdk/contracts/native/header_sync/common"
 	"github.com/devfans/zion-sdk/contracts/native/utils"
 	"github.com/devfans/zion-sdk/core/state"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/rpc"
 
 	// "github.com/polynetwork/bridge-common/base"
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/chains/eth"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
 )
 
 var (
-	CCM_ADDRESS = utils.CrossChainManagerContractAddress
-	_ZION_ID    uint64
+	CCM_ADDRESS          = utils.CrossChainManagerContractAddress
+	NODE_MANAGER_ADDRESS = utils.NodeManagerContractAddress
+	SKP_PROOF            = "st_proof"
+	EpochProofDigest     = common.HexToHash("e4bf3526f07c80af3a5de1411dd34471c71bdd5d04eedbfa1040da2c96802041")
+
+	_ZION_ID uint64
 )
 
 type Client struct {
-	Rpc *rpc.Client
-	*ethclient.Client
-	address string
+	eth.Client
 }
 
 func ReadChainID() uint64 {
@@ -55,28 +60,18 @@ func ReadChainID() uint64 {
 }
 
 func New(url string) *Client {
-	rpcClient, _ := rpc.Dial(url)
-	rawClient, err := ethclient.Dial(url)
-	if err != nil {
-		log.Error("Failed to init zion client", "url", url)
+	node_manager.InitABI()
+	c := eth.New(url)
+	if c == nil {
 		return nil
 	}
-	id, err := rawClient.NetworkID(context.Background())
+	id, err := c.NetworkID(context.Background())
 	if err != nil {
 		log.Error("Failed to get network id", "url", url, "err", err)
 		return nil
 	}
 	atomic.StoreUint64(&_ZION_ID, id.Uint64())
-
-	return &Client{
-		Rpc:     rpcClient,
-		Client:  rawClient,
-		address: url,
-	}
-}
-
-func (c *Client) Address() string {
-	return c.address
+	return &Client{*c}
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
@@ -221,6 +216,36 @@ func (c *Client) GetSideChainEpochWithHeight(chainId, height uint64) (data []byt
 	return c.GetStorage(utils.CrossChainManagerContractAddress,
 		util.Concat([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId), utils.GetUint64Bytes(height)),
 	)
+}
+
+func EpochProofKey(epochId uint64) common.Hash {
+	enc := EpochProofDigest.Bytes()
+	enc = append(enc, utils.GetUint64Bytes(epochId)...)
+	proofHashKey := crypto.Keccak256Hash(enc)
+	key := utils.ConcatKey(NODE_MANAGER_ADDRESS, []byte(SKP_PROOF), proofHashKey.Bytes())
+	return crypto.Keccak256Hash(key[common.AddressLength:])
+}
+
+func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo, err error) {
+	payload, err := new(node_manager.MethodEpochInput).Encode()
+	if err != nil {
+		return
+	}
+	arg := ethereum.CallMsg{
+		From: common.Address{},
+		To:   &NODE_MANAGER_ADDRESS,
+		Data: payload,
+	}
+	res, err := c.CallContract(context.Background(), arg, big.NewInt(int64(height)))
+	if err != nil {
+		return
+	}
+	output := new(node_manager.MethodEpochOutput)
+	if err = output.Decode(res); err != nil {
+		return
+	}
+	epochInfo = output.Epoch
+	return
 }
 
 type SDK struct {
