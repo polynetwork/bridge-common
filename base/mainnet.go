@@ -36,9 +36,9 @@ var (
 	ZILLIQA  uint64 = 18
 	ARBITRUM uint64 = 19
 	NEO3     uint64 = 88
-	XDAI     uint64 = 206
-	OPTIMISM uint64 = 207
-	FANTOM   uint64 = 208
+	XDAI     uint64 = 20
+	OPTIMISM uint64 = 200007
+	FANTOM   uint64 = 200008
 
 	ENV = "mainnet"
 )
