@@ -35,7 +35,7 @@ type SingletonStore struct {
 func (s *SingletonStore) Single(o Singleton) (interface{}, error) {
 	s.Lock()
 	defer s.Unlock()
-	key := fmt.Sprintf("%s:%s", reflect.TypeOf(o).Name(), o.Key())
+	key := fmt.Sprintf("%s:%s", reflect.TypeOf(o).String(), o.Key())
 	ins, ok := s.state[key]
 	if ok {
 		return ins, nil
