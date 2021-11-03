@@ -109,6 +109,7 @@ func (w *Wallet) Init() (err error) {
 	for a, p := range w.providers {
 		err = p.Init(a)
 		if err != nil {
+			err = fmt.Errorf("Failed to init account %s, err %v", a.Address, err)
 			return
 		}
 	}
