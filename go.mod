@@ -20,7 +20,7 @@ require (
 	github.com/ontio/ontology-go-sdk v1.11.4
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/polynetwork/cosmos-poly-module v0.0.0-20200810030259-95d586518759
-	github.com/polynetwork/poly v1.7.3-0.20210804073726-5d4f4d4a9371 // indirect
+	github.com/polynetwork/poly v1.7.3-0.20210804073726-5d4f4d4a9371
 	github.com/prometheus/client_golang v1.7.0 // indirect
 	github.com/prometheus/tsdb v0.9.1 // indirect
 	github.com/rjeczalik/notify v0.9.2 // indirect

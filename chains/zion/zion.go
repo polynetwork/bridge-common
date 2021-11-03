@@ -21,6 +21,7 @@ import (
 	"context"
 	"encoding/binary"
 	"encoding/hex"
+	"fmt"
 	"math/big"
 	"sync/atomic"
 	"time"
@@ -41,6 +42,7 @@ import (
 	"github.com/polynetwork/bridge-common/chains/eth"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
+	cstates "github.com/polynetwork/poly/core/states"
 )
 
 var (
@@ -205,11 +207,20 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 	if err != nil {
 		return 0, err
 	}
-	if res != nil {
-		if len(res) > 7 {
-			height = binary.LittleEndian.Uint64(res)
+	if res == nil {
+		return 0, fmt.Errorf("getPrevHeaderHeight, heightStore is nil")
+	}
+	heightBytes, err := cstates.GetValueFromRawStorageItem(res)
+	if err != nil {
+		return 0, fmt.Errorf("GetHeaderByHeight, deserialize headerBytes from raw storage item err:%v", err)
+	}
+	if heightBytes != nil {
+		if len(heightBytes) > 7 {
+			height = binary.LittleEndian.Uint64(heightBytes)
+		} else if len(heightBytes) > 3 {
+			height = uint64(binary.LittleEndian.Uint32(heightBytes))
 		} else {
-			height = uint64(binary.LittleEndian.Uint32(res))
+			err = fmt.Errorf("Failed to decode heightBytes, %v", heightBytes)
 		}
 	}
 	return
