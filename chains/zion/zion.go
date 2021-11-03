@@ -20,6 +20,7 @@ package zion
 import (
 	"context"
 	"encoding/binary"
+	"encoding/hex"
 	"math/big"
 	"sync/atomic"
 	"time"
@@ -115,8 +116,15 @@ func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height uin
 	return
 }
 
-func (c *Client) GetStorage(contract common.Address, key []byte) (data []byte, err error) {
+func (c *Client) GetStorageAt(contract common.Address, key []byte) (data []byte, err error) {
 	return c.StorageAt(context.Background(), contract, state.Key2Slot(key), nil)
+}
+
+func (c *Client) GetStorage(account common.Address, key []byte) ([]byte, error) {
+	var result hexutil.Bytes
+	keyHex := hex.EncodeToString(key)
+	err := c.Rpc.CallContext(context.Background(), &result, "eth_getStorageAtCacheDB", account, keyHex, "latest")
+	return result, err
 }
 
 func (c *Client) GetDoneTx(chainId uint64, ccId []byte) (data []byte, err error) {
