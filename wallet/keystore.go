@@ -22,6 +22,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/polynetwork/bridge-common/log"
 )
 
 type KeyStoreProviderConfig struct {
@@ -43,8 +44,8 @@ func NewKeyStoreProvider(config *KeyStoreProviderConfig) *KeyStoreProvider {
 }
 
 func (p *KeyStoreProvider) Accounts() []accounts.Account {
-	accounts := p.KeyStore.Accounts()
 	list := []accounts.Account{}
+	accounts := p.KeyStore.Accounts()
 	for _, account := range accounts {
 		_, ok := p.config.Passwords[strings.ToLower(account.Address.String())]
 		if ok {
