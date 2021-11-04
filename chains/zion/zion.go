@@ -23,6 +23,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -109,8 +110,7 @@ func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height uin
 			}
 		}
 		// TODO: Check confirm here
-		// if err != nil && !strings.Contains(err.Error(), "INVALID PARAMS") {
-		if err != nil {
+		if err != nil && !strings.Contains(err.Error(), "not found") {
 			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
 		time.Sleep(time.Second)
