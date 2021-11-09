@@ -25,8 +25,8 @@ var (
 	ETH      uint64 = 1000002
 	ONT      uint64 = 3
 	NEO      uint64 = 5
-	HECO     uint64 = 100007
-	BSC      uint64 = 100006
+	HECO     uint64 = 1000007
+	BSC      uint64 = 1000006
 	O3       uint64 = 82
 	NEO3     uint64 = 88
 	PLT      uint64 = 107
