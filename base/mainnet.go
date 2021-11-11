@@ -37,9 +37,9 @@ var (
 	ARBITRUM uint64 = 19
 	NEO3     uint64 = 88
 	XDAI     uint64 = 20
-	OPTIMISM uint64 = 200007
-	FANTOM   uint64 = 200008
-	AVA      uint64 = 200009
+	OPTIMISM uint64 = 23
+	FANTOM   uint64 = 22
+	AVA      uint64 = 21
 
 	ENV = "mainnet"
 )
