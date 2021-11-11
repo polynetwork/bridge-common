@@ -95,7 +95,7 @@ func (c *Client) GetBlockHeightByTxHash(hash common.Hash) (uint64, error) {
 	return receipt.BlockNumber.Uint64(), nil
 }
 
-func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height uint64, err error) {
+func (c *Client) ConfirmWait(hash common.Hash, blocks uint64, count int) (height uint64, err error) {
 	var h, current uint64
 	for count > 0 {
 		count--
