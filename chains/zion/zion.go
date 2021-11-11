@@ -102,11 +102,11 @@ func (c *Client) ConfirmWait(hash common.Hash, blocks uint64, count int) (height
 		h, err = c.GetBlockHeightByTxHash(hash)
 		if err == nil {
 			if blocks == 0 {
-				return uint64(h), nil
+				return h, nil
 			}
 			current, err = c.GetLatestHeight()
 			if err == nil && current >= h+blocks {
-				return uint64(h), nil
+				return h, nil
 			}
 		}
 		// TODO: Check confirm here

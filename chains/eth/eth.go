@@ -21,10 +21,8 @@ import (
 	"context"
 	"fmt"
 	"math/big"
-	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -77,7 +75,7 @@ func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Has
 	if err != nil {
 		return nil, err
 	} else if json == nil {
-		return nil, ethereum.NotFound
+		return nil, nil
 	} else if _, r, _ := json.tx.RawSignatureValues(); r == nil {
 		return nil, fmt.Errorf("server returned transaction without signature")
 	}
@@ -101,21 +99,25 @@ func (c *Client) GetTxHeight(ctx context.Context, hash common.Hash) (height uint
 	return
 }
 
-func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height uint64, pending bool, err error) {
+func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height, confirms uint64, pending bool, err error) {
 	var current uint64
 	for count > 0 {
 		count--
+		confirms = 0
 		height, pending, err = c.GetTxHeight(context.Background(), hash)
 		if height > 0 {
 			if blocks == 0 {
 				return
 			}
 			current, err = c.GetLatestHeight()
-			if err == nil && current >= height+blocks {
-				return
+			if current >= height {
+				confirms = current - height
+				if confirms >= blocks {
+					return
+				}
 			}
 		}
-		if err != nil && !strings.Contains(err.Error(), "not found") {
+		if err != nil {
 			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
 		time.Sleep(time.Second)
