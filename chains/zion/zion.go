@@ -122,11 +122,14 @@ func (c *Client) GetStorageAt(contract common.Address, key []byte) (data []byte,
 	return c.StorageAt(context.Background(), contract, state.Key2Slot(key), nil)
 }
 
-func (c *Client) GetStorage(account common.Address, key []byte) ([]byte, error) {
+func (c *Client) GetStorage(account common.Address, key []byte) (data []byte, err error) {
 	var result hexutil.Bytes
 	keyHex := hex.EncodeToString(key)
-	err := c.Rpc.CallContext(context.Background(), &result, "eth_getStorageAtCacheDB", account, keyHex, "latest")
-	return result, err
+	err = c.Rpc.CallContext(context.Background(), &result, "eth_getStorageAtCacheDB", account, keyHex, "latest")
+	if err == nil {
+		data, err = cstates.GetValueFromRawStorageItem(result)
+	}
+	return
 }
 
 func (c *Client) GetDoneTx(chainId uint64, ccId []byte) (data []byte, err error) {
@@ -203,17 +206,19 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 	*/
 	var id [8]byte
 	binary.LittleEndian.PutUint64(id[:], chainId)
-	res, err := c.GetStorage(utils.HeaderSyncContractAddress, append([]byte(hcom.CURRENT_HEADER_HEIGHT), id[:]...))
+	heightBytes, err := c.GetStorage(utils.HeaderSyncContractAddress, append([]byte(hcom.CURRENT_HEADER_HEIGHT), id[:]...))
 	if err != nil {
 		return 0, err
 	}
-	if res == nil {
+	if heightBytes == nil {
 		return 0, fmt.Errorf("getPrevHeaderHeight, heightStore is nil")
 	}
-	heightBytes, err := cstates.GetValueFromRawStorageItem(res)
-	if err != nil {
-		return 0, fmt.Errorf("GetHeaderByHeight, deserialize headerBytes from raw storage item err:%v", err)
-	}
+	/*
+		heightBytes, err := cstates.GetValueFromRawStorageItem(res)
+		if err != nil {
+			return 0, fmt.Errorf("GetHeaderByHeight, deserialize headerBytes from raw storage item err:%v", err)
+		}
+	*/
 	if heightBytes != nil {
 		if len(heightBytes) > 7 {
 			height = binary.LittleEndian.Uint64(heightBytes)
