@@ -22,16 +22,16 @@ package base
 var (
 	POLY     uint64 = 0
 	BTC      uint64 = 1
-	ETH      uint64 = 1000002
+	ETH      uint64 = 100002
 	ONT      uint64 = 3
 	NEO      uint64 = 5
-	HECO     uint64 = 1000007
+	HECO     uint64 = 100007
 	BSC      uint64 = 1000006
 	O3       uint64 = 82
 	NEO3     uint64 = 88
 	PLT      uint64 = 107
 	ZILLIQA  uint64 = 111
-	OK       uint64 = 200
+	OK       uint64 = 1012
 	HEIMDALL uint64 = 201
 	MATIC    uint64 = 202
 	ARBITRUM uint64 = 205
