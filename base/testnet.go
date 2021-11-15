@@ -36,9 +36,9 @@ var (
 	MATIC    uint64 = 202
 	ARBITRUM uint64 = 205
 	XDAI     uint64 = 206
-	OPTIMISM uint64 = 207
 	FANTOM   uint64 = 208
 	AVA      uint64 = 209
+	OPTIMISM uint64 = 210
 
 	SWITCHEO uint64 = 1000
 
