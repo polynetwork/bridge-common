@@ -74,7 +74,7 @@ func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Has
 	err = c.Rpc.CallContext(ctx, &json, "eth_getTransactionByHash", hash)
 	if err != nil {
 		return nil, err
-	} else if json == nil {
+	} else if json == nil || json.tx == nil {
 		return nil, nil
 	} else if _, r, _ := json.tx.RawSignatureValues(); r == nil {
 		return nil, fmt.Errorf("server returned transaction without signature")
