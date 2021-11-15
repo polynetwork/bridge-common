@@ -87,7 +87,7 @@ func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Has
 
 func (c *Client) GetTxHeight(ctx context.Context, hash common.Hash) (height uint64, pending bool, err error) {
 	tx, err := c.TransactionWithExtraByHash(context.Background(), hash)
-	if err != nil {
+	if err != nil || tx == nil {
 		return
 	}
 	pending = tx.BlockNumber == nil
