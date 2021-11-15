@@ -32,13 +32,13 @@ var (
 	PLT      uint64 = 107
 	ZILLIQA  uint64 = 111
 	OK       uint64 = 1012
-	HEIMDALL uint64 = 201
-	MATIC    uint64 = 202
-	ARBITRUM uint64 = 205
-	XDAI     uint64 = 206
-	OPTIMISM uint64 = 207
-	FANTOM   uint64 = 208
-	AVA      uint64 = 209
+	HEIMDALL uint64 = 2001
+	MATIC    uint64 = 2002
+	ARBITRUM uint64 = 2005
+	XDAI     uint64 = 2006
+	OPTIMISM uint64 = 2007
+	FANTOM   uint64 = 2008
+	AVA      uint64 = 2009
 
 	SWITCHEO uint64 = 1000
 
