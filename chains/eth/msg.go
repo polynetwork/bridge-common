@@ -17,6 +17,14 @@
 
 package eth
 
+import (
+	"errors"
+	"math/big"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+)
+
 type ETHProof struct {
 	Address       string         `json:"address"`
 	Balance       string         `json:"balance"`
@@ -31,4 +39,50 @@ type StorageProof struct {
 	Key   string   `json:"key"`
 	Value string   `json:"value"`
 	Proof []string `json:"proof"`
+}
+
+type rpcTransaction struct {
+	tx *types.Transaction
+	txExtraInfo
+}
+
+type txExtraInfo struct {
+	BlockNumber *string         `json:"blockNumber,omitempty"`
+	BlockHash   *common.Hash    `json:"blockHash,omitempty"`
+	From        *common.Address `json:"from,omitempty"`
+}
+
+// senderFromServer is a types.Signer that remembers the sender address returned by the RPC
+// server. It is stored in the transaction's sender address cache to avoid an additional
+// request in TransactionSender.
+type senderFromServer struct {
+	addr      common.Address
+	blockhash common.Hash
+}
+
+func setSenderFromServer(tx *types.Transaction, addr common.Address, block common.Hash) {
+	// Use types.Sender for side-effect to store our signer into the cache.
+	types.Sender(&senderFromServer{addr, block}, tx)
+}
+
+func (s *senderFromServer) Equal(other types.Signer) bool {
+	os, ok := other.(*senderFromServer)
+	return ok && os.blockhash == s.blockhash
+}
+
+func (s *senderFromServer) Sender(tx *types.Transaction) (common.Address, error) {
+	if s.blockhash == (common.Hash{}) {
+		return common.Address{}, errors.New("sender not cached")
+	}
+	return s.addr, nil
+}
+
+func (s *senderFromServer) ChainID() *big.Int {
+	panic("can't sign with senderFromServer")
+}
+func (s *senderFromServer) Hash(tx *types.Transaction) common.Hash {
+	panic("can't sign with senderFromServer")
+}
+func (s *senderFromServer) SignatureValues(tx *types.Transaction, sig []byte) (R, S, V *big.Int, err error) {
+	panic("can't sign with senderFromServer")
 }

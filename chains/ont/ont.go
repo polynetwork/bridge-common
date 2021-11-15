@@ -20,13 +20,13 @@ package ont
 import (
 	"time"
 
+	"github.com/devfans/zion-sdk/contracts/native/utils"
 	ontology_go_sdk "github.com/ontio/ontology-go-sdk"
 	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/header_sync"
 	outils "github.com/ontio/ontology/smartcontract/service/native/utils"
 
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
-	"github.com/polynetwork/poly/native/service/utils"
 )
 
 type Rpc = ontology_go_sdk.OntologySdk

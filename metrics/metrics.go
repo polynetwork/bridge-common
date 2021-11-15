@@ -20,12 +20,11 @@ package metrics
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"sync"
 	"time"
 
 	"github.com/polynetwork/bridge-common/base"
-
-	"github.com/beego/beego/v2/server/web"
 )
 
 var (
@@ -96,14 +95,10 @@ func NewMetrics(prefix string) *Metrics {
 	return metrics
 }
 
-type MetricController struct {
-	web.Controller
-}
-
-func (c *MetricController) Metrics() {
+func GetMetrics(w http.ResponseWriter, _ *http.Request) {
 	metricState.RLock()
 	state := metricState.State
 	metricState.RUnlock()
-	c.Ctx.Output.Header("Content-Type", "application/json; charset=utf-8")
-	c.Ctx.Output.Body(state)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(state)
 }

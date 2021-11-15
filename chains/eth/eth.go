@@ -19,14 +19,17 @@ package eth
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
 )
 
@@ -64,6 +67,62 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 		return 0, err
 	}
 	return (*big.Int)(&result).Uint64(), err
+}
+
+// TransactionByHash returns the transaction with the given hash.
+func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Hash) (json *rpcTransaction, err error) {
+	err = c.Rpc.CallContext(ctx, &json, "eth_getTransactionByHash", hash)
+	if err != nil {
+		return nil, err
+	} else if json == nil || json.tx == nil {
+		return nil, nil
+	} else if _, r, _ := json.tx.RawSignatureValues(); r == nil {
+		return nil, fmt.Errorf("server returned transaction without signature")
+	}
+	if json.From != nil && json.BlockHash != nil {
+		setSenderFromServer(json.tx, *json.From, *json.BlockHash)
+	}
+	return json, nil
+}
+
+func (c *Client) GetTxHeight(ctx context.Context, hash common.Hash) (height uint64, pending bool, err error) {
+	tx, err := c.TransactionWithExtraByHash(context.Background(), hash)
+	if err != nil || tx == nil {
+		return
+	}
+	pending = tx.BlockNumber == nil
+	if !pending {
+		v := big.NewInt(0)
+		v.SetString(*tx.BlockNumber, 10)
+		height = v.Uint64()
+	}
+	return
+}
+
+func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height, confirms uint64, pending bool, err error) {
+	var current uint64
+	for count > 0 {
+		count--
+		confirms = 0
+		height, pending, err = c.GetTxHeight(context.Background(), hash)
+		if height > 0 {
+			if blocks == 0 {
+				return
+			}
+			current, err = c.GetLatestHeight()
+			if current >= height {
+				confirms = current - height
+				if confirms >= blocks {
+					return
+				}
+			}
+		}
+		if err != nil {
+			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
+		}
+		time.Sleep(time.Second)
+	}
+	return
 }
 
 type SDK struct {

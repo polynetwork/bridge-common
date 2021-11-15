@@ -94,6 +94,18 @@ func GetChainName(id uint64) string {
 		return "Switcheo"
 	case PLT:
 		return "Palette"
+	case ARBITRUM:
+		return "Arbitrum"
+	case ZILLIQA:
+		return "Zilliqa"
+	case XDAI:
+		return "Xdai"
+	case OPTIMISM:
+		return "Optimism"
+	case FANTOM:
+		return "Fantom"
+	case AVA:
+		return "Avalanche"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -102,11 +114,17 @@ func GetChainName(id uint64) string {
 func BlocksToSkip(chainId uint64) uint64 {
 	switch chainId {
 	case MATIC:
-		return 64
+		return 120
 	case ETH:
-		return 3
-	case BSC, HECO, O3:
-		return 2
+		return 8
+	case BSC, HECO:
+		return 17
+	case O3:
+		return 8
+	case PLT:
+		return 5
+	case ONT:
+		return 0
 	default:
 		return 1
 	}
