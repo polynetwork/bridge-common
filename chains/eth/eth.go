@@ -19,7 +19,6 @@ package eth
 
 import (
 	"context"
-	"fmt"
 	"math/big"
 	"time"
 
