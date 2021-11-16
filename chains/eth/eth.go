@@ -95,7 +95,7 @@ func (c *Client) GetTxHeight(ctx context.Context, hash common.Hash) (height uint
 	pending = tx.BlockNumber == nil
 	if !pending {
 		v := big.NewInt(0)
-		v.SetString(*tx.BlockNumber, 10)
+		v.SetString((*tx.BlockNumber)[2:], 16)
 		height = v.Uint64()
 	}
 	return
