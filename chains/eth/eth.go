@@ -72,17 +72,20 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 // TransactionByHash returns the transaction with the given hash.
 func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Hash) (json *rpcTransaction, err error) {
 	err = c.Rpc.CallContext(ctx, &json, "eth_getTransactionByHash", hash)
-	if err != nil {
-		return nil, err
-	} else if json == nil || json.tx == nil {
-		return nil, nil
-	} else if _, r, _ := json.tx.RawSignatureValues(); r == nil {
-		return nil, fmt.Errorf("server returned transaction without signature")
-	}
-	if json.From != nil && json.BlockHash != nil {
-		setSenderFromServer(json.tx, *json.From, *json.BlockHash)
-	}
-	return json, nil
+	return
+	/*
+		if err != nil {
+			return nil, err
+		} else if json == nil || json.tx == nil {
+			return nil, nil
+		} else if _, r, _ := json.tx.RawSignatureValues(); r == nil {
+			return nil, fmt.Errorf("server returned transaction without signature")
+		}
+		if json.From != nil && json.BlockHash != nil {
+			setSenderFromServer(json.tx, *json.From, *json.BlockHash)
+		}
+		return json, nil
+	*/
 }
 
 func (c *Client) GetTxHeight(ctx context.Context, hash common.Hash) (height uint64, pending bool, err error) {
