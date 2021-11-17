@@ -18,6 +18,7 @@
 package util
 
 import (
+	"fmt"
 	"reflect"
 	"sync"
 
@@ -34,12 +35,12 @@ type SingletonStore struct {
 func (s *SingletonStore) Single(o Singleton) (interface{}, error) {
 	s.Lock()
 	defer s.Unlock()
-	key := o.Key()
+	key := fmt.Sprintf("%s:%s", reflect.TypeOf(o).String(), o.Key())
 	ins, ok := s.state[key]
 	if ok {
 		return ins, nil
 	}
-	log.Info("Creating new singleton instance", "type", reflect.TypeOf(o), "key", key)
+	log.Info("Creating new singleton instance", "key", key)
 	ins, err := o.Create()
 	s.state[key] = ins
 	return ins, err
