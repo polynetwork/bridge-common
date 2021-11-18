@@ -29,7 +29,7 @@ var (
 	BSC      uint64 = 1000006
 	O3       uint64 = 82
 	NEO3     uint64 = 88
-	PLT      uint64 = 107
+	PLT      uint64 = 208
 	ZILLIQA  uint64 = 111
 	OK       uint64 = 1012
 	HEIMDALL uint64 = 2001

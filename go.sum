@@ -153,6 +153,7 @@ github.com/deckarep/golang-set v1.7.1 h1:SCQV0S6gTtp6itiFrTqI+pfmJ4LN85S1YzhDf9r
 github.com/deckarep/golang-set v1.7.1/go.mod h1:93vsz/8Wt4joVM7c2AVqh+YRMiUSc14yDtF28KmMOgQ=
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
+github.com/devfans/zion-sdk v0.0.2 h1:GiBhawfAqJbNc0r0ea0UxAD3qNz2cWm9mQjA9hT/+jk=
 github.com/devfans/zion-sdk v0.0.2/go.mod h1:Gg/Ob+yfNBdGxCLBym18ku6dSh6z9DYMoTn60uVbSxM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
@@ -343,6 +344,7 @@ github.com/improbable-eng/grpc-web v0.12.0/go.mod h1:6hRR09jOEG81ADP5wCQju1z71g6
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/influxdata/influxdb v1.2.3-0.20180221223340-01288bdb0883/go.mod h1:qZna6X/4elxqT3yI9iZYdZrWWdeFOOprn86kgg4+IzY=
 github.com/influxdata/influxdb1-client v0.0.0-20191209144304-8bf82d3c094d/go.mod h1:qj24IKcXYK6Iy9ceXlo3Tc+vtHo9lIhSX5JddghvEPo=
+github.com/itchyny/base58-go v0.1.0 h1:zF5spLDo956exUAD17o+7GamZTRkXOZlqJjRciZwd1I=
 github.com/itchyny/base58-go v0.1.0/go.mod h1:SrMWPE3DFuJJp1M/RUhu4fccp/y9AlB8AL3o3duPToU=
 github.com/jackpal/go-nat-pmp v1.0.2-0.20160603034137-1fa385a6f458 h1:6OvNmYgJyexcZ3pYbTI9jWx5tHo1Dee/tWbLMfPe2TA=
 github.com/jackpal/go-nat-pmp v1.0.2-0.20160603034137-1fa385a6f458/go.mod h1:QPH045xvCAeXUZOxsnwmrtiCoxIr9eob+4orBN1SBKc=
@@ -472,6 +474,7 @@ github.com/ontio/ontology v1.11.1-0.20200812075204-26cf1fa5dd47/go.mod h1:aoLM6p
 github.com/ontio/ontology v1.14.0-beta.0.20210818114002-fedaf66010a7/go.mod h1:nZBByr1/Xo1XYGRkHPMfkwaufxItHYvNi5+ljS4a8BE=
 github.com/ontio/ontology-crypto v1.0.9/go.mod h1:h/jeqqb9Ma/Leszxqh6zY3eTF2yks44hyRKikMni+YQ=
 github.com/ontio/ontology-crypto v1.1.0/go.mod h1:AsW1qiMNNSHKp6uoAC4v1OeWleDiV1xNpfpsEw+l1sU=
+github.com/ontio/ontology-crypto v1.2.1 h1:NG4U0WrQIGPzmYrvRnU398u8V6V3rXjpuUENnWT2TTY=
 github.com/ontio/ontology-crypto v1.2.1/go.mod h1:GQ2fatGKGSSyuOHjpC47KhEeSEqUtoBRhVnftsbmzn8=
 github.com/ontio/ontology-eventbus v0.9.1/go.mod h1:hCQIlbdPckcfykMeVUdWrqHZ8d30TBdmLfXCVWGkYhM=
 github.com/ontio/ontology-go-sdk v1.11.4/go.mod h1:fRhHYhFfYiUuIlTVtcXLVziiXOneBwVCSAX72+N7XVI=
@@ -512,6 +515,7 @@ github.com/polynetwork/cosmos-poly-module v0.0.0-20200810030259-95d586518759/go.
 github.com/polynetwork/eth-contracts v0.0.0-20200814062128-70f58e22b014/go.mod h1:TeePrYZfWJAwuksPlie7RPequ51Ujp5l/JY6TcutsFc=
 github.com/polynetwork/poly v0.0.0-20200710095239-0596a3d7afe5/go.mod h1:UzlGEWk0eCGsuMJOZfBoZjRbmu4Yw/SudKAIFe1gPnY=
 github.com/polynetwork/poly v0.0.0-20200715030435-4f1d1a0adb44/go.mod h1:UzlGEWk0eCGsuMJOZfBoZjRbmu4Yw/SudKAIFe1gPnY=
+github.com/polynetwork/poly v1.7.3-0.20210804073726-5d4f4d4a9371 h1:uxd0xMNKV7n0E7ZVcZdqYMIimgzWmK0Bh8a0uu8/XUo=
 github.com/polynetwork/poly v1.7.3-0.20210804073726-5d4f4d4a9371/go.mod h1:/+DAUZ7oWJZaZSigHrBWMwqESaTRqiFEVYft2hMwiT4=
 github.com/polynetwork/poly-go-sdk v0.0.0-20200722030827-6875b6018b93/go.mod h1:a1wMo/VFoUAKX2yVjipvFug6Yu5BPhf/2tP5xywqfIc=
 github.com/polynetwork/poly-go-sdk v0.0.0-20200730112529-d9c0c7ddf3d8/go.mod h1:a1wMo/VFoUAKX2yVjipvFug6Yu5BPhf/2tP5xywqfIc=
