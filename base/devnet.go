@@ -29,11 +29,11 @@ var (
 	BSC      uint64 = 1000006
 	O3       uint64 = 82
 	NEO3     uint64 = 88
-	PLT      uint64 = 107
+	PLT      uint64 = 208
 	ZILLIQA  uint64 = 111
 	OK       uint64 = 1012
-	HEIMDALL uint64 = 2001
-	MATIC    uint64 = 2002
+	HEIMDALL uint64 = 2015
+	MATIC    uint64 = 216
 	ARBITRUM uint64 = 2005
 	XDAI     uint64 = 2006
 	OPTIMISM uint64 = 2007
