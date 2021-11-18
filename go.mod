@@ -5,13 +5,13 @@ go 1.15
 require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/allegro/bigcache v1.2.1 // indirect
-	github.com/beego/beego/v2 v2.0.1
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
 	github.com/cespare/cp v1.1.1 // indirect
 	github.com/christianxiao/tendermint v0.26.0-polygon
 	github.com/christianxiao/tm-db v0.2.0-polygon
 	github.com/cosmos/cosmos-sdk v0.39.2
 	github.com/deckarep/golang-set v1.7.1 // indirect
+	github.com/devfans/zion-sdk v0.0.2
 	github.com/ethereum/go-ethereum v1.10.7
 	github.com/gballet/go-libpcsclite v0.0.0-20191108122812-4678299bea08 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect

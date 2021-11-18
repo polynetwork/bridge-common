@@ -20,20 +20,31 @@
 package base
 
 var (
-	POLY  uint64 = 0
-	BTC   uint64 = 1
-	ETH   uint64 = 2
-	ONT   uint64 = 3
-	NEO   uint64 = 4
-	BSC   uint64 = 6
-	HECO  uint64 = 7
-	O3    uint64 = 80
-	NEO3  uint64 = 88
-	OK    uint64 = 90
-	MATIC uint64 = 13
+	POLY     uint64 = 0
+	BTC      uint64 = 1
+	ETH      uint64 = 202
+	ONT      uint64 = 3
+	NEO      uint64 = 5
+	HECO     uint64 = 207
+	BSC      uint64 = 1000006
+	O3       uint64 = 82
+	NEO3     uint64 = 88
+	PLT      uint64 = 107
+	ZILLIQA  uint64 = 111
+	OK       uint64 = 1012
+	HEIMDALL uint64 = 2001
+	MATIC    uint64 = 2002
+	ARBITRUM uint64 = 2005
+	XDAI     uint64 = 2006
+	OPTIMISM uint64 = 2007
+	FANTOM   uint64 = 2008
+	AVA      uint64 = 2009
 
 	SWITCHEO uint64 = 1000
 
 	ENV = "devnet"
 )
-var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC}
+
+var CHAINS = []uint64{
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+}
