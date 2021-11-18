@@ -150,13 +150,22 @@ func (c *Client) GetSideChainHeaderIndex(chainId uint64, height uint64) (hash []
 func (c *Client) GetSideChainConsensusBlockHeight(chainId uint64) (height uint64, err error) {
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER_BLOCK_HEIGHT), utils.GetUint64Bytes(chainId))
 	res, err := c.GetStorage(utils.HeaderSyncContractAddress, key)
-	height = utils.GetBytesUint64(res)
+	if err == nil {
+		res, err = cstates.GetValueFromRawStorageItem(res)
+		if err == nil {
+			height = utils.GetBytesUint64(res)
+		}
+	}
 	return
 }
 
 func (c *Client) GetSideChainConsensusPeer(chainId uint64) (data []byte, err error) {
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER), utils.GetUint64Bytes(chainId))
-	return c.GetStorage(utils.HeaderSyncContractAddress, key)
+	data, err = c.GetStorage(utils.HeaderSyncContractAddress, key)
+	if err == nil {
+		data, err = cstates.GetValueFromRawStorageItem(data)
+	}
+	return
 }
 
 /*
