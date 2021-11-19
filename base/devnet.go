@@ -33,7 +33,7 @@ var (
 	ZILLIQA  uint64 = 111
 	OK       uint64 = 1012
 	HEIMDALL uint64 = 2015
-	MATIC    uint64 = 2016
+	MATIC    uint64 = 20016
 	ARBITRUM uint64 = 2005
 	XDAI     uint64 = 2006
 	OPTIMISM uint64 = 2007
