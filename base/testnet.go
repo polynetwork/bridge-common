@@ -30,9 +30,15 @@ var (
 	O3       uint64 = 82
 	NEO3     uint64 = 88
 	PLT      uint64 = 107
+	ZILLIQA  uint64 = 111
 	OK       uint64 = 200
 	HEIMDALL uint64 = 201
 	MATIC    uint64 = 202
+	ARBITRUM uint64 = 205
+	XDAI     uint64 = 206
+	OPTIMISM uint64 = 207
+	FANTOM   uint64 = 208
+	AVA      uint64 = 209
 
 	SWITCHEO uint64 = 1000
 
@@ -40,5 +46,5 @@ var (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
 }
