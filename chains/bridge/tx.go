@@ -48,7 +48,7 @@ type CheckTxResponse struct {
 	}
 }
 
-func (c *Client) CheckTx(req map[string]*CheckTxRequest) (res *CheckTxResponse, err error) {
+func (c *Client) CheckTx(req *CheckTxRequest) (res *CheckTxResponse, err error) {
 	res = new(CheckTxResponse)
 	err = tools.PostJsonFor(c.address+"/transactionofhash", req, res)
 	if err != nil {
