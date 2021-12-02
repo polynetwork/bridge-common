@@ -48,9 +48,29 @@ type CheckTxResponse struct {
 	}
 }
 
+type TxBody struct {
+	Chainid uint64
+	Txhash  string
+}
+
+type TxResponse struct {
+	Fchaintx *TxBody
+	Mchaintx *TxBody
+	Tchaintx *TxBody
+}
+
 func (c *Client) CheckTx(req *CheckTxRequest) (res *CheckTxResponse, err error) {
 	res = new(CheckTxResponse)
 	err = tools.PostJsonFor(c.address+"/transactionofhash", req, res)
+	if err != nil {
+		res = nil
+	}
+	return
+}
+
+func (c *Client) FetchTx(req *CheckTxRequest) (res *TxResponse, err error) {
+	res = new(TxResponse)
+	err = tools.GetJsonFor(c.explorer+"/getcrosstx?txhash="+req.Hash, res)
 	if err != nil {
 		res = nil
 	}
