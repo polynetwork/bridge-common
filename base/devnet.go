@@ -23,6 +23,9 @@ var (
 	POLY     uint64 = 0
 	BTC      uint64 = 1
 	ETH      uint64 = 202
+	KOVAN    uint64 = 302
+	RINKBY   uint64 = 402
+	GOERLI   uint64 = 502
 	ONT      uint64 = 3
 	NEO      uint64 = 5
 	HECO     uint64 = 207
@@ -33,18 +36,17 @@ var (
 	ZILLIQA  uint64 = 111
 	OK       uint64 = 1012
 	HEIMDALL uint64 = 2015
-	MATIC    uint64 = 2016
+	MATIC    uint64 = 20016
 	ARBITRUM uint64 = 2005
 	XDAI     uint64 = 2006
-	OPTIMISM uint64 = 2007
+	OPTIMISM uint64 = 200
 	FANTOM   uint64 = 2008
 	AVA      uint64 = 2009
-
 	SWITCHEO uint64 = 1000
 
 	ENV = "devnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, KOVAN, RINKBY, GOERLI,
 }
