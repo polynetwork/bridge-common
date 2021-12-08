@@ -37,11 +37,11 @@ var (
 	OK       uint64 = 1012
 	HEIMDALL uint64 = 2015
 	MATIC    uint64 = 20016
-	ARBITRUM uint64 = 2005
+	ARBITRUM uint64 = 300
 	XDAI     uint64 = 2006
 	OPTIMISM uint64 = 200
-	FANTOM   uint64 = 2008
-	AVA      uint64 = 2009
+	FANTOM   uint64 = 400
+	AVA      uint64 = 500
 	SWITCHEO uint64 = 1000
 
 	ENV = "devnet"
