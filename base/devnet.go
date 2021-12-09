@@ -31,9 +31,10 @@ var (
 	NEO3  uint64 = 88
 	OK    uint64 = 90
 	MATIC uint64 = 13
+	METIS uint64 = 300
 
 	SWITCHEO uint64 = 1000
 
 	ENV = "devnet"
 )
-var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC}
+var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS}
