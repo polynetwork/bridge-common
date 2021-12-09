@@ -112,6 +112,8 @@ func GetChainName(id uint64) string {
 		return "Fantom"
 	case AVA:
 		return "Avalanche"
+	case SIDE:
+		return "Side"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -129,7 +131,7 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 8
 	case PLT:
 		return 5
-	case ONT:
+	case ONT, SIDE:
 		return 0
 	default:
 		return 1
@@ -142,6 +144,8 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 12
 	case BSC, HECO:
 		return 21
+	case SIDE:
+		return 0
 	case ONT, NEO, NEO3, OK, SWITCHEO:
 		return 1
 	case PLT:

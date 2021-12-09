@@ -21,7 +21,7 @@ package base
 
 var (
 	POLY     uint64 = 0
-	BTC      uint64 = 1
+	ZION     uint64 = 1
 	ETH      uint64 = 202
 	KOVAN    uint64 = 302
 	RINKBY   uint64 = 402
@@ -30,6 +30,7 @@ var (
 	NEO      uint64 = 5
 	HECO     uint64 = 207
 	BSC      uint64 = 1000006
+	SIDE     uint64 = 77
 	O3       uint64 = 82
 	NEO3     uint64 = 88
 	PLT      uint64 = 208
@@ -38,7 +39,7 @@ var (
 	HEIMDALL uint64 = 2015
 	MATIC    uint64 = 20016
 	ARBITRUM uint64 = 300
-	XDAI     uint64 = 2006
+	XDAI     uint64 = 600
 	OPTIMISM uint64 = 200
 	FANTOM   uint64 = 400
 	AVA      uint64 = 500
@@ -48,5 +49,5 @@ var (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, KOVAN, RINKBY, GOERLI,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, KOVAN, RINKBY, GOERLI, SIDE,
 }

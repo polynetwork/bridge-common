@@ -21,7 +21,7 @@ package base
 
 var (
 	POLY     uint64 = 0
-	BTC      uint64 = 1
+	ZION     uint64 = 1
 	ETH      uint64 = 2
 	ONT      uint64 = 3
 	NEO      uint64 = 4
@@ -37,6 +37,7 @@ var (
 	ARBITRUM uint64 = 19
 	NEO3     uint64 = 88
 	XDAI     uint64 = 20
+	SIDE     uint64 = 77
 	OPTIMISM uint64 = 200007
 	FANTOM   uint64 = 200008
 	AVA      uint64 = 200009
@@ -45,5 +46,5 @@ var (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, SIDE,
 }
