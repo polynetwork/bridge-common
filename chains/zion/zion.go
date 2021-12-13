@@ -217,11 +217,11 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 		return 0, err
 	}
 	if heightBytes == nil {
-		return 0, fmt.Errorf("getPrevHeaderHeight, heightStore is nil")
+		return 0, fmt.Errorf("Get side chain height failed, height store is nil")
 	}
 	heightBytes, err = cstates.GetValueFromRawStorageItem(heightBytes)
 	if err != nil {
-		return 0, fmt.Errorf("GetHeaderByHeight, deserialize headerBytes from raw storage item err:%v", err)
+		return 0, fmt.Errorf("Deserialize headerBytes from raw storage item err:%v", err)
 	}
 	if heightBytes != nil {
 		if len(heightBytes) > 7 {
