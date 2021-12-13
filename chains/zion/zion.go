@@ -221,7 +221,7 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 	}
 	heightBytes, err = cstates.GetValueFromRawStorageItem(heightBytes)
 	if err != nil {
-		return 0, fmt.Errorf("Deserialize headerBytes from raw storage item err:%v", err)
+		return 0, fmt.Errorf("Deserialize height bytes from raw storage item err:%v", err)
 	}
 	if heightBytes != nil {
 		if len(heightBytes) > 7 {
