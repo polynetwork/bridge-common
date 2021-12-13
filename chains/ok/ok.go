@@ -18,6 +18,8 @@
 package ok
 
 import (
+	"math"
+	"sync/atomic"
 	"time"
 
 	oksdk "github.com/okex/exchain-go-sdk"
@@ -31,14 +33,17 @@ type Rpc = oksdk.Client
 type Client struct {
 	*Rpc
 	address string
+	weight  *uint64
 }
 
 func New(url string) *Client {
 	config, _ := oksdk.NewClientConfig(url, "okexchain-65", oksdk.BroadcastBlock, "0.01okt", 200000, 0, "")
 	client := oksdk.NewClient(config)
+	var max uint64 = math.MaxUint64
 	return &Client{
 		Rpc:     &client,
 		address: url,
+		weight:  &max,
 	}
 }
 
@@ -47,12 +52,15 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
-	return 1, nil
+	return atomic.LoadUint64(c.weight), nil
 }
 
 func (c *Client) GetValidators(height uint64) (validators []*types.Validator, err error) {
 	vr, err := c.Tendermint().QueryValidatorsResult(int64(height))
 	if err != nil {
+		if w := atomic.LoadUint64(c.weight); w > 0 {
+			atomic.StoreUint64(c.weight, w-1)
+		}
 		return nil, err
 	}
 	return vr.Validators, nil
