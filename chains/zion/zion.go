@@ -63,8 +63,11 @@ func ReadChainID() uint64 {
 	return atomic.LoadUint64(&_ZION_ID)
 }
 
-func New(url string) *Client {
+func init() {
 	node_manager.InitABI()
+}
+
+func New(url string) *Client {
 	c := eth.New(url)
 	if c == nil {
 		return nil
