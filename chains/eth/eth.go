@@ -53,7 +53,7 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) GetProof(addr string, key string, height uint64) (proof *ETHProof, err error) {
-	var heightHex string
+	heightHex := "latest"
 	if height > 0 {
 		heightHex = hexutil.EncodeBig(big.NewInt(int64(height)))
 	}

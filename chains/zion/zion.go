@@ -271,7 +271,34 @@ func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo,
 		To:   &NODE_MANAGER_ADDRESS,
 		Data: payload,
 	}
-	res, err := c.CallContract(context.Background(), arg, big.NewInt(int64(height)))
+	var block *big.Int
+	if height > 0 {
+		block = big.NewInt(int64(height))
+	}
+	res, err := c.CallContract(context.Background(), arg, block)
+	if err != nil {
+		return
+	}
+	output := new(node_manager.MethodEpochOutput)
+	if err = output.Decode(res); err != nil {
+		return
+	}
+	epochInfo = output.Epoch
+	return
+}
+
+func (c *Client) EpochById(epochId uint64) (epochInfo *node_manager.EpochInfo, err error) {
+	input := node_manager.MethodGetEpochByIDInput{EpochID: epochId}
+	payload, err := input.Encode()
+	if err != nil {
+		return
+	}
+	arg := ethereum.CallMsg{
+		From: common.Address{},
+		To:   &NODE_MANAGER_ADDRESS,
+		Data: payload,
+	}
+	res, err := c.CallContract(context.Background(), arg, nil)
 	if err != nil {
 		return
 	}
