@@ -63,8 +63,11 @@ func ReadChainID() uint64 {
 	return atomic.LoadUint64(&_ZION_ID)
 }
 
-func New(url string) *Client {
+func init() {
 	node_manager.InitABI()
+}
+
+func New(url string) *Client {
 	c := eth.New(url)
 	if c == nil {
 		return nil
@@ -126,10 +129,7 @@ func (c *Client) GetStorage(account common.Address, key []byte) (data []byte, er
 	var result hexutil.Bytes
 	keyHex := hex.EncodeToString(key)
 	err = c.Rpc.CallContext(context.Background(), &result, "eth_getStorageAtCacheDB", account, keyHex, "latest")
-	if err == nil {
-		data, err = cstates.GetValueFromRawStorageItem(result)
-	}
-	return
+	return result, err
 }
 
 func (c *Client) GetDoneTx(chainId uint64, ccId []byte) (data []byte, err error) {
@@ -153,13 +153,22 @@ func (c *Client) GetSideChainHeaderIndex(chainId uint64, height uint64) (hash []
 func (c *Client) GetSideChainConsensusBlockHeight(chainId uint64) (height uint64, err error) {
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER_BLOCK_HEIGHT), utils.GetUint64Bytes(chainId))
 	res, err := c.GetStorage(utils.HeaderSyncContractAddress, key)
-	height = utils.GetBytesUint64(res)
+	if err == nil {
+		res, err = cstates.GetValueFromRawStorageItem(res)
+		if err == nil {
+			height = utils.GetBytesUint64(res)
+		}
+	}
 	return
 }
 
 func (c *Client) GetSideChainConsensusPeer(chainId uint64) (data []byte, err error) {
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER), utils.GetUint64Bytes(chainId))
-	return c.GetStorage(utils.HeaderSyncContractAddress, key)
+	data, err = c.GetStorage(utils.HeaderSyncContractAddress, key)
+	if err == nil {
+		data, err = cstates.GetValueFromRawStorageItem(data)
+	}
+	return
 }
 
 /*
@@ -211,14 +220,12 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 		return 0, err
 	}
 	if heightBytes == nil {
-		return 0, fmt.Errorf("getPrevHeaderHeight, heightStore is nil")
+		return 0, fmt.Errorf("Get side chain height failed, height store is nil")
 	}
-	/*
-		heightBytes, err := cstates.GetValueFromRawStorageItem(res)
-		if err != nil {
-			return 0, fmt.Errorf("GetHeaderByHeight, deserialize headerBytes from raw storage item err:%v", err)
-		}
-	*/
+	heightBytes, err = cstates.GetValueFromRawStorageItem(heightBytes)
+	if err != nil {
+		return 0, fmt.Errorf("Deserialize height bytes from raw storage item err:%v", err)
+	}
 	if heightBytes != nil {
 		if len(heightBytes) > 7 {
 			height = binary.LittleEndian.Uint64(heightBytes)
@@ -232,8 +239,12 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 }
 
 func (c *Client) GetSideChainEpoch(chainId uint64) (data []byte, err error) {
-	return c.GetStorage(utils.HeaderSyncContractAddress,
+	data, err = c.GetStorage(utils.HeaderSyncContractAddress,
 		append([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId)...))
+	if err == nil {
+		data, err = cstates.GetValueFromRawStorageItem(data)
+	}
+	return
 }
 
 func (c *Client) GetSideChainEpochWithHeight(chainId, height uint64) (data []byte, err error) {
@@ -260,7 +271,34 @@ func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo,
 		To:   &NODE_MANAGER_ADDRESS,
 		Data: payload,
 	}
-	res, err := c.CallContract(context.Background(), arg, big.NewInt(int64(height)))
+	var block *big.Int
+	if height > 0 {
+		block = big.NewInt(int64(height))
+	}
+	res, err := c.CallContract(context.Background(), arg, block)
+	if err != nil {
+		return
+	}
+	output := new(node_manager.MethodEpochOutput)
+	if err = output.Decode(res); err != nil {
+		return
+	}
+	epochInfo = output.Epoch
+	return
+}
+
+func (c *Client) EpochById(epochId uint64) (epochInfo *node_manager.EpochInfo, err error) {
+	input := node_manager.MethodGetEpochByIDInput{EpochID: epochId}
+	payload, err := input.Encode()
+	if err != nil {
+		return
+	}
+	arg := ethereum.CallMsg{
+		From: common.Address{},
+		To:   &NODE_MANAGER_ADDRESS,
+		Data: payload,
+	}
+	res, err := c.CallContract(context.Background(), arg, nil)
 	if err != nil {
 		return
 	}

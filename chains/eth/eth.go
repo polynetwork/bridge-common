@@ -19,7 +19,6 @@ package eth
 
 import (
 	"context"
-	"fmt"
 	"math/big"
 	"time"
 
@@ -54,7 +53,10 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) GetProof(addr string, key string, height uint64) (proof *ETHProof, err error) {
-	heightHex := hexutil.EncodeBig(big.NewInt(int64(height)))
+	heightHex := "latest"
+	if height > 0 {
+		heightHex = hexutil.EncodeBig(big.NewInt(int64(height)))
+	}
 	proof = &ETHProof{}
 	err = c.Rpc.CallContext(context.Background(), &proof, "eth_getProof", addr, []string{key}, heightHex)
 	return
@@ -72,17 +74,20 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 // TransactionByHash returns the transaction with the given hash.
 func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Hash) (json *rpcTransaction, err error) {
 	err = c.Rpc.CallContext(ctx, &json, "eth_getTransactionByHash", hash)
-	if err != nil {
-		return nil, err
-	} else if json == nil || json.tx == nil {
-		return nil, nil
-	} else if _, r, _ := json.tx.RawSignatureValues(); r == nil {
-		return nil, fmt.Errorf("server returned transaction without signature")
-	}
-	if json.From != nil && json.BlockHash != nil {
-		setSenderFromServer(json.tx, *json.From, *json.BlockHash)
-	}
-	return json, nil
+	return
+	/*
+		if err != nil {
+			return nil, err
+		} else if json == nil || json.tx == nil {
+			return nil, nil
+		} else if _, r, _ := json.tx.RawSignatureValues(); r == nil {
+			return nil, fmt.Errorf("server returned transaction without signature")
+		}
+		if json.From != nil && json.BlockHash != nil {
+			setSenderFromServer(json.tx, *json.From, *json.BlockHash)
+		}
+		return json, nil
+	*/
 }
 
 func (c *Client) GetTxHeight(ctx context.Context, hash common.Hash) (height uint64, pending bool, err error) {
@@ -93,7 +98,7 @@ func (c *Client) GetTxHeight(ctx context.Context, hash common.Hash) (height uint
 	pending = tx.BlockNumber == nil
 	if !pending {
 		v := big.NewInt(0)
-		v.SetString(*tx.BlockNumber, 10)
+		v.SetString((*tx.BlockNumber)[2:], 16)
 		height = v.Uint64()
 	}
 	return

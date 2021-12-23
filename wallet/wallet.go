@@ -193,7 +193,7 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
+	log.Info("Compose dst chain tx", "hash", tx.Hash().String(), "account", account.Address, "nonce", nonce, "gas_price", gasPrice.String(), "gas_limit", limit)
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
