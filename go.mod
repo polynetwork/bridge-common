@@ -8,7 +8,7 @@ require (
 	github.com/cespare/cp v1.1.1 // indirect
 	github.com/cosmos/cosmos-sdk v0.39.2
 	github.com/deckarep/golang-set v1.7.1 // indirect
-	github.com/devfans/zion-sdk v0.0.2
+	github.com/devfans/zion-sdk v0.0.4-0.20211223115626-e8b5b6a45245
 	github.com/ethereum/go-ethereum v1.10.7
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/golang/mock v1.5.0 // indirect

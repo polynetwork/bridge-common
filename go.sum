@@ -155,6 +155,8 @@ github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
 github.com/devfans/zion-sdk v0.0.2 h1:GiBhawfAqJbNc0r0ea0UxAD3qNz2cWm9mQjA9hT/+jk=
 github.com/devfans/zion-sdk v0.0.2/go.mod h1:Gg/Ob+yfNBdGxCLBym18ku6dSh6z9DYMoTn60uVbSxM=
+github.com/devfans/zion-sdk v0.0.4-0.20211223115626-e8b5b6a45245 h1:vTsjRFcixTAMveadiKbFP2GwLI6caA+wHYxPxaE84sI=
+github.com/devfans/zion-sdk v0.0.4-0.20211223115626-e8b5b6a45245/go.mod h1:Gg/Ob+yfNBdGxCLBym18ku6dSh6z9DYMoTn60uVbSxM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/docker/docker v1.4.2-0.20180625184442-8e610b2b55bf/go.mod h1:eEKB0N0r5NX/I1kEveEz05bcu8tLC/8azJZsviup8Sk=
