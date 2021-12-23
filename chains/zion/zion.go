@@ -63,8 +63,11 @@ func ReadChainID() uint64 {
 	return atomic.LoadUint64(&_ZION_ID)
 }
 
-func New(url string) *Client {
+func init() {
 	node_manager.InitABI()
+}
+
+func New(url string) *Client {
 	c := eth.New(url)
 	if c == nil {
 		return nil
@@ -217,11 +220,11 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 		return 0, err
 	}
 	if heightBytes == nil {
-		return 0, fmt.Errorf("getPrevHeaderHeight, heightStore is nil")
+		return 0, fmt.Errorf("Get side chain height failed, height store is nil")
 	}
 	heightBytes, err = cstates.GetValueFromRawStorageItem(heightBytes)
 	if err != nil {
-		return 0, fmt.Errorf("GetHeaderByHeight, deserialize headerBytes from raw storage item err:%v", err)
+		return 0, fmt.Errorf("Deserialize height bytes from raw storage item err:%v", err)
 	}
 	if heightBytes != nil {
 		if len(heightBytes) > 7 {
@@ -268,7 +271,34 @@ func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo,
 		To:   &NODE_MANAGER_ADDRESS,
 		Data: payload,
 	}
-	res, err := c.CallContract(context.Background(), arg, big.NewInt(int64(height)))
+	var block *big.Int
+	if height > 0 {
+		block = big.NewInt(int64(height))
+	}
+	res, err := c.CallContract(context.Background(), arg, block)
+	if err != nil {
+		return
+	}
+	output := new(node_manager.MethodEpochOutput)
+	if err = output.Decode(res); err != nil {
+		return
+	}
+	epochInfo = output.Epoch
+	return
+}
+
+func (c *Client) EpochById(epochId uint64) (epochInfo *node_manager.EpochInfo, err error) {
+	input := node_manager.MethodGetEpochByIDInput{EpochID: epochId}
+	payload, err := input.Encode()
+	if err != nil {
+		return
+	}
+	arg := ethereum.CallMsg{
+		From: common.Address{},
+		To:   &NODE_MANAGER_ADDRESS,
+		Data: payload,
+	}
+	res, err := c.CallContract(context.Background(), arg, nil)
 	if err != nil {
 		return
 	}
