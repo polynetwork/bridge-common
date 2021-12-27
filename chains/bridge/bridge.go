@@ -26,13 +26,18 @@ import (
 )
 
 type Client struct {
-	address string
+	address  string
+	explorer string
 }
 
 func New(url string) *Client {
 	return &Client{
 		address: url,
 	}
+}
+
+func (c *Client) SetExplorer(url string) {
+	c.explorer = url
 }
 
 func (c *Client) Address() string {

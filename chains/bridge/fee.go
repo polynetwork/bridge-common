@@ -52,3 +52,30 @@ func (r *CheckFeeRequest) Missing() bool {
 func (c *Client) CheckFee(req map[string]*CheckFeeRequest) (err error) {
 	return tools.PostJsonFor(c.address+"/newcheckfee", req, &req)
 }
+
+type GetFeeRequest struct {
+	SrcChainId    uint64
+	DstChainId    uint64
+	SwapTokenHash string
+	Hash          string
+}
+
+type GetFeeResponse struct {
+	SrcChainId               uint64
+	DstChainId               uint64
+	SwapTokenHash            string
+	TokenAmount              string
+	UsdtAmount               string
+	TokenAmountWithPrecision string
+	Balance                  string
+	BalanceWithPrecision     string
+}
+
+func (c *Client) GetFee(req *GetFeeRequest) (res *GetFeeResponse, err error) {
+	res = new(GetFeeResponse)
+	err = tools.PostJsonFor(c.address+"/getfee", req, res)
+	if err != nil {
+		return nil, err
+	}
+	return
+}
