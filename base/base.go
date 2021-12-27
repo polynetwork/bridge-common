@@ -110,6 +110,8 @@ func GetChainName(id uint64) string {
 		return "Optimism"
 	case FANTOM:
 		return "Fantom"
+	case METIS:
+		return "Metis"
 	case AVA:
 		return "Avalanche"
 	case SIDE:
