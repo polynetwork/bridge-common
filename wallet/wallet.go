@@ -165,7 +165,7 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 		return
 	}
 	if gasLimit == 0 {
-		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: big.NewInt(0), Data: data}
+		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 		if err != nil {
 			nonces.Update(false)

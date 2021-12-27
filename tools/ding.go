@@ -129,3 +129,26 @@ func PostJsonFor(url string, payload interface{}, result interface{}) error {
 	}
 	return nil
 }
+
+func GetJsonFor(url string, result interface{}) error {
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(respBody, result)
+	if err != nil {
+		log.Error("GetJson response", "url", url, "Body", string(respBody))
+	} else {
+		log.Debug("GetJson response", "url", url, "Body", string(respBody))
+	}
+	return nil
+}

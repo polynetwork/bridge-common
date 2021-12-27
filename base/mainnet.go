@@ -31,20 +31,21 @@ var (
 	PLT      uint64 = 8
 	O3       uint64 = 10
 	OK       uint64 = 12
+	NEO3     uint64 = 14
 	HEIMDALL uint64 = 15
 	MATIC    uint64 = 17
 	ZILLIQA  uint64 = 18
 	ARBITRUM uint64 = 19
-	NEO3     uint64 = 88
 	XDAI     uint64 = 20
 	SIDE     uint64 = 77
 	OPTIMISM uint64 = 200007
 	FANTOM   uint64 = 200008
 	AVA      uint64 = 200009
+	METIS    uint64 = 300
 
 	ENV = "mainnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, SIDE,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, SIDE, METIS,
 }

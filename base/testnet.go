@@ -1,3 +1,4 @@
+//go:build testnet
 // +build testnet
 
 /*
@@ -40,6 +41,7 @@ var (
 	FANTOM   uint64 = 208
 	AVA      uint64 = 209
 	OPTIMISM uint64 = 210
+	METIS    uint64 = 300
 
 	SWITCHEO uint64 = 1000
 
@@ -47,5 +49,5 @@ var (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, SIDE,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, SIDE, METIS,
 }
