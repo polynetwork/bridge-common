@@ -22,6 +22,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -110,4 +112,20 @@ func Retry(ctx context.Context, f func() error, interval time.Duration, count in
 			return err
 		}
 	}
+}
+
+func WriteFile(path string, data []byte) error {
+	// make sure dir exists
+	dir := filepath.Dir(path)
+	if _, err := os.Stat(dir); err != nil {
+		os.MkdirAll(dir, os.ModePerm)
+	}
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0664)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+	_, err = f.Write(data)
+	return err
 }

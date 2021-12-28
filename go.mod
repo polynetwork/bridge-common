@@ -10,6 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.39.2
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/ethereum/go-ethereum v1.10.7
+	github.com/gagliardetto/solana-go v1.0.2
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/golang/mock v1.5.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
@@ -34,7 +35,6 @@ require (
 	github.com/status-im/keycard-go v0.0.0-20190424133014-d95853db0f48 // indirect
 	github.com/tendermint/tendermint v0.33.9
 	github.com/tendermint/tm-db v0.5.2 // indirect
-	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/sys v0.0.0-20210915083310-ed5796bab164 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
