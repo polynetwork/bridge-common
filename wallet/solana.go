@@ -27,6 +27,8 @@ import (
 	sol "github.com/polynetwork/bridge-common/chains/solana"
 )
 
+type SolanaAccount = solana.PrivateKey
+type SolanaSignature = solana.Signature
 type SolanaWallet struct {
 	accounts []*solana.PrivateKey
 	sdk      *sol.SDK
@@ -49,6 +51,10 @@ func NewSolanaWallet(config *Config, sdk *sol.SDK) (w *SolanaWallet, err error) 
 		}
 	}
 	return
+}
+
+func (w *SolanaWallet) Accounts() []*solana.PrivateKey {
+	return w.accounts
 }
 
 func (w *SolanaWallet) Invoke(instructions []solana.Instruction) (sig solana.Signature, err error) {
