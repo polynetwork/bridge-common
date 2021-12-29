@@ -19,7 +19,7 @@
 
 package base
 
-var (
+const (
 	POLY     uint64 = 0
 	BTC      uint64 = 1
 	ETH      uint64 = 2
@@ -37,10 +37,10 @@ var (
 	ZILLIQA  uint64 = 18
 	ARBITRUM uint64 = 19
 	XDAI     uint64 = 20
-	OPTIMISM uint64 = 23
-	FANTOM   uint64 = 22
 	AVA      uint64 = 21
-	METIS    uint64 = 300
+	FANTOM   uint64 = 22
+	OPTIMISM uint64 = 23
+	METIS    uint64 = 24
 
 	ENV = "mainnet"
 )

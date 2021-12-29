@@ -20,7 +20,7 @@
 
 package base
 
-var (
+const (
 	POLY     uint64 = 0
 	BTC      uint64 = 1
 	ETH      uint64 = 2
