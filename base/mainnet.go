@@ -42,7 +42,8 @@ const (
 	OPTIMISM uint64 = 23
 	METIS    uint64 = 24
 
-	ENV = "mainnet"
+	RINKEBY uint64 = 1000000 // Invalid chain ids
+	ENV            = "mainnet"
 )
 
 var CHAINS = []uint64{
