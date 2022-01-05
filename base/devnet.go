@@ -39,3 +39,7 @@ const (
 )
 
 var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, METIS,
+}

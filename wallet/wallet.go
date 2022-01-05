@@ -54,7 +54,7 @@ type IWallet interface {
 	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	Accounts() []accounts.Account
-	GetBalance(accounts.Account) (*big.Int, error)
+	GetBalance(common.Address) (*big.Int, error)
 }
 
 type Wallet struct {

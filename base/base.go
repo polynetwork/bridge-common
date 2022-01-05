@@ -150,3 +150,12 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 100000000
 	}
 }
+
+func SameAsETH(chainId uint64) bool {
+	for _, chain := range ETH_CHAINS {
+		if chain == chainId {
+			return true
+		}
+	}
+	return false
+}
