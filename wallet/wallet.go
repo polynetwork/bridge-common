@@ -54,6 +54,7 @@ type IWallet interface {
 	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	Accounts() []accounts.Account
+	GetBalance(accounts.Account) (*big.Int, error)
 }
 
 type Wallet struct {
@@ -85,6 +86,10 @@ func New(config *Config, sdk *eth.SDK) *Wallet {
 		w.AddProvider(NewKeyStoreProvider(c))
 	}
 	return w
+}
+
+func (w *Wallet) GetBalance(address common.Address) (balance *big.Int, err error) {
+	return w.sdk.Node().BalanceAt(context.Background(), address, nil)
 }
 
 func (w *Wallet) AddProvider(p Provider) {
