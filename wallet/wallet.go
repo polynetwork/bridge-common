@@ -54,6 +54,7 @@ type IWallet interface {
 	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	Accounts() []accounts.Account
+	GetBalance(common.Address) (*big.Int, error)
 }
 
 type Wallet struct {
@@ -85,6 +86,10 @@ func New(config *Config, sdk *eth.SDK) *Wallet {
 		w.AddProvider(NewKeyStoreProvider(c))
 	}
 	return w
+}
+
+func (w *Wallet) GetBalance(address common.Address) (balance *big.Int, err error) {
+	return w.sdk.Node().BalanceAt(context.Background(), address, nil)
 }
 
 func (w *Wallet) AddProvider(p Provider) {
@@ -164,7 +169,7 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 		return
 	}
 	if gasLimit == 0 {
-		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: big.NewInt(0), Data: data}
+		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 		if err != nil {
 			nonces.Update(false)

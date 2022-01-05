@@ -22,6 +22,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"strings"
 	"time"
 )
@@ -110,4 +111,8 @@ func Retry(ctx context.Context, f func() error, interval time.Duration, count in
 			return err
 		}
 	}
+}
+
+func SetDecimals(a *big.Int, decimals int64) *big.Int {
+	return new(big.Int).Mul(a, new(big.Int).Exp(big.NewInt(10), big.NewInt(decimals), nil))
 }

@@ -19,7 +19,7 @@
 
 package base
 
-var (
+const (
 	POLY     uint64 = 0
 	BTC      uint64 = 1
 	ETH      uint64 = 2
@@ -31,15 +31,24 @@ var (
 	PLT      uint64 = 8
 	O3       uint64 = 10
 	OK       uint64 = 12
+	NEO3     uint64 = 14
 	HEIMDALL uint64 = 15
 	MATIC    uint64 = 17
 	ZILLIQA  uint64 = 18
 	ARBITRUM uint64 = 19
-	NEO3     uint64 = 88
+	XDAI     uint64 = 20
+	AVA      uint64 = 21
+	FANTOM   uint64 = 22
+	OPTIMISM uint64 = 23
+	METIS    uint64 = 24
 
 	ENV = "mainnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS,
 }
