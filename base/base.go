@@ -104,6 +104,8 @@ func GetChainName(id uint64) string {
 		return "Optimism"
 	case FANTOM:
 		return "Fantom"
+	case METIS:
+		return "Metis"
 	case AVA:
 		return "Avalanche"
 	default:
@@ -147,4 +149,13 @@ func BlocksToWait(chainId uint64) uint64 {
 	default:
 		return 100000000
 	}
+}
+
+func SameAsETH(chainId uint64) bool {
+	for _, chain := range ETH_CHAINS {
+		if chain == chainId {
+			return true
+		}
+	}
+	return false
 }
