@@ -23,6 +23,7 @@ import (
 	"time"
 
 	oksdk "github.com/okex/exchain-go-sdk"
+	ttypes "github.com/okex/exchain-go-sdk/module/tendermint/types"
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
 	"github.com/tendermint/tendermint/types"
@@ -53,6 +54,17 @@ func (c *Client) Address() string {
 
 func (c *Client) GetLatestHeight() (uint64, error) {
 	return atomic.LoadUint64(c.weight), nil
+}
+
+func (c *Client) QueryCommitResult(height uint64) (*ttypes.ResultCommit, error) {
+	cr, err := c.Tendermint().QueryCommitResult(int64(height))
+	if err != nil {
+		if w := atomic.LoadUint64(c.weight); w > 0 {
+			atomic.StoreUint64(c.weight, w-1)
+		}
+		return nil, err
+	}
+	return cr, nil
 }
 
 func (c *Client) GetValidators(height uint64) (validators []*types.Validator, err error) {
