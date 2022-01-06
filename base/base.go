@@ -110,6 +110,8 @@ func GetChainName(id uint64) string {
 		return "Metis"
 	case AVA:
 		return "Avalanche"
+	case BOBA:
+		return "Boba"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
