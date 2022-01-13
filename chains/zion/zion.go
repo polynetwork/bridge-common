@@ -43,7 +43,6 @@ import (
 	"github.com/polynetwork/bridge-common/chains/eth"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
-	cstates "github.com/polynetwork/poly/core/states"
 )
 
 var (
@@ -154,10 +153,7 @@ func (c *Client) GetSideChainConsensusBlockHeight(chainId uint64) (height uint64
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER_BLOCK_HEIGHT), utils.GetUint64Bytes(chainId))
 	res, err := c.GetStorage(utils.HeaderSyncContractAddress, key)
 	if err == nil {
-		res, err = cstates.GetValueFromRawStorageItem(res)
-		if err == nil {
-			height = utils.GetBytesUint64(res)
-		}
+		height = utils.GetBytesUint64(res)
 	}
 	return
 }
@@ -165,9 +161,6 @@ func (c *Client) GetSideChainConsensusBlockHeight(chainId uint64) (height uint64
 func (c *Client) GetSideChainConsensusPeer(chainId uint64) (data []byte, err error) {
 	key := util.Concat([]byte(hcom.CONSENSUS_PEER), utils.GetUint64Bytes(chainId))
 	data, err = c.GetStorage(utils.HeaderSyncContractAddress, key)
-	if err == nil {
-		data, err = cstates.GetValueFromRawStorageItem(data)
-	}
 	return
 }
 
@@ -222,10 +215,6 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 	if heightBytes == nil {
 		return 0, fmt.Errorf("Get side chain height failed, height store is nil")
 	}
-	heightBytes, err = cstates.GetValueFromRawStorageItem(heightBytes)
-	if err != nil {
-		return 0, fmt.Errorf("Deserialize height bytes from raw storage item err:%v", err)
-	}
 	if heightBytes != nil {
 		if len(heightBytes) > 7 {
 			height = binary.LittleEndian.Uint64(heightBytes)
@@ -241,9 +230,6 @@ func (c *Client) GetSideChainHeight(chainId uint64) (height uint64, err error) {
 func (c *Client) GetSideChainEpoch(chainId uint64) (data []byte, err error) {
 	data, err = c.GetStorage(utils.HeaderSyncContractAddress,
 		append([]byte(hcom.EPOCH_SWITCH), utils.GetUint64Bytes(chainId)...))
-	if err == nil {
-		data, err = cstates.GetValueFromRawStorageItem(data)
-	}
 	return
 }
 
