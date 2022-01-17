@@ -22,7 +22,7 @@ package base
 var (
 	POLY     uint64 = 0
 	ZION     uint64 = 1
-	ETH      uint64 = 202
+	ETH      uint64 = 2
 	KOVAN    uint64 = 302
 	RINKBY   uint64 = 402
 	GOERLI   uint64 = 502
@@ -33,7 +33,7 @@ var (
 	SIDE     uint64 = 77
 	O3       uint64 = 82
 	NEO3     uint64 = 88
-	PLT      uint64 = 208
+	PLT      uint64 = 107
 	ZILLIQA  uint64 = 111
 	OK       uint64 = 1012
 	HEIMDALL uint64 = 2015
