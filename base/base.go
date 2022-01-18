@@ -112,6 +112,8 @@ func GetChainName(id uint64) string {
 		return "Avalanche"
 	case BOBA:
 		return "Boba"
+	case PIXIE:
+		return "Pixie"
 	case OASIS:
 		return "Oasis"
 	default:
