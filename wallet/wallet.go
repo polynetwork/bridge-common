@@ -53,6 +53,7 @@ type IWallet interface {
 	Init() error
 	Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
+	EstimateWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	Accounts() []accounts.Account
 	GetBalance(common.Address) (*big.Int, error)
 }
@@ -148,10 +149,18 @@ func (w *Wallet) GetAccount(account accounts.Account) (provider Provider, nonces
 
 func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	account, _, _ := w.Select()
-	return w.SendWithAccount(account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+	return w.sendWithAccount(false, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
 }
 
 func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
+	return w.sendWithAccount(false, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+}
+
+func (w *Wallet) EstimateWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
+	return w.sendWithAccount(true, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+}
+
+func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if gasPrice == nil || gasPrice.Sign() <= 0 {
 		gasPrice, err = w.GasPrice()
 		if err != nil {
@@ -181,6 +190,13 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 			err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
 			return
 		}
+	}
+
+	if dry {
+		fmt.Printf(
+			"Estimated tx successfully account %s gas_price %s gas_limit %v nonce %v target %s amount %s data %x\n",
+			account.Address, gasPrice, gasLimit, nonce, addr, amount, data)
+		return
 	}
 
 	gasLimit = uint64(1.3 * float32(gasLimit))
