@@ -1,3 +1,4 @@
+//go:build devnet
 // +build devnet
 
 /*
@@ -32,6 +33,7 @@ const (
 	OK      uint64 = 90
 	MATIC   uint64 = 13
 	METIS   uint64 = 300
+	PIXIE   uint64 = 316
 	RINKEBY uint64 = 402
 
 	SWITCHEO uint64 = 1000
@@ -39,8 +41,8 @@ const (
 	ENV = "devnet"
 )
 
-var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY}
+var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE}
 
 var ETH_CHAINS = []uint64{
-	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY,
+	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE,
 }
