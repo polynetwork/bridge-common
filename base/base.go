@@ -135,6 +135,8 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 5
 	case ONT:
 		return 0
+	case PIXIE:
+		return 2
 	default:
 		return 1
 	}
@@ -154,6 +156,8 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 12
 	case MATIC:
 		return 128
+	case PIXIE:
+		return 3
 	default:
 		return 100000000
 	}
