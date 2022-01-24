@@ -42,9 +42,9 @@ const (
 	FANTOM   uint64 = 22
 	OPTIMISM uint64 = 23
 	METIS    uint64 = 24
+	BOBA     uint64 = 25
 
 	// Invalid chain IDs
-	BOBA    uint64 = 40000000
 	RINKEBY uint64 = 1000000
 	PIXIE   uint64 = 2000000
 
