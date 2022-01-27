@@ -125,7 +125,7 @@ func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height, co
 		if err != nil {
 			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 3)
 	}
 	return
 }
