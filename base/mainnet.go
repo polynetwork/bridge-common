@@ -48,6 +48,7 @@ const (
 	RINKEBY uint64 = 1000000
 	PIXIE   uint64 = 2000000
 	OASIS   uint64 = 3000000
+	OASIS1  uint64 = 3000001
 
 	ENV = "mainnet"
 )
