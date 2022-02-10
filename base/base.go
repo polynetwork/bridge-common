@@ -72,6 +72,8 @@ func GetChainName(id uint64) string {
 		return "Poly"
 	case ETH:
 		return "Ethereum"
+	case RINKEBY:
+		return "Ethereum-Rinkeby"
 	case ONT:
 		return "Ontology"
 	case NEO:
@@ -104,8 +106,16 @@ func GetChainName(id uint64) string {
 		return "Optimism"
 	case FANTOM:
 		return "Fantom"
+	case METIS:
+		return "Metis"
 	case AVA:
 		return "Avalanche"
+	case BOBA:
+		return "Boba"
+	case PIXIE:
+		return "Pixie"
+	case OASIS:
+		return "Oasis"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -125,6 +135,8 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 5
 	case ONT:
 		return 0
+	case PIXIE:
+		return 2
 	default:
 		return 1
 	}
@@ -144,7 +156,18 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 12
 	case MATIC:
 		return 128
+	case PIXIE:
+		return 3
 	default:
 		return 100000000
 	}
+}
+
+func SameAsETH(chainId uint64) bool {
+	for _, chain := range ETH_CHAINS {
+		if chain == chainId {
+			return true
+		}
+	}
+	return false
 }

@@ -1,3 +1,4 @@
+//go:build mainnet
 // +build mainnet
 
 /*
@@ -19,7 +20,7 @@
 
 package base
 
-var (
+const (
 	POLY     uint64 = 0
 	BTC      uint64 = 1
 	ETH      uint64 = 2
@@ -31,19 +32,30 @@ var (
 	PLT      uint64 = 8
 	O3       uint64 = 10
 	OK       uint64 = 12
+	NEO3     uint64 = 14
 	HEIMDALL uint64 = 15
 	MATIC    uint64 = 17
 	ZILLIQA  uint64 = 18
 	ARBITRUM uint64 = 19
-	NEO3     uint64 = 88
 	XDAI     uint64 = 20
-	OPTIMISM uint64 = 23
-	FANTOM   uint64 = 22
 	AVA      uint64 = 21
+	FANTOM   uint64 = 22
+	OPTIMISM uint64 = 23
+	METIS    uint64 = 24
+	BOBA     uint64 = 25
+
+	// Invalid chain IDs
+	RINKEBY uint64 = 1000000
+	PIXIE   uint64 = 2000000
+	OASIS   uint64 = 3000000
 
 	ENV = "mainnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, BOBA, PIXIE,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, BOBA, PIXIE,
 }

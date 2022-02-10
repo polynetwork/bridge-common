@@ -1,3 +1,4 @@
+//go:build testnet
 // +build testnet
 
 /*
@@ -19,7 +20,7 @@
 
 package base
 
-var (
+const (
 	POLY     uint64 = 0
 	BTC      uint64 = 1
 	ETH      uint64 = 2
@@ -36,9 +37,14 @@ var (
 	MATIC    uint64 = 202
 	ARBITRUM uint64 = 205
 	XDAI     uint64 = 206
-	OPTIMISM uint64 = 207
+	OPTIMISM uint64 = 210
 	FANTOM   uint64 = 208
 	AVA      uint64 = 209
+	METIS    uint64 = 300
+	PIXIE    uint64 = 316
+	BOBA     uint64 = 400
+	RINKEBY  uint64 = 402
+	OASIS	 uint64 = 500
 
 	SWITCHEO uint64 = 1000
 
@@ -46,5 +52,9 @@ var (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, RINKEBY, BOBA, PIXIE, OASIS,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, RINKEBY, BOBA, PIXIE, OASIS,
 }
