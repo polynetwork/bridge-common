@@ -149,18 +149,22 @@ func (w *Wallet) GetAccount(account accounts.Account) (provider Provider, nonces
 
 func (w *Wallet) Send(addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	account, _, _ := w.Select()
-	return w.sendWithAccount(false, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+	return w.sendWithAccount(false, true, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
 }
 
 func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
-	return w.sendWithAccount(false, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+	return w.sendWithAccount(false, true, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+}
+
+func (w *Wallet) SendWithAccountFix(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
+	return w.sendWithAccount(false, false, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
 }
 
 func (w *Wallet) EstimateWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
-	return w.sendWithAccount(true, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+	return w.sendWithAccount(true, true, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
 }
 
-func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
+func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if gasPrice == nil || gasPrice.Sign() <= 0 {
 		gasPrice, err = w.GasPrice()
 		if err != nil {
@@ -178,7 +182,10 @@ func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common
 		return
 	}
 	if gasLimit == 0 {
-		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+		msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
+		if estimateWithGas {
+			msg.GasPrice = gasPrice
+		}
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 		if err != nil {
 			nonces.Update(false)
