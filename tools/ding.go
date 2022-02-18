@@ -104,12 +104,19 @@ func PostJson(url string, payload interface{}) error {
 }
 
 func PostJsonFor(url string, payload interface{}, result interface{}) error {
+	return PostJsonAs(url, nil, payload, result)
+}
+
+func PostJsonAs(url string, construct func(*http.Request), payload interface{}, result interface{}) error {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
+	if construct != nil {
+		construct(req)
+	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -131,8 +138,15 @@ func PostJsonFor(url string, payload interface{}, result interface{}) error {
 }
 
 func GetJsonFor(url string, result interface{}) error {
+	return GetJsonAs(url, nil, result)
+}
+
+func GetJsonAs(url string, construct func(*http.Request), result interface{}) error {
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Set("Content-Type", "application/json")
+	if construct != nil {
+		construct(req)
+	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
