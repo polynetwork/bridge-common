@@ -21,6 +21,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -108,11 +109,15 @@ func PostJsonFor(url string, payload interface{}, result interface{}) error {
 }
 
 func PostJsonAs(url string, construct func(*http.Request), payload interface{}, result interface{}) error {
-	data, err := json.Marshal(payload)
-	if err != nil {
-		return err
+	var body io.Reader
+	if payload != nil {
+		data, err := json.Marshal(payload)
+		if err != nil {
+			return err
+		}
+		body = bytes.NewBuffer(data)
 	}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", url, body)
 	req.Header.Set("Content-Type", "application/json")
 	if construct != nil {
 		construct(req)
