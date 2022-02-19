@@ -135,7 +135,7 @@ func PostJsonAs(url string, construct func(*http.Request), payload interface{}, 
 	}
 	err = json.Unmarshal(respBody, result)
 	if err != nil {
-		log.Error("PostJson response", "Body", string(respBody))
+		log.Error("PostJson response", "Body", string(respBody), "err", err)
 	} else {
 		log.Debug("PostJson response", "Body", string(respBody))
 	}
@@ -165,7 +165,7 @@ func GetJsonAs(url string, construct func(*http.Request), result interface{}) er
 	}
 	err = json.Unmarshal(respBody, result)
 	if err != nil {
-		log.Error("GetJson response", "url", url, "Body", string(respBody))
+		log.Error("GetJson response", "url", url, "Body", string(respBody), "err", err)
 	} else {
 		log.Debug("GetJson response", "url", url, "Body", string(respBody))
 	}
