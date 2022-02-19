@@ -111,9 +111,18 @@ func PostJsonFor(url string, payload interface{}, result interface{}) error {
 func PostJsonAs(url string, construct func(*http.Request), payload interface{}, result interface{}) error {
 	var body io.Reader
 	if payload != nil {
-		data, err := json.Marshal(payload)
-		if err != nil {
-			return err
+		var data []byte
+		var err error
+		switch p := payload.(type) {
+		case string:
+			data = []byte(p)
+		case []byte:
+			data = p
+		default:
+			data, err = json.Marshal(payload)
+			if err != nil {
+				return err
+			}
 		}
 		body = bytes.NewBuffer(data)
 	}
