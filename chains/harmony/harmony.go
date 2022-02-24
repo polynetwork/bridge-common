@@ -19,6 +19,7 @@ package harmony
 
 import (
 	"context"
+	"encoding/hex"
 	"math/big"
 	"time"
 
@@ -54,7 +55,7 @@ func(c *Client) HeaderByNumberRLP(height uint64) (data []byte, err error) {
 		custom.ToBlockNumArg(big.NewInt(int64(height))))
 
 	if err == nil {
-		data = resp.Result
+		data, err = hex.DecodeString(string(resp.Result[1:len(resp.Result)-1]))
 	}
 	return
 }
