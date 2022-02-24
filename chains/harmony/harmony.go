@@ -50,7 +50,7 @@ func(c *Client) HeaderByNumber(height uint64) (data []byte, err error) {
 
 func(c *Client) HeaderByNumberRLP(height uint64) (data []byte, err error) {
 	resp, err := c.caller.CallContextRaw(
-		context.Background(), "eth_getBlockByNumberRLPHex",
+		context.Background(), "hmy_getBlockByNumberRLPHex",
 		custom.ToBlockNumArg(big.NewInt(int64(height))), false)
 
 	if err == nil {
