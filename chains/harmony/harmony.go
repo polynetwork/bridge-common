@@ -53,7 +53,10 @@ func(c *Client) HeaderByNumberRLP(height uint64) (data []byte, err error) {
 		context.Background(), "eth_getBlockByNumberRLPHex",
 		custom.ToBlockNumArg(big.NewInt(int64(height))), false)
 
-	return resp.Result, err
+	if err == nil {
+		data = resp.Result
+	}
+	return
 }
 
 type SDK struct {
