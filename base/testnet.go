@@ -48,6 +48,7 @@ const (
 	HSC      uint64 = 600
 
 	SWITCHEO uint64 = 1000
+	HARMONY  uint64 = 2000001
 
 	ENV = "testnet"
 )

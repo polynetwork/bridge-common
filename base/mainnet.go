@@ -48,6 +48,7 @@ const (
 	// Invalid chain IDs
 	RINKEBY uint64 = 1000000
 	PIXIE   uint64 = 2000000
+	HARMONY uint64 = 2000001
 	HSC     uint64 = 3000000
 
 	ENV = "mainnet"
