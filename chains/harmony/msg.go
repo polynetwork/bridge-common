@@ -30,7 +30,6 @@ type Header struct {
 	Number              *big.Int       `json:"number"`
 	GasLimit            uint64         `json:"gasLimit"`
 	GasUsed             uint64         `json:"gasUsed"`
-	Time                *big.Int       `json:"timestamp"`
 	Extra               []byte         `json:"extraData"`
 	MixDigest           common.Hash    `json:"mixHash"`
 	// Additional Fields
