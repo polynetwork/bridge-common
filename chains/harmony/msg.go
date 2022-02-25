@@ -9,14 +9,12 @@ import (
 )
 
 type HeaderWithSig struct {
-	Header *Header
 	HeaderRLP []byte
 	Sig []byte
 	Bitmap []byte
 }
 
 func (hs *HeaderWithSig) Encode() ([]byte, error) {
-	hs.Header = nil
 	return rlp.EncodeToBytes(hs)
 }
 
