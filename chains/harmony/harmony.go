@@ -20,13 +20,14 @@ package harmony
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 	"math/big"
 	"time"
 
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/chains/custom"
 	"github.com/polynetwork/bridge-common/chains/eth"
 	"github.com/polynetwork/bridge-common/util"
-	"github.com/polynetwork/bridge-common/chains/custom"
 )
 
 type Client struct {
@@ -41,12 +42,15 @@ func New(url string) *Client {
 	}
 }
 
-func(c *Client) HeaderByNumber(height uint64) (data []byte, err error) {
+func(c *Client) HeaderByNumber(height uint64) (header *Header, err error) {
 	resp, err := c.caller.CallContextRaw(
-		context.Background(), "eth_getBlockByNumber",
-		custom.ToBlockNumArg(big.NewInt(int64(height))), false)
-
-	return resp.Result, err
+		context.Background(), "hmy_getHeaderByNumber",
+		custom.ToBlockNumArg(big.NewInt(int64(height))))
+	if err != nil { return }
+	header = new(Header)
+	err = json.Unmarshal(resp.Result, header)
+	if err != nil { header = nil }
+	return
 }
 
 func(c *Client) HeaderByNumberRLP(height uint64) (data []byte, err error) {
