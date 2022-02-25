@@ -27,7 +27,7 @@ import (
 
 func New(chainID uint64, urls []string, interval time.Duration) (sdk *chains.ChainSDK, err error) {
 	switch chainID {
-	case base.ETH, base.HECO, base.OK, base.BSC, base.MATIC:
+	case base.ETH, base.HECO, base.OK, base.BSC, base.MATIC, base.HSC:
 		sdk, err = chains.New(chainID, urls, interval, eth.New)
 	}
 	return
