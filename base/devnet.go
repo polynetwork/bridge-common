@@ -38,6 +38,7 @@ const (
 	HSC     uint64 = 600
 
 	SWITCHEO uint64 = 1000
+	HARMONY  uint64 = 2000001
 
 	ENV = "devnet"
 )
@@ -45,5 +46,5 @@ const (
 var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE, HSC}
 
 var ETH_CHAINS = []uint64{
-	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC,
+	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC, HARMONY,
 }
