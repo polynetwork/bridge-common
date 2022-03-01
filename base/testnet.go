@@ -46,9 +46,9 @@ const (
 	RINKEBY  uint64 = 402
 	OASIS    uint64 = 500
 	HSC      uint64 = 603
+	HARMONY  uint64 = 800
 
 	SWITCHEO uint64 = 1000
-	HARMONY  uint64 = 2000001
 
 	ENV = "testnet"
 )
