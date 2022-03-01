@@ -21,7 +21,6 @@ import (
 	"context"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"math/big"
 	"time"
 
@@ -49,7 +48,6 @@ func(c *Client) HeaderByNumber(height uint64) (header *Header, err error) {
 		custom.ToBlockNumArg(big.NewInt(int64(height))))
 	if err != nil { return }
 	header = new(Header)
-	fmt.Println(string(resp.Result))
 	err = json.Unmarshal(resp.Result, header)
 	if err != nil { header = nil }
 	return
