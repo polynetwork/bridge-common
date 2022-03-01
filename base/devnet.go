@@ -35,7 +35,7 @@ const (
 	METIS   uint64 = 300
 	PIXIE   uint64 = 316
 	RINKEBY uint64 = 402
-	HSC     uint64 = 601
+	HSC     uint64 = 603
 
 	SWITCHEO uint64 = 1000
 

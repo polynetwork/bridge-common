@@ -45,7 +45,7 @@ const (
 	BOBA     uint64 = 400
 	RINKEBY  uint64 = 402
 	OASIS    uint64 = 500
-	HSC      uint64 = 601
+	HSC      uint64 = 603
 
 	SWITCHEO uint64 = 1000
 
