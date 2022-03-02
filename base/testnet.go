@@ -46,7 +46,7 @@ const (
 	RINKEBY  uint64 = 402
 	OASIS    uint64 = 500
 	HSC      uint64 = 603
-	HARMONY  uint64 = 800
+	HARMONY  uint64 = 801
 
 	SWITCHEO uint64 = 1000
 
