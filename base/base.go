@@ -118,6 +118,8 @@ func GetChainName(id uint64) string {
 		return "Oasis"
 	case HSC:
 		return "Hsc"
+	case HARMONY:
+		return "Harmony"
 	case BYTOM:
 		return "Bytom"
 	default:

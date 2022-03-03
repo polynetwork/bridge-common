@@ -39,6 +39,7 @@ const (
 	BYTOM   uint64 = 700
 
 	SWITCHEO uint64 = 1000
+	HARMONY  uint64 = 2000001
 
 	ENV = "devnet"
 )
@@ -48,5 +49,5 @@ var CHAINS = []uint64{
 }
 
 var ETH_CHAINS = []uint64{
-	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC, BYTOM,
+	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM,
 }
