@@ -120,6 +120,8 @@ func GetChainName(id uint64) string {
 		return "Hsc"
 	case HARMONY:
 		return "Harmony"
+	case BYTOM:
+		return "Bytom"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -131,7 +133,7 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 120
 	case ETH:
 		return 8
-	case BSC, HECO, HSC:
+	case BSC, HECO, HSC, BYTOM:
 		return 17
 	case O3:
 		return 8
@@ -150,7 +152,7 @@ func BlocksToWait(chainId uint64) uint64 {
 	switch chainId {
 	case ETH:
 		return 12
-	case BSC, HECO, HSC:
+	case BSC, HECO, HSC, BYTOM:
 		return 21
 	case ONT, NEO, NEO3, OK, SWITCHEO:
 		return 1
