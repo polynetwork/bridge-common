@@ -47,7 +47,7 @@ const (
 	OASIS    uint64 = 500
 	HSC      uint64 = 603
 	HARMONY  uint64 = 801
-	BYTOM    uint64 = 700
+	BYTOM    uint64 = 701
 
 	SWITCHEO uint64 = 1000
 

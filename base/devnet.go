@@ -36,7 +36,7 @@ const (
 	PIXIE   uint64 = 316
 	RINKEBY uint64 = 402
 	HSC     uint64 = 603
-	BYTOM   uint64 = 700
+	BYTOM   uint64 = 701
 
 	SWITCHEO uint64 = 1000
 	HARMONY  uint64 = 2000001
