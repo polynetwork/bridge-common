@@ -18,10 +18,11 @@
 package star
 
 import (
-	"time"
 	"context"
+	"time"
 
 	"github.com/starcoinorg/starcoin-go/client"
+
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
 )
@@ -35,7 +36,9 @@ type Client struct {
 }
 
 func New(url string) *Client {
+	client := client.NewStarcoinClient(url)
 	return &Client{
+		Rpc: &client,
 		address: url,
 	}
 }

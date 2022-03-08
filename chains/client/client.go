@@ -22,13 +22,11 @@ import (
 
 	"github.com/polynetwork/bridge-common/base"
 	"github.com/polynetwork/bridge-common/chains"
-	"github.com/polynetwork/bridge-common/chains/eth"
 )
 
 func New(chainID uint64, urls []string, interval time.Duration) (sdk *chains.ChainSDK, err error) {
 	switch chainID {
 	case base.ETH, base.HECO, base.OK, base.BSC, base.MATIC:
-		sdk, err = chains.New(chainID, urls, interval, eth.New)
 	}
 	return
 }
