@@ -7,6 +7,11 @@ import (
 
 func TestClient_HeaderByNumber(t *testing.T) {
 	c := New("https://api.harmony.one")
+	height, err := c.GetLatestHeight()
+	if err != nil {
+		t.Fatal("Failed to get latest height", err)
+	}
+	t.Log("Chain height", height)
 	header, err := c.HeaderByNumber(23361200)
 	if err != nil {
 		t.Fatal("Failed to header by number ", err)
