@@ -50,7 +50,9 @@ const (
 	OASIS   uint64 = 3000000
 	OASIS1  uint64 = 3000001
 
-	ENV = "mainnet"
+	STAR uint64 = 10032
+
+ENV = "mainnet"
 )
 
 var CHAINS = []uint64{

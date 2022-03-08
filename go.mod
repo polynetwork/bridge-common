@@ -3,6 +3,7 @@ module github.com/polynetwork/bridge-common
 go 1.15
 
 require (
+	github.com/starcoinorg/starcoin-go v0.0.0-20220105024102-530daedc128b
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/allegro/bigcache v1.2.1 // indirect
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
