@@ -38,8 +38,9 @@ const (
 	HSC     uint64 = 603
 	BYTOM   uint64 = 701
 
-	SWITCHEO uint64 = 1000
-	HARMONY  uint64 = 801
+	SWITCHEO   uint64 = 1000
+	HARMONY    uint64 = 801
+	BCSPALETTE uint64 = 1001
 
 	ENV = "devnet"
 )
