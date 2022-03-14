@@ -98,6 +98,8 @@ func GetChainName(id uint64) string {
 		return "Arbitrum"
 	case ZILLIQA:
 		return "Zilliqa"
+	case BCSPALETTE:
+		return "BCS Palette"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -111,7 +113,7 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 3
 	case BSC, HECO, O3:
 		return 2
-	case PLT:
+	case PLT, BCSPALETTE:
 		return 5
 	default:
 		return 1
@@ -126,7 +128,7 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 21
 	case ONT, NEO, NEO3, OK, SWITCHEO:
 		return 1
-	case PLT:
+	case PLT, BCSPALETTE:
 		return 4
 	case O3:
 		return 12
