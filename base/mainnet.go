@@ -1,3 +1,4 @@
+//go:build mainnet
 // +build mainnet
 
 /*
@@ -20,26 +21,27 @@
 package base
 
 var (
-	POLY     uint64 = 0
-	BTC      uint64 = 1
-	ETH      uint64 = 2
-	ONT      uint64 = 3
-	NEO      uint64 = 4
-	SWITCHEO uint64 = 5
-	BSC      uint64 = 6
-	HECO     uint64 = 7
-	PLT      uint64 = 8
-	O3       uint64 = 10
-	OK       uint64 = 12
-	HEIMDALL uint64 = 15
-	MATIC    uint64 = 17
-	ZILLIQA  uint64 = 18
-	ARBITRUM uint64 = 19
-	NEO3     uint64 = 88
+	POLY       uint64 = 0
+	BTC        uint64 = 1
+	ETH        uint64 = 2
+	ONT        uint64 = 3
+	NEO        uint64 = 4
+	SWITCHEO   uint64 = 5
+	BSC        uint64 = 6
+	HECO       uint64 = 7
+	PLT        uint64 = 8
+	O3         uint64 = 10
+	OK         uint64 = 12
+	HEIMDALL   uint64 = 15
+	MATIC      uint64 = 17
+	ZILLIQA    uint64 = 18
+	ARBITRUM   uint64 = 19
+	NEO3       uint64 = 88
+	BCSPALETTE uint64 = 1001
 
 	ENV = "mainnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, BCSPALETTE,
 }
