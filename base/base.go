@@ -126,6 +126,8 @@ func GetChainName(id uint64) string {
 		return "BCS Palette"
 	case KCC:
 		return "KCC"
+	case STARCOIN:
+		return "Starcoin"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -147,6 +149,8 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 0
 	case PIXIE:
 		return 2
+	case STARCOIN:
+		return 70
 	default:
 		return 1
 	}
@@ -168,6 +172,8 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 128
 	case PIXIE:
 		return 3
+	case STARCOIN:
+		return 72
 	default:
 		return 100000000
 	}
