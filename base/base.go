@@ -124,6 +124,8 @@ func GetChainName(id uint64) string {
 		return "Bytom"
 	case BCSPALETTE:
 		return "BCS Palette"
+	case KCC:
+		return "KCC"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
