@@ -122,6 +122,8 @@ func GetChainName(id uint64) string {
 		return "Harmony"
 	case BYTOM:
 		return "Bytom"
+	case KCC:
+		return "KCC"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}

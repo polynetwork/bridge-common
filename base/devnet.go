@@ -37,6 +37,7 @@ const (
 	RINKEBY uint64 = 402
 	HSC     uint64 = 603
 	BYTOM   uint64 = 700
+	KCC     uint64 = 900
 
 	SWITCHEO uint64 = 1000
 	HARMONY  uint64 = 801
@@ -49,5 +50,5 @@ var CHAINS = []uint64{
 }
 
 var ETH_CHAINS = []uint64{
-	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM,
+	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, KCC,
 }
