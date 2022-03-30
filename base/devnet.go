@@ -1,3 +1,4 @@
+//go:build devnet
 // +build devnet
 
 /*
@@ -35,12 +36,12 @@ var (
 	NEO3     uint64 = 88
 	PLT      uint64 = 208
 	ZILLIQA  uint64 = 111
-	OK       uint64 = 1012
+	OK       uint64 = 200
 	HEIMDALL uint64 = 2015
 	MATIC    uint64 = 20016
 	ARBITRUM uint64 = 300
 	XDAI     uint64 = 600
-	OPTIMISM uint64 = 200
+	OPTIMISM uint64 = 1200
 	FANTOM   uint64 = 400
 	AVA      uint64 = 500
 	METIS    uint64 = 301
