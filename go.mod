@@ -7,6 +7,7 @@ require (
 	github.com/devfans/zion-sdk v0.0.2
 	github.com/ethereum/go-ethereum v1.10.7
 	github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579
+	github.com/joeqian10/neo3-gogogo v1.1.2
 	github.com/mattn/go-colorable v0.1.7
 	github.com/mattn/go-isatty v0.0.12
 	github.com/okex/exchain-go-sdk v0.18.2
@@ -14,9 +15,7 @@ require (
 	github.com/ontio/ontology-go-sdk v1.11.4
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/polynetwork/cosmos-poly-module v0.0.0-20200810030259-95d586518759
-	github.com/polynetwork/poly v1.3.1
-	github.com/polynetwork/poly-go-sdk v0.0.0-20210114035303-84e1615f4ad4
-	github.com/polynetwork/poly-io-test v0.0.0-20200819093740-8cf514b07750 // indirect
+	github.com/polynetwork/poly v1.3.1 // indirect
 	github.com/tendermint/tendermint v0.33.9
 	golang.org/x/mod v0.5.0 // indirect
 	golang.org/x/sys v0.0.0-20210915083310-ed5796bab164 // indirect
