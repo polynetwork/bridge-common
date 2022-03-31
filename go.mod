@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/cosmos/cosmos-sdk v0.39.2
-	github.com/devfans/zion-sdk v0.0.2
+	github.com/devfans/zion-sdk v0.0.4
 	github.com/ethereum/go-ethereum v1.10.7
 	github.com/joeqian10/neo-gogogo v0.0.0-20201214075916-44b70d175579
 	github.com/joeqian10/neo3-gogogo v1.1.2
