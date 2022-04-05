@@ -31,4 +31,5 @@ require (
 	github.com/tendermint/tendermint v0.33.9
 	github.com/tendermint/tm-db v0.5.2 // indirect
 	golang.org/x/sys v0.0.0-20210915083310-ed5796bab164 // indirect
+	github.com/rain-zxn/ontology-go-sdk v1.1.1
 )
