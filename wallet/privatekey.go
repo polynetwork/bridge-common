@@ -15,19 +15,4 @@
  * along with The poly network .  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package client
-
-import (
-	"time"
-
-	"github.com/polynetwork/bridge-common/base"
-	"github.com/polynetwork/bridge-common/chains"
-)
-
-func New(chainID uint64, urls []string, interval time.Duration) (sdk *chains.ChainSDK, err error) {
-	switch chainID {
-	case base.ETH, base.HECO, base.OK, base.BSC, base.MATIC, base.HSC:
-		sdk, err = chains.New(chainID, urls, interval, eth.New)
-	}
-	return
-}
+package wallet
