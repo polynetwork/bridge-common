@@ -128,6 +128,14 @@ func GetChainName(id uint64) string {
 		return "KCC"
 	case STARCOIN:
 		return "Starcoin"
+	case BINANCE:
+		return "Binance"
+	case OKX:
+		return "Okx"
+	case GATE:
+		return "Gate"
+	case KUCOIN:
+		return "Kucoin"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}

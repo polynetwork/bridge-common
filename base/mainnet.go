@@ -55,9 +55,13 @@ const (
 	BCSPALETTE uint64 = 1001001
 	STARCOIN   uint64 = 1001002
 
-	STAR uint64 = 10032
+	// CEX
+	BINANCE uint64 = 9001
+	OKX     uint64 = 9002
+	GATE    uint64 = 9003
+	KUCOIN  uint64 = 9004
 
-ENV = "mainnet"
+	ENV = "mainnet"
 )
 
 var CHAINS = []uint64{
