@@ -20,16 +20,16 @@ package ontevm
 import (
 	"time"
 
+	ontology_go_sdk "github.com/ontio/ontology-go-sdk"
 	"github.com/ontio/ontology/smartcontract/service/native/cross_chain/header_sync"
 	outils "github.com/ontio/ontology/smartcontract/service/native/utils"
-	ontology_poly_sdk "github.com/rain-zxn/ontology-go-sdk"
 
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
 	"github.com/polynetwork/poly/native/service/utils"
 )
 
-type Rpc = ontology_poly_sdk.OntologySdk
+type Rpc = ontology_go_sdk.OntologySdk
 
 type Client struct {
 	*Rpc
@@ -37,7 +37,7 @@ type Client struct {
 }
 
 func New(url string) *Client {
-	sdk := ontology_poly_sdk.NewOntologySdk()
+	sdk := ontology_go_sdk.NewOntologySdk()
 	sdk.NewRpcClient().SetAddress(url)
 
 	return &Client{
