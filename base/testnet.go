@@ -35,7 +35,7 @@ var (
 	HEIMDALL uint64 = 201
 	MATIC    uint64 = 202
 	ARBITRUM uint64 = 205
-	ONTEVM   uint64 = 5555
+	ONTEVM   uint64 = 333
 
 	SWITCHEO uint64 = 1000
 
