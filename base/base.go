@@ -141,7 +141,7 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 120
 	case ETH:
 		return 8
-	case BSC, HECO, HSC, BYTOM:
+	case BSC, HECO, HSC, BYTOM, KCC:
 		return 17
 	case O3:
 		return 8
@@ -162,10 +162,12 @@ func BlocksToWait(chainId uint64) uint64 {
 	switch chainId {
 	case ETH:
 		return 12
-	case BSC, HECO, HSC, BYTOM:
+	case BSC, HECO, HSC, BYTOM, KCC:
 		return 21
 	case ONT, NEO, NEO3, OK, SWITCHEO:
 		return 1
+	case HARMONY:
+		return 2
 	case PLT, BCSPALETTE:
 		return 4
 	case O3:
