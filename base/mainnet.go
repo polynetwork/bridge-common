@@ -44,14 +44,14 @@ const (
 	METIS    uint64 = 24
 	BOBA     uint64 = 25
 	OASIS    uint64 = 26
+	HARMONY  uint64 = 27
+	HSC      uint64 = 28
+	BYTOM    uint64 = 29
+	KCC      uint64 = 30
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
 	PIXIE      uint64 = 2000000
-	HARMONY    uint64 = 2000001
-	HSC        uint64 = 3000000
-	BYTOM      uint64 = 7000001
-	KCC        uint64 = 7000002
 	BCSPALETTE uint64 = 1001001
 	STARCOIN   uint64 = 1001002
 	ONTEVM     uint64 = 1001333
