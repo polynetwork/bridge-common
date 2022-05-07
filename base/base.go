@@ -72,6 +72,8 @@ func GetChainName(id uint64) string {
 		return "Poly"
 	case ETH:
 		return "Ethereum"
+	case RINKEBY:
+		return "Ethereum-Rinkeby"
 	case ONT:
 		return "Ontology"
 	case NEO:
@@ -98,6 +100,38 @@ func GetChainName(id uint64) string {
 		return "Arbitrum"
 	case ZILLIQA:
 		return "Zilliqa"
+	case XDAI:
+		return "Xdai"
+	case OPTIMISM:
+		return "Optimism"
+	case FANTOM:
+		return "Fantom"
+	case METIS:
+		return "Metis"
+	case AVA:
+		return "Avalanche"
+	case BOBA:
+		return "Boba"
+	case PIXIE:
+		return "Pixie"
+	case OASIS:
+		return "Oasis"
+	case HSC:
+		return "Hsc"
+	case HARMONY:
+		return "Harmony"
+	case BYTOM:
+		return "Bytom"
+	case BCSPALETTE:
+		return "BCS Palette"
+	case KCC:
+		return "KCC"
+	case STARCOIN:
+		return "Starcoin"
+	case ONTEVM:
+		return "ONTEVM"
+	case MILKO:
+		return "Milkomeda"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -106,15 +140,21 @@ func GetChainName(id uint64) string {
 func BlocksToSkip(chainId uint64) uint64 {
 	switch chainId {
 	case MATIC:
-		return 64
+		return 120
 	case ETH:
-		return 3
-	case BSC, HECO, O3:
-		return 2
-	case PLT:
+		return 8
+	case BSC, HECO, HSC, BYTOM, KCC:
+		return 17
+	case O3:
+		return 8
+	case PLT, BCSPALETTE:
 		return 5
 	case ONT:
 		return 0
+	case PIXIE:
+		return 2
+	case STARCOIN:
+		return 70
 	default:
 		return 1
 	}
@@ -124,17 +164,32 @@ func BlocksToWait(chainId uint64) uint64 {
 	switch chainId {
 	case ETH:
 		return 12
-	case BSC, HECO:
+	case BSC, HECO, HSC, BYTOM, KCC:
 		return 21
 	case ONT, NEO, NEO3, OK, SWITCHEO:
 		return 1
-	case PLT:
+	case HARMONY:
+		return 2
+	case PLT, BCSPALETTE:
 		return 4
 	case O3:
 		return 12
 	case MATIC:
 		return 128
+	case PIXIE:
+		return 3
+	case STARCOIN:
+		return 72
 	default:
 		return 100000000
 	}
+}
+
+func SameAsETH(chainId uint64) bool {
+	for _, chain := range ETH_CHAINS {
+		if chain == chainId {
+			return true
+		}
+	}
+	return false
 }

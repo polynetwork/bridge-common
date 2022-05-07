@@ -15,37 +15,53 @@
  * along with The poly network .  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package bridge
+package harmony
 
 import (
-	"fmt"
+	"context"
+	"encoding/hex"
+	"encoding/json"
+	"math/big"
 	"time"
 
 	"github.com/polynetwork/bridge-common/chains"
+	"github.com/polynetwork/bridge-common/chains/custom"
+	"github.com/polynetwork/bridge-common/chains/eth"
 	"github.com/polynetwork/bridge-common/util"
 )
 
 type Client struct {
-	address  string
-	explorer string
+	*eth.Client
+	caller *custom.Client
 }
 
 func New(url string) *Client {
+	client, _ := custom.Dial(url)
 	return &Client{
-		address: url,
+		eth.New(url), client,
 	}
 }
 
-func (c *Client) SetExplorer(url string) {
-	c.explorer = url
+func(c *Client) HeaderByNumber(height uint64) (header *Header, err error) {
+	resp, err := c.caller.CallContextRaw(
+		context.Background(), "hmy_getHeaderByNumber",
+		custom.ToBlockNumArg(big.NewInt(int64(height))))
+	if err != nil { return }
+	header = new(Header)
+	err = json.Unmarshal(resp.Result, header)
+	if err != nil { header = nil }
+	return
 }
 
-func (c *Client) Address() string {
-	return c.address
-}
+func(c *Client) HeaderByNumberRLP(height uint64) (data []byte, err error) {
+	resp, err := c.caller.CallContextRaw(
+		context.Background(), "hmy_getHeaderByNumberRLPHex",
+		custom.ToBlockNumArg(big.NewInt(int64(height))))
 
-func (c *Client) GetLatestHeight() (uint64, error) {
-	return 1, nil
+	if err == nil {
+		data, err = hex.DecodeString(string(resp.Result[1:len(resp.Result)-1]))
+	}
+	return
 }
 
 type SDK struct {
@@ -97,13 +113,12 @@ func (s *SDK) Create() (interface{}, error) {
 	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }
 
-func (s *SDK) Key() (key string) {
+func (s *SDK) Key() string {
 	if s.ChainSDK != nil {
-		key = s.ChainSDK.Key()
+		return s.ChainSDK.Key()
 	} else if s.options != nil {
-		key = s.options.Key()
+		return s.options.Key()
 	} else {
 		panic("Unable to identify the sdk")
 	}
-	return fmt.Sprintf("Bridge-Client%s", key)
 }
