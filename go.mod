@@ -24,6 +24,7 @@ require (
 	github.com/mattn/go-isatty v0.0.12
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
+	github.com/novifinancial/serde-reflection/serde-generate/runtime/golang v0.0.0-20211013011333-6820d5b97d8c
 	github.com/ontio/ontology v1.11.1-0.20200812075204-26cf1fa5dd47
 	github.com/ontio/ontology-go-sdk v1.11.4
 	github.com/pkg/errors v0.9.1
@@ -33,10 +34,12 @@ require (
 	github.com/polynetwork/poly-io-test v0.0.0-20200819093740-8cf514b07750 // indirect
 	github.com/prometheus/tsdb v0.10.0 // indirect
 	github.com/rjeczalik/notify v0.9.2 // indirect
+	github.com/rs/cors v1.7.0
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cobra v1.1.1 // indirect
 	github.com/spf13/viper v1.7.1 // indirect
-	github.com/status-im/keycard-go v0.0.0-20191119114148-6dd40a46baa0 // indirect
+	github.com/starcoinorg/starcoin-go v0.0.0-20220105024102-530daedc128b
+	github.com/status-im/keycard-go v0.0.0-20190424133014-d95853db0f48 // indirect
 	github.com/tendermint/go-amino v0.15.1
 	github.com/tendermint/tendermint v0.33.9
 	github.com/tendermint/tm-db v0.5.2 // indirect
