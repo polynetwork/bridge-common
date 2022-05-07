@@ -1,3 +1,4 @@
+//go:build devnet
 // +build devnet
 
 /*
@@ -19,21 +20,38 @@
 
 package base
 
-var (
-	POLY  uint64 = 0
-	BTC   uint64 = 1
-	ETH   uint64 = 2
-	ONT   uint64 = 3
-	NEO   uint64 = 4
-	BSC   uint64 = 6
-	HECO  uint64 = 7
-	O3    uint64 = 80
-	NEO3  uint64 = 88
-	OK    uint64 = 90
-	MATIC uint64 = 13
+const (
+	POLY    uint64 = 0
+	BTC     uint64 = 1
+	ETH     uint64 = 2
+	ONT     uint64 = 3
+	NEO     uint64 = 4
+	BSC     uint64 = 6
+	HECO    uint64 = 7
+	O3      uint64 = 80
+	NEO3    uint64 = 88
+	OK      uint64 = 90
+	MATIC   uint64 = 13
+	METIS   uint64 = 300
+	PIXIE   uint64 = 316
+	RINKEBY uint64 = 402
+	HSC     uint64 = 603
+	BYTOM   uint64 = 701
+	KCC     uint64 = 900
+	ONTEVM  uint64 = 5555
 
-	SWITCHEO uint64 = 1000
+	SWITCHEO   uint64 = 1000
+	HARMONY    uint64 = 801
+	BCSPALETTE uint64 = 1001
+	STARCOIN   uint64 = 318
 
 	ENV = "devnet"
 )
-var CHAINS = []uint64{POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC}
+
+var CHAINS = []uint64{
+	POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, STARCOIN, ONTEVM,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, KCC, ONTEVM,
+}

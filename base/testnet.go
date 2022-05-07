@@ -20,29 +20,51 @@
 
 package base
 
-var (
-	POLY       uint64 = 0
-	BTC        uint64 = 1
-	ETH        uint64 = 2
-	ONT        uint64 = 3
-	NEO        uint64 = 5
-	HECO       uint64 = 7
-	BSC        uint64 = 79
-	O3         uint64 = 82
-	NEO3       uint64 = 88
-	PLT        uint64 = 107
-	ZILLIQA    uint64 = 111
-	OK         uint64 = 200
-	HEIMDALL   uint64 = 201
-	MATIC      uint64 = 202
-	ARBITRUM   uint64 = 205
-	BCSPALETTE uint64 = 1001
+const (
+	POLY     uint64 = 0
+	BTC      uint64 = 1
+	ETH      uint64 = 2
+	ONT      uint64 = 3
+	NEO      uint64 = 5
+	HECO     uint64 = 7
+	BSC      uint64 = 79
+	O3       uint64 = 82
+	NEO3     uint64 = 88
+	PLT      uint64 = 107
+	ZILLIQA  uint64 = 111
+	OK       uint64 = 200
+	HEIMDALL uint64 = 201
+	MATIC    uint64 = 202
+	ARBITRUM uint64 = 205
+	XDAI     uint64 = 206
+	OPTIMISM uint64 = 210
+	FANTOM   uint64 = 208
+	AVA      uint64 = 209
+	METIS    uint64 = 300
+	PIXIE    uint64 = 316
+	BOBA     uint64 = 400
+	RINKEBY  uint64 = 402
+	OASIS    uint64 = 500
+	HSC      uint64 = 603
+	BYTOM    uint64 = 701
+	HARMONY  uint64 = 800
+	KCC      uint64 = 900
+	ONTEVM   uint64 = 333
+	MILKO    uint64 = 810
 
-	SWITCHEO uint64 = 1000
+	SWITCHEO   uint64 = 1000
+	BCSPALETTE uint64 = 1001
+	STARCOIN   uint64 = 318
 
 	ENV = "testnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, BCSPALETTE,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	METIS, RINKEBY, BOBA, PIXIE, OASIS, HSC, HARMONY, BYTOM, BCSPALETTE, STARCOIN, ONTEVM, KCC, MILKO,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, RINKEBY, BOBA, PIXIE, OASIS, HSC,
+	HARMONY, HARMONY, BYTOM, BCSPALETTE, KCC, ONTEVM, MILKO,
 }

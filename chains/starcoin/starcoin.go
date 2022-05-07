@@ -1,43 +1,26 @@
-/*
- * Copyright (C) 2021 The poly network Authors
- * This file is part of The poly network library.
- *
- * The  poly network  is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The  poly network  is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License
- * along with The poly network .  If not, see <http://www.gnu.org/licenses/>.
- */
-
-package bridge
+package starcoin
 
 import (
-	"fmt"
-	"time"
-
+	"context"
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
+	"github.com/starcoinorg/starcoin-go/client"
+	"time"
 )
 
+type Rpc = client.StarcoinClient
+
 type Client struct {
-	address  string
-	explorer string
+	*Rpc
+	address string
 }
 
 func New(url string) *Client {
+	c := client.NewStarcoinClient(url)
 	return &Client{
+		Rpc:     &c,
 		address: url,
 	}
-}
-
-func (c *Client) SetExplorer(url string) {
-	c.explorer = url
 }
 
 func (c *Client) Address() string {
@@ -45,7 +28,11 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
-	return 1, nil
+	nodeInfo, err := c.GetNodeInfo(context.Background())
+	if err != nil {
+		return 0, err
+	}
+	return nodeInfo.GetBlockNumber()
 }
 
 type SDK struct {
@@ -54,22 +41,14 @@ type SDK struct {
 	options *chains.Options
 }
 
-func (s *SDK) Node() *Client {
-	return s.nodes[s.ChainSDK.Index()]
-}
-
-func (s *SDK) Select() *Client {
-	return s.nodes[s.ChainSDK.Select()]
-}
-
 func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
 
 	clients := make([]*Client, len(urls))
 	nodes := make([]chains.SDK, len(urls))
 	for i, url := range urls {
-		client := New(url)
-		nodes[i] = client
-		clients[i] = client
+		c := New(url)
+		nodes[i] = c
+		clients[i] = c
 	}
 	sdk, err := chains.NewChainSDK(chainID, nodes, interval, maxGap)
 	if err != nil {
@@ -93,17 +72,24 @@ func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap u
 	return sdk.(*SDK), nil
 }
 
+func (s *SDK) Node() *Client {
+	return s.nodes[s.ChainSDK.Index()]
+}
+
+func (s *SDK) Select() *Client {
+	return s.nodes[s.ChainSDK.Select()]
+}
+
 func (s *SDK) Create() (interface{}, error) {
 	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }
 
-func (s *SDK) Key() (key string) {
+func (s *SDK) Key() string {
 	if s.ChainSDK != nil {
-		key = s.ChainSDK.Key()
+		return s.ChainSDK.Key()
 	} else if s.options != nil {
-		key = s.options.Key()
+		return s.options.Key()
 	} else {
 		panic("Unable to identify the sdk")
 	}
-	return fmt.Sprintf("Bridge-Client%s", key)
 }

@@ -20,28 +20,51 @@
 
 package base
 
-var (
-	POLY       uint64 = 0
-	BTC        uint64 = 1
-	ETH        uint64 = 2
-	ONT        uint64 = 3
-	NEO        uint64 = 4
-	SWITCHEO   uint64 = 5
-	BSC        uint64 = 6
-	HECO       uint64 = 7
-	PLT        uint64 = 8
-	O3         uint64 = 10
-	OK         uint64 = 12
-	HEIMDALL   uint64 = 15
-	MATIC      uint64 = 17
-	ZILLIQA    uint64 = 18
-	ARBITRUM   uint64 = 19
-	NEO3       uint64 = 88
-	BCSPALETTE uint64 = 1001
+const (
+	POLY     uint64 = 0
+	BTC      uint64 = 1
+	ETH      uint64 = 2
+	ONT      uint64 = 3
+	NEO      uint64 = 4
+	SWITCHEO uint64 = 5
+	BSC      uint64 = 6
+	HECO     uint64 = 7
+	PLT      uint64 = 8
+	O3       uint64 = 10
+	OK       uint64 = 12
+	NEO3     uint64 = 14
+	HEIMDALL uint64 = 15
+	MATIC    uint64 = 17
+	ZILLIQA  uint64 = 18
+	ARBITRUM uint64 = 19
+	XDAI     uint64 = 20
+	AVA      uint64 = 21
+	FANTOM   uint64 = 22
+	OPTIMISM uint64 = 23
+	METIS    uint64 = 24
+	BOBA     uint64 = 25
+	OASIS    uint64 = 26
+	HARMONY  uint64 = 27
+	HSC      uint64 = 28
+	BYTOM    uint64 = 29
+	KCC      uint64 = 30
+
+	// Invalid chain IDs
+	RINKEBY    uint64 = 1000000
+	PIXIE      uint64 = 2000000
+	BCSPALETTE uint64 = 1001001
+	STARCOIN   uint64 = 1001002
+	ONTEVM     uint64 = 1001333
+	MILKO      uint64 = 1001335
 
 	ENV = "mainnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, BCSPALETTE,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	METIS, BOBA, PIXIE, OASIS, HSC, HARMONY, BYTOM, BCSPALETTE, STARCOIN, ONTEVM, KCC, MILKO,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, BOBA, PIXIE, OASIS, HSC, HARMONY, HARMONY, BYTOM, BCSPALETTE, KCC, ONTEVM, MILKO,
 }
