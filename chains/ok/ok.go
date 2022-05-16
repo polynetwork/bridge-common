@@ -18,6 +18,7 @@
 package ok
 
 import (
+	"github.com/polynetwork/bridge-common/log"
 	"math"
 	"sync/atomic"
 	"time"
@@ -58,9 +59,13 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 
 func (c *Client) QueryCommitResult(height uint64) (*ttypes.ResultCommit, error) {
 	cr, err := c.Tendermint().QueryCommitResult(int64(height))
+	if height/10 == 0 {
+		log.Info("tendermint", "node", c.address, "weight", *(c.weight))
+	}
 	if err != nil {
 		if w := atomic.LoadUint64(c.weight); w > 0 {
 			atomic.StoreUint64(c.weight, w-1)
+			log.Error("QueryCommitResult", "error", err, "node", c.address, "weight", *(c.weight))
 		}
 		return nil, err
 	}
@@ -72,6 +77,7 @@ func (c *Client) GetValidators(height uint64) (validators []*types.Validator, er
 	if err != nil {
 		if w := atomic.LoadUint64(c.weight); w > 0 {
 			atomic.StoreUint64(c.weight, w-1)
+			log.Error("QueryValidatorsResult", "error", err, "node", c.address, "weight", *(c.weight))
 		}
 		return nil, err
 	}
