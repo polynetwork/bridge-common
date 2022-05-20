@@ -124,6 +124,8 @@ func GetChainName(id uint64) string {
 		return "Bytom"
 	case BCSPALETTE:
 		return "BCS Palette"
+	case BCSPALETTE2:
+		return "BCS Palette2"
 	case KCC:
 		return "KCC"
 	case STARCOIN:
@@ -147,7 +149,7 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 17
 	case O3:
 		return 8
-	case PLT, BCSPALETTE:
+	case PLT, BCSPALETTE, BCSPALETTE2:
 		return 5
 	case ONT:
 		return 0
@@ -170,7 +172,7 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 1
 	case HARMONY:
 		return 2
-	case PLT, BCSPALETTE:
+	case PLT, BCSPALETTE, BCSPALETTE2:
 		return 4
 	case O3:
 		return 12

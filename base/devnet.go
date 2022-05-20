@@ -40,10 +40,11 @@ const (
 	KCC     uint64 = 900
 	ONTEVM  uint64 = 5555
 
-	SWITCHEO   uint64 = 1000
-	HARMONY    uint64 = 801
-	BCSPALETTE uint64 = 1001
-	STARCOIN   uint64 = 318
+	SWITCHEO    uint64 = 1000
+	HARMONY     uint64 = 801
+	BCSPALETTE  uint64 = 1001
+	BCSPALETTE2 uint64 = 1002
+	STARCOIN    uint64 = 318
 
 	ENV = "devnet"
 )
