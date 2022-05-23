@@ -132,6 +132,10 @@ func GetChainName(id uint64) string {
 		return "ONTEVM"
 	case MILKO:
 		return "Milkomeda"
+	case CUBE:
+		return "Cube"
+	case KAVA:
+		return "Kava"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
