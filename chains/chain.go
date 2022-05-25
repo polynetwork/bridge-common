@@ -102,19 +102,38 @@ func (s *ChainSDK) updateSelection() {
 	var sdk SDK
 	var index int
 	state := make([]uint64, len(s.nodes))
+	timer := time.After(time.Second * 10)
+	ch := make(chan [2]uint64, len(s.nodes))
 	for i, s := range s.nodes {
-		h, err := s.GetLatestHeight()
-		if err != nil {
-			log.Error("Ping node error", "url", s.Address(), "err", err)
-		} else {
-			state[i] = h
-			if h > height {
-				height = h
-				sdk = s
-				index = i
+		go func (index int, node SDK) {
+			h, err := node.GetLatestHeight()
+			if err != nil {
+				log.Error("Ping node error", "url", node.Address(), "err", err)
+			}
+			ch <- [2]uint64{uint64(index), h}
+		} (i, s)
+	}
+
+	count := len(s.nodes)
+	LOOP:
+	for {
+		select {
+		case <- timer:
+			break LOOP
+		case res := <- ch:
+			count--
+			state[int(res[0])] = res[1]
+			if res[1] > height {
+				index = int(res[0])
+				height = res[1]
+				sdk = s.nodes[index]
+			}
+			if count == 0 {
+				break LOOP
 			}
 		}
 	}
+
 	status := 1
 	if sdk == nil {
 		status = 0
