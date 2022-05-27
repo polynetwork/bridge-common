@@ -25,7 +25,6 @@ import (
 	"strconv"
 
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
 )
 
@@ -44,6 +43,7 @@ var (
 	VMODULE   = ""
 
 	glogger *log.GlogHandler
+	output 	io.Writer
 
 	New    = log.New
 	Root   = log.Root
@@ -67,16 +67,13 @@ func init() {
 	log.Root().SetHandler(glogger)
 }
 
-func Init() {
+func Init(config *LogConfig) {
 	var ostream log.Handler
-	output := io.Writer(os.Stderr)
+	output = config.Writer()
 	if JSON {
 		ostream = log.StreamHandler(output, log.JSONFormat())
 	} else {
 		usecolor := (isatty.IsTerminal(os.Stderr.Fd()) || isatty.IsCygwinTerminal(os.Stderr.Fd())) && os.Getenv("TERM") != "dumb"
-		if usecolor {
-			output = colorable.NewColorableStderr()
-		}
 		ostream = log.StreamHandler(output, log.TerminalFormat(usecolor))
 	}
 	glogger.SetHandler(ostream)
@@ -105,6 +102,10 @@ func Init() {
 
 func Json(lvl log.Lvl, body interface{}) {
 	v, _ := json.Marshal(body)
+	if output != nil {
+		log.Output(string(v), lvl, 0, nil)
+		return
+	}
 	if lvl <= VERBOSITY {
 		fmt.Println(string(v))
 	}
