@@ -48,6 +48,7 @@ const (
 	HSC      uint64 = 28
 	BYTOM    uint64 = 29
 	KCC      uint64 = 30
+	KAVA     uint64 = 32
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
@@ -57,7 +58,6 @@ const (
 	ONTEVM     uint64 = 1001333
 	MILKO      uint64 = 1001335
 	CUBE       uint64 = 1001336
-	KAVA       uint64 = 1001337
 
 	ENV = "mainnet"
 )
