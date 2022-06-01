@@ -17,15 +17,18 @@
 
 package bridge
 
-import "github.com/polynetwork/bridge-common/tools"
+import (
+	"github.com/polynetwork/bridge-common/tools"
+)
 
 type CheckFeeStatus int
 
 const (
-	SKIP     CheckFeeStatus = -2 // Skip since not our tx
-	NOT_PAID CheckFeeStatus = -1 // Not paid or paid too low
-	MISSING  CheckFeeStatus = 0  // Tx not received yet
-	PAID     CheckFeeStatus = 1  // Paid and enough pass
+	SKIP        CheckFeeStatus = -2 // Skip since not our tx
+	NOT_PAID    CheckFeeStatus = -1 // Not paid or paid too low
+	MISSING     CheckFeeStatus = 0  // Tx not received yet
+	PAID        CheckFeeStatus = 1  // Paid and enough pass
+	EstimatePay CheckFeeStatus = 2  // Paid but need EstimateGas
 )
 
 type CheckFeeRequest struct {
@@ -34,6 +37,7 @@ type CheckFeeRequest struct {
 	PolyHash string
 	Paid     float64
 	Min      float64
+	PaidGas  float64
 	Status   CheckFeeStatus
 }
 
@@ -47,6 +51,10 @@ func (r *CheckFeeRequest) Skip() bool {
 
 func (r *CheckFeeRequest) Missing() bool {
 	return r == nil || r.Status == MISSING
+}
+
+func (r *CheckFeeRequest) EstimatePay() bool {
+	return r != nil && r.Status == EstimatePay
 }
 
 func (c *Client) CheckFee(req map[string]*CheckFeeRequest) (err error) {

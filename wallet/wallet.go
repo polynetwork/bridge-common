@@ -56,6 +56,7 @@ type IWallet interface {
 	EstimateWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	Accounts() []accounts.Account
 	GetBalance(common.Address) (*big.Int, error)
+	EstimateGas(addr common.Address, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
 }
 
 type Wallet struct {
@@ -257,4 +258,20 @@ func (w *Wallet) Select() (accounts.Account, Provider, NonceProvider) {
 
 func (w *Wallet) Upgrade() *EthWallet {
 	return &EthWallet{*w}
+}
+
+func (w *Wallet) EstimateGas(addr common.Address, data []byte) (gasPrice *big.Int, gasLimit uint64, err error) {
+	gasPrice, err = w.GasPrice()
+	if err != nil {
+		err = fmt.Errorf("Get gas price error %v", err)
+		return
+	}
+	account, _, _ := w.Select()
+	msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: big.NewInt(0), Data: data}
+	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
+	if err != nil {
+		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
+		return
+	}
+	return
 }
