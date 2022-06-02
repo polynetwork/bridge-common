@@ -58,7 +58,7 @@ type IWallet interface {
 	Select() (accounts.Account, Provider, NonceProvider)
 	GetBalance(common.Address) (*big.Int, error)
 	EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
-    SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
+	SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 }
 
 type Wallet struct {
