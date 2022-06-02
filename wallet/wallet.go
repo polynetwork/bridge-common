@@ -281,7 +281,6 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	return
 }
 
-
 func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
 		err = fmt.Errorf("max limit is zero or missing")
@@ -339,7 +338,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		return
 	}
 	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
-	err = w.sdk.Node().SendTransaction(context.Background(), tx)
+	err = w.sdk.Node().SendTransaction(context.Background(), tx, bind.PrivateTxArgs{})
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
 	return tx.Hash().String(), err
