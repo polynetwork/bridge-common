@@ -28,7 +28,7 @@ const (
 	NOT_PAID    CheckFeeStatus = -1 // Not paid or paid too low
 	MISSING     CheckFeeStatus = 0  // Tx not received yet
 	PAID        CheckFeeStatus = 1  // Paid and enough pass
-	EstimatePay CheckFeeStatus = 2  // Paid but need EstimateGas
+	PAID_LIMIT  CheckFeeStatus = 2  // Paid but need EstimateGas
 )
 
 type CheckFeeRequest struct {
@@ -53,8 +53,8 @@ func (r *CheckFeeRequest) Missing() bool {
 	return r == nil || r.Status == MISSING
 }
 
-func (r *CheckFeeRequest) EstimatePay() bool {
-	return r != nil && r.Status == EstimatePay
+func (r *CheckFeeRequest) PaidLimit() bool {
+	return r != nil && r.Status == PAID_LIMIT
 }
 
 func (c *Client) CheckFee(req map[string]*CheckFeeRequest) (err error) {
