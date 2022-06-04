@@ -47,6 +47,10 @@ type Config struct {
 	// ONT wallet
 	GasPrice uint64
 	GasLimit uint64
+
+	// FLOW wallet
+	Address    string
+	PrivateKey string
 }
 
 type IWallet interface {

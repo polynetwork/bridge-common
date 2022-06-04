@@ -39,6 +39,7 @@ const (
 	BYTOM      uint64 = 701
 	KCC        uint64 = 900
 	ONTEVM     uint64 = 5555
+	FLOW       uint64 = 444
 	KAVA       uint64 = 920
 	CUBE       uint64 = 930
 	SWITCHEO   uint64 = 1000
@@ -50,7 +51,7 @@ const (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, STARCOIN, ONTEVM, CUBE, KAVA,
+	POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, STARCOIN, ONTEVM, CUBE, KAVA, FLOW,
 }
 
 var ETH_CHAINS = []uint64{
