@@ -148,7 +148,7 @@ func BlocksToSkip(chainId uint64) uint64 {
 	case ETH:
 		return 8
 	case BSC, HECO, HSC, BYTOM, KCC:
-		return 17
+		return 20
 	case O3:
 		return 8
 	case PLT, BCSPALETTE:
