@@ -62,7 +62,7 @@ func SetBalanceLimit(chain uint64, limit *big.Int) {
 func HasBalance(chain uint64, balance *big.Int) bool {
 	limit := balanceMinLimits[chain]
 	if limit == nil {
-		limit = util.SetDecimals(big.NewInt(2), 17)
+		limit = util.SetDecimals(big.NewInt(1), 17)
 	}
 	return balance != nil && balance.Cmp(limit) >= 0
 }
