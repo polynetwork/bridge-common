@@ -50,14 +50,14 @@ const (
 	KCC      uint64 = 30
 	STARCOIN uint64 = 31
 	KAVA     uint64 = 32
+	MILKO    uint64 = 34
+	CUBE     uint64 = 35
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
 	PIXIE      uint64 = 2000000
 	BCSPALETTE uint64 = 1001001
 	ONTEVM     uint64 = 1001333
-	MILKO      uint64 = 1001335
-	CUBE       uint64 = 1001336
 	FLOW       uint64 = 1000444
 
 	ENV = "mainnet"
