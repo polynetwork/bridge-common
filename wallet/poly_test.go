@@ -24,14 +24,14 @@ import (
 
 func TestNewPolySigner(t *testing.T) {
 	type args struct {
-		config *PolySignerConfig
+		config *Config
 	}
 	tests := []struct {
 		name    string
 		args    args
 		wantErr bool
 	}{
-		{"TestPolySigner", args{&PolySignerConfig{"../../poly.dat", os.Getenv("POLY_PASS")}}, false},
+		{"TestPolySigner", args{&Config{Path: "../../poly.dat",Password: os.Getenv("POLY_PASS")}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
