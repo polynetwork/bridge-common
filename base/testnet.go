@@ -20,7 +20,7 @@
 
 package base
 
-var (
+const (
 	POLY     uint64 = 0
 	ZION     uint64 = 1
 	ETH      uint64 = 10002
@@ -28,7 +28,6 @@ var (
 	NEO      uint64 = 5
 	HECO     uint64 = 7
 	BSC      uint64 = 6
-	SIDE     uint64 = 77
 	O3       uint64 = 82
 	NEO3     uint64 = 88
 	PLT      uint64 = 107
@@ -42,12 +41,37 @@ var (
 	AVA      uint64 = 209
 	OPTIMISM uint64 = 210
 	METIS    uint64 = 300
+	PIXIE    uint64 = 316
+	BOBA     uint64 = 400
+	RINKEBY  uint64 = 402
+	OASIS    uint64 = 500
+	HSC      uint64 = 603
+	BYTOM    uint64 = 701
+	HARMONY  uint64 = 800
+	KCC      uint64 = 900
+	ONTEVM   uint64 = 333
+	MILKO    uint64 = 810
+	FLOW     uint64 = 910
+	KAVA     uint64 = 920
+	CUBE     uint64 = 930
 
-	SWITCHEO uint64 = 1000
+	SWITCHEO   uint64 = 1000
+	BCSPALETTE uint64 = 1001
+	STARCOIN   uint64 = 318
+
+	// Invalid chain ids
+	KOVAN  uint64 = 9000002
+	GOERLI uint64 = 9000003
 
 	ENV = "testnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, SIDE, METIS,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	METIS, RINKEBY, BOBA, PIXIE, OASIS, HSC, HARMONY, BYTOM, BCSPALETTE, STARCOIN, ONTEVM, KCC, MILKO, CUBE, KAVA, FLOW,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, RINKEBY, BOBA, PIXIE, OASIS, HSC,
+	HARMONY, HARMONY, BYTOM, BCSPALETTE, KCC, ONTEVM, MILKO, CUBE, KAVA,
 }

@@ -18,11 +18,13 @@
 package wallet
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/polynetwork/bridge-common/log"
+	"github.com/polynetwork/bridge-common/util"
 )
 
 type KeyStoreProviderConfig struct {
@@ -62,4 +64,49 @@ func (p *KeyStoreProvider) Init(account accounts.Account) error {
 		return nil
 	}
 	return p.Unlock(account, pass)
+}
+
+func UpdateAccount(path, password, newPassword, account string) (err error) {
+	if path == "" {
+		return fmt.Errorf("Wallet patch can not be empty")
+	}
+	if account != "" {
+		account = util.LowerHex(account)
+	}
+	ks := keystore.NewKeyStore(path, keystore.StandardScryptN, keystore.StandardScryptP)
+	for i, a := range ks.Accounts() {
+		if account != "" && util.LowerHex(a.Address.String()) != account {
+			continue
+		}
+		err = ks.Update(a, password, newPassword)
+		log.Info("Updating passphrase", "index", i, "account", a.Address.String(), "newer", newPassword, "err", err)
+		if err != nil {
+			err = fmt.Errorf("Failed to update password, %w", err)
+		}
+	}
+	return
+}
+
+func CreateAccount(path, password string) (err error) {
+	if path == "" {
+		return fmt.Errorf("Wallet patch can not be empty")
+	}
+	ks := keystore.NewKeyStore(path, keystore.StandardScryptN, keystore.StandardScryptP)
+	account, err := ks.NewAccount(password)
+	if err != nil {
+		return
+	}
+	log.Info("Created new account", "address", account.Address.Hex())
+	/*
+		data, err := ks.Export(account, password, password)
+		if err != nil {
+			return
+		}
+		fmt.Println(string(data))
+		err = ioutil.WriteFile(fmt.Sprintf("%s/%s.json", path, account.Address.Hex()), data, 0644)
+		if err != nil {
+			log.Error("Failed to write account file", "err", err)
+		}
+	*/
+	return nil
 }

@@ -1,3 +1,4 @@
+//go:build devnet
 // +build devnet
 
 /*
@@ -19,36 +20,55 @@
 
 package base
 
-var (
-	POLY     uint64 = 0
-	ZION     uint64 = 1
-	ETH      uint64 = 2
-	KOVAN    uint64 = 302
-	RINKBY   uint64 = 402
-	GOERLI   uint64 = 502
-	ONT      uint64 = 3
-	NEO      uint64 = 5
-	HECO     uint64 = 7
-	BSC      uint64 = 79
-	SIDE     uint64 = 77
-	O3       uint64 = 82
-	NEO3     uint64 = 88
-	PLT      uint64 = 107
-	ZILLIQA  uint64 = 111
-	OK       uint64 = 1012
-	HEIMDALL uint64 = 2015
-	MATIC    uint64 = 20016
-	ARBITRUM uint64 = 300
-	XDAI     uint64 = 600
-	OPTIMISM uint64 = 200
-	FANTOM   uint64 = 400
-	AVA      uint64 = 500
-	METIS    uint64 = 301
-	SWITCHEO uint64 = 1000
+const (
+	POLY       uint64 = 0
+	BTC        uint64 = 1
+	ETH        uint64 = 2
+	ONT        uint64 = 3
+	NEO        uint64 = 4
+	BSC        uint64 = 6
+	HECO       uint64 = 7
+	O3         uint64 = 80
+	NEO3       uint64 = 88
+	OK         uint64 = 90
+	MATIC      uint64 = 13
+	METIS      uint64 = 300
+	PIXIE      uint64 = 316
+	RINKEBY    uint64 = 402
+	HSC        uint64 = 603
+	BYTOM      uint64 = 701
+	KCC        uint64 = 900
+	ONTEVM     uint64 = 5555
+	FLOW       uint64 = 444
+	KAVA       uint64 = 920
+	CUBE       uint64 = 930
+	SWITCHEO   uint64 = 1000
+	HARMONY    uint64 = 801
+	BCSPALETTE uint64 = 1001
+	STARCOIN   uint64 = 318
+
+	// Invalid chain ids
+	HEIMDALL uint64 = 9000001
+	PLT      uint64 = 9000002
+	ARBITRUM uint64 = 9000003
+	ZILLIQA  uint64 = 9000004
+	XDAI     uint64 = 9000005
+	OPTIMISM uint64 = 9000006
+	FANTOM   uint64 = 9000007
+	AVA      uint64 = 9000008
+	BOBA     uint64 = 9000009
+	OASIS    uint64 = 9000010
+	MILKO    uint64 = 9000011
+	KOVAN    uint64 = 9000012
+	GOERLI   uint64 = 9000013
 
 	ENV = "devnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, KOVAN, RINKBY, GOERLI, SIDE, METIS,
+	POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, STARCOIN, ONTEVM, CUBE, KAVA, FLOW,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, KCC, ONTEVM, CUBE, KAVA,
 }

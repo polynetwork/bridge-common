@@ -1,3 +1,4 @@
+//go:build mainnet
 // +build mainnet
 
 /*
@@ -19,7 +20,7 @@
 
 package base
 
-var (
+const (
 	POLY     uint64 = 0
 	ZION     uint64 = 1
 	ETH      uint64 = 2
@@ -37,15 +38,36 @@ var (
 	ZILLIQA  uint64 = 18
 	ARBITRUM uint64 = 19
 	XDAI     uint64 = 20
-	SIDE     uint64 = 77
-	OPTIMISM uint64 = 200007
-	FANTOM   uint64 = 200008
-	AVA      uint64 = 200009
-	METIS    uint64 = 300
+	AVA      uint64 = 21
+	FANTOM   uint64 = 22
+	OPTIMISM uint64 = 23
+	METIS    uint64 = 24
+	BOBA     uint64 = 25
+	OASIS    uint64 = 26
+	HARMONY  uint64 = 27
+	HSC      uint64 = 28
+	BYTOM    uint64 = 29
+	KCC      uint64 = 30
+	STARCOIN uint64 = 31
+	KAVA     uint64 = 32
+	MILKO    uint64 = 34
+	CUBE     uint64 = 35
+
+	// Invalid chain IDs
+	RINKEBY    uint64 = 1000000
+	PIXIE      uint64 = 2000000
+	BCSPALETTE uint64 = 1001001
+	ONTEVM     uint64 = 1001333
+	FLOW       uint64 = 1000444
 
 	ENV = "mainnet"
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, SIDE, METIS,
+	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
+	METIS, BOBA, PIXIE, OASIS, HSC, HARMONY, BYTOM, BCSPALETTE, STARCOIN, ONTEVM, KCC, MILKO, CUBE, KAVA, FLOW,
+}
+
+var ETH_CHAINS = []uint64{
+	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, BOBA, PIXIE, OASIS, HSC, HARMONY, BYTOM, BCSPALETTE, KCC, ONTEVM, MILKO, CUBE, KAVA,
 }

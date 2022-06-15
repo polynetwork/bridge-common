@@ -18,7 +18,10 @@
 package wallet
 
 import (
+	"math/big"
+
 	"github.com/polynetwork/bridge-common/base"
+	"github.com/polynetwork/bridge-common/util"
 )
 
 var softGasLimits = map[uint64]uint64{}
@@ -47,4 +50,19 @@ func GetChainGasLimit(chain, limit uint64) uint64 {
 		limit = hard
 	}
 	return limit
+}
+
+var balanceMinLimits = map[uint64]*big.Int{}
+
+// NOTE: call on init
+func SetBalanceLimit(chain uint64, limit *big.Int) {
+	balanceMinLimits[chain] = limit
+}
+
+func HasBalance(chain uint64, balance *big.Int) bool {
+	limit := balanceMinLimits[chain]
+	if limit == nil {
+		limit = util.SetDecimals(big.NewInt(1), 17)
+	}
+	return balance != nil && balance.Cmp(limit) >= 0
 }
