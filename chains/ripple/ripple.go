@@ -29,8 +29,8 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
-	h, err := c.GetLatestHeight()
-	return h, err
+	h, err := c.GetRpcClient().GetCurrentHeight()
+	return uint64(h), err
 }
 
 type SDK struct {
