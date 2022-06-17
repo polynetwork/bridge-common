@@ -16,7 +16,7 @@
  */
 
 package switcheo
-
+/*
 import (
 	"time"
 
@@ -148,3 +148,4 @@ func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap u
 func (s *SDK) Create() (interface{}, error) {
 	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }
+ */

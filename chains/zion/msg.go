@@ -17,13 +17,7 @@
 
 package zion
 
-import (
-	"fmt"
-	"sort"
-
-	"github.com/devfans/zion/common"
-)
-
+/*
 type SigInfo struct {
 	Status  bool
 	SigInfo map[string][]byte
@@ -71,3 +65,4 @@ func (s *SigInfo) Deserialization(source *common.ZeroCopySource) error {
 	s.SigInfo = sigInfo
 	return nil
 }
+ */

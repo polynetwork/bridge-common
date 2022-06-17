@@ -1,5 +1,6 @@
 package flow
 
+/*
 import (
 	"context"
 	"github.com/onflow/flow-go-sdk/client"
@@ -101,3 +102,4 @@ func (s *SDK) Key() string {
 		panic("Unable to identify the sdk")
 	}
 }
+ */

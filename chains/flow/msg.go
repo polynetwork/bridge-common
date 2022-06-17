@@ -1,5 +1,5 @@
 package flow
-
+/*
 import (
 	"crypto/ecdsa"
 	"fmt"
@@ -84,3 +84,4 @@ func RecoverPubkeyFromFlowSig(hash, sig []byte, polyAddr common.Address) (pub []
 	return
 
 }
+*/
