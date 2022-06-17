@@ -36,6 +36,7 @@ import (
 type Config struct {
 	ChainId           uint64
 	KeyStoreProviders []*KeyStoreProviderConfig
+	KeyProviders	  []string
 	Nodes             []string
 
 	// NEO wallet
@@ -116,6 +117,15 @@ func (w *Wallet) Accounts() []accounts.Account {
 }
 
 func (w *Wallet) Init() (err error) {
+	{
+		for _, k := range w.config.KeyProviders {
+			p, err := NewKeyProvider(k)
+			if err != nil {
+				return fmt.Errorf("create KeyProvider failure, %w", err)
+			}
+			w.AddProvider(p)
+		}
+	}
 	w.updateAccounts()
 	w.Lock()
 	defer w.Unlock()
