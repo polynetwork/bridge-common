@@ -26,6 +26,7 @@ import (
 	"github.com/polynetwork/bridge-common/chains/star"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/starcoinorg/starcoin-go/client"
+	"github.com/blocktree/go-owcrypt"
 	"github.com/starcoinorg/starcoin-go/types"
 )
 
@@ -58,6 +59,9 @@ func (w *StarWallet) Send(ctx context.Context, account *types.AccountAddress, pa
 	gasPrice, err := w.sdk.Node().GetGasUnitPrice(ctx)
 	if err != nil { return }
 	tx, err := w.sdk.Node().BuildRawUserTransaction(ctx, *account, payload, gasPrice, w.config.GasLimit, nonce)
+	if err != nil { return }
+	publicKey, _ := owcrypt.GenPubkey(w.accounts[*account], owcrypt.ECC_CURVE_ED25519_NORMAL)
+	_, err = w.sdk.Node().EstimateGasByDryRunRaw(context.Background(), *tx, types.Ed25519PublicKey(publicKey))
 	if err != nil { return }
 	return w.sdk.Node().SubmitTransaction(ctx, w.accounts[*account], tx)
 }
