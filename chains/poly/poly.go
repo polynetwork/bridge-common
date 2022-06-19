@@ -19,6 +19,8 @@ package poly
 
 import (
 	"encoding/binary"
+	"fmt"
+	"sort"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -37,8 +39,10 @@ import (
 )
 
 var (
-	CCM_ADDRESS = utils.CrossChainManagerContractAddress.ToHexString()
-	_POLY_ID    uint64
+	CCM_ADDRESS                        = utils.CrossChainManagerContractAddress.ToHexString()
+	signatureManagerContractAddress, _ = common.AddressParseFromBytes([]byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08})
+	SM_ADDRESS                         = signatureManagerContractAddress.ToHexString()
+	_POLY_ID                           uint64
 )
 
 type Rpc = psdk.PolySdk
@@ -247,4 +251,52 @@ func (s *SDK) Key() string {
 	} else {
 		panic("Unable to identify the sdk")
 	}
+}
+
+type SigInfo struct {
+	Status  bool
+	SigInfo map[string][]byte
+}
+
+func (s *SigInfo) Serialization(sink *common.ZeroCopySink) {
+	sink.WriteBool(s.Status)
+	sink.WriteUint64(uint64(len(s.SigInfo)))
+	sigInfoList := make([]string, 0, len(s.SigInfo))
+	for k := range s.SigInfo {
+		sigInfoList = append(sigInfoList, k)
+	}
+	sort.SliceStable(sigInfoList, func(i, j int) bool {
+		return sigInfoList[i] > sigInfoList[j]
+	})
+	for _, k := range sigInfoList {
+		sink.WriteString(k)
+		v := s.SigInfo[k]
+		sink.WriteVarBytes(v)
+	}
+}
+
+func (s *SigInfo) Deserialization(source *common.ZeroCopySource) error {
+	status, eof := source.NextBool()
+	if eof {
+		return fmt.Errorf("SigInfo deserialize status length error")
+	}
+	n, eof := source.NextUint64()
+	if eof {
+		return fmt.Errorf("SigInfo deserialize SigInfo length error")
+	}
+	sigInfo := make(map[string][]byte)
+	for i := 0; uint64(i) < n; i++ {
+		k, e := source.NextString()
+		if e {
+			return fmt.Errorf("SigInfo deserialize key error")
+		}
+		v, e := source.NextVarBytes()
+		if e {
+			return fmt.Errorf("SigInfo deserialize value error")
+		}
+		sigInfo[k] = v
+	}
+	s.Status = status
+	s.SigInfo = sigInfo
+	return nil
 }

@@ -1,9 +1,21 @@
 package harmony
 
 import (
+	"context"
 	"fmt"
 	"testing"
+
+	"github.com/polynetwork/bridge-common/chains/custom"
 )
+
+func TestNew(t *testing.T) {
+	c, _ := custom.Dial("https://zksync2-testnet.zksync.dev/")
+	resp, err := c.CallContextRaw(
+		context.Background(), "zks_getMainContract")
+		// custom.ToBlockNumArg(big.NewInt(int64(1365587))), true)
+	if err != nil { t.Fatal(err) }
+	t.Log(string(resp.Result))
+}
 
 func TestClient_HeaderByNumber(t *testing.T) {
 	c := New("https://api.harmony.one")
