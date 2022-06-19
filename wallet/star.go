@@ -18,10 +18,10 @@
 package wallet
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"context"
 
 	"github.com/polynetwork/bridge-common/chains/star"
 	"github.com/polynetwork/bridge-common/log"
@@ -33,6 +33,13 @@ type StarWallet struct {
 	sdk *star.SDK
 	config *Config
 	accounts map[types.AccountAddress]types.Ed25519PrivateKey
+}
+
+func (w *StarWallet) Accounts() (list []types.AccountAddress) {
+	for key := range w.accounts {
+		list = append(list, key)
+	}
+	return
 }
 
 func (w *StarWallet) Send(ctx context.Context, account *types.AccountAddress, payload types.TransactionPayload) (hash string, err error) {
