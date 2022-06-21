@@ -1,5 +1,5 @@
 package wallet
-
+/*
 import (
 	"context"
 	"fmt"
@@ -89,3 +89,4 @@ func (w *FlowWallet) CreateServiceAccount() (serviceAccount *ServiceAccount, err
 func (w *FlowWallet) Init() (err error) {
 	return
 }
+ */

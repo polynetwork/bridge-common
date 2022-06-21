@@ -187,8 +187,12 @@ func BlocksToWait(chainId uint64) uint64 {
 	}
 }
 
-func CheckAfter(chainID uint64) uint64 {
+func CheckAfter(chainID uint64) int64 {
 	switch chainID {
+	case MATIC, PLT:
+		return 60 * 3
+	case BSC, HECO:
+		return 60 * 4
 	default:
 		return 60 * 30
 	}

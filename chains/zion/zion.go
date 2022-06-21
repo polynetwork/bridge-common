@@ -25,16 +25,18 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/rlp"
 
+	"github.com/devfans/zion-sdk/contracts/native/go_abi/node_manager_abi"
+	"github.com/devfans/zion-sdk/contracts/native/go_abi/cross_chain_manager_abi"
 	"github.com/devfans/zion-sdk/contracts/native/governance/node_manager"
 	"github.com/devfans/zion-sdk/contracts/native/utils"
 	"github.com/devfans/zion-sdk/core/state"
-	"github.com/devfans/zion-sdk/contracts/native/go_abi/node_manager_abi"
+	"github.com/devfans/zion-sdk/contracts/native/go_abi/info_sync_abi"
 
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/chains/eth"
@@ -53,6 +55,9 @@ var (
 
 type Client struct {
 	eth.Client
+	*cross_chain_manager_abi.CrossChainManager
+	*info_sync_abi.InfoSync
+	*node_manager_abi.INodeManager
 }
 
 func ReadChainID() uint64 {
@@ -74,7 +79,20 @@ func New(url string) *Client {
 		return nil
 	}
 	atomic.StoreUint64(&_ZION_ID, id.Uint64())
-	return &Client{*c}
+	ccm, err := cross_chain_manager_abi.NewCrossChainManager(utils.CrossChainManagerContractAddress, c)
+	if err != nil {
+		log.Fatal("Unexpected abi init failure", "err", err)
+	}
+	infoSync, err := info_sync_abi.NewInfoSync(utils.InfoSyncContractAddress, c)
+	if err != nil {
+		log.Fatal("Unexpected abi init failure", "err", err)
+	}
+	nm, err := node_manager_abi.NewINodeManager(utils.NodeManagerContractAddress, c)
+	if err != nil {
+		log.Fatal("Unexpected abi init failure", "err", err)
+	}
+	client := &Client{*c, ccm, infoSync, nm}
+	return client
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
@@ -137,13 +155,11 @@ func EpochProofKey(epochId uint64) common.Hash {
 }
 
 func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo, err error) {
-	abi, err := node_manager_abi.NewINodeManager(utils.NodeManagerContractAddress, c)
-	if err != nil { return }
 	var options *bind.CallOpts
 	if height > 0 {
 		options = &bind.CallOpts{BlockNumber: big.NewInt(int64(height))}
 	}
-	data, err := abi.Epoch(options)
+	data, err := c.Epoch(options)
 	if err != nil { return }
 	info := new(node_manager.EpochInfo)
 	err = rlp.DecodeBytes(data, info)
@@ -152,9 +168,7 @@ func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo,
 }
 
 func (c *Client) EpochById(epochId uint64) (epochInfo *node_manager.EpochInfo, err error) {
-	abi, err := node_manager_abi.NewINodeManager(utils.NodeManagerContractAddress, c)
-	if err != nil { return }
-	data, err := abi.GetEpochByID(nil, epochId)
+	data, err := c.GetEpochByID(nil, epochId)
 	if err != nil { return }
 	if len(data) == 0 {
 		return
