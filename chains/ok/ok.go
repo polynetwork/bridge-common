@@ -27,7 +27,7 @@ import (
 	ttypes "github.com/okex/exchain-go-sdk/module/tendermint/types"
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
-	"github.com/tendermint/tendermint/types"
+	"github.com/okex/exchain/libs/tendermint/types"
 )
 
 type Rpc = oksdk.Client
