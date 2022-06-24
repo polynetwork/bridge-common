@@ -36,6 +36,7 @@ import (
 type Config struct {
 	ChainId           uint64
 	KeyStoreProviders []*KeyStoreProviderConfig
+	KeyProviders	  []string
 	Nodes             []string
 
 	// NEO wallet
@@ -116,6 +117,15 @@ func (w *Wallet) Accounts() []accounts.Account {
 }
 
 func (w *Wallet) Init() (err error) {
+	{
+		for _, k := range w.config.KeyProviders {
+			p, err := NewKeyProvider(k)
+			if err != nil {
+				return fmt.Errorf("create KeyProvider failure, %w", err)
+			}
+			w.AddProvider(p)
+		}
+	}
 	w.updateAccounts()
 	w.Lock()
 	defer w.Unlock()
@@ -185,7 +195,7 @@ func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common
 		return
 	}
 	if gasLimit == 0 {
-		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+		msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 		if err != nil {
 			nonces.Update(false)
@@ -272,7 +282,7 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 		err = fmt.Errorf("Get gas price error %v", err)
 		return
 	}
-	msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+	msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 	if err != nil {
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
@@ -280,7 +290,6 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	}
 	return
 }
-
 
 func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
@@ -305,7 +314,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 	}
 
 	var gasLimit uint64
-	msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+	msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 	if err != nil {
 		nonces.Update(false)
