@@ -62,6 +62,8 @@ type IWallet interface {
 	Accounts() []accounts.Account
 	Select() (accounts.Account, Provider, NonceProvider)
 	GetBalance(common.Address) (*big.Int, error)
+	SignHashWithAccount(accounts.Account, []byte) ([]byte, error)
+	SignHash([]byte) ([]byte, error)
 	EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
 	SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 }
@@ -177,6 +179,19 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 
 func (w *Wallet) EstimateWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	return w.sendWithAccount(true, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
+}
+
+func (w *Wallet) SignHashWithAccount(account accounts.Account, hash []byte) (sig []byte, err error) {
+	provider, _ := w.GetAccount(account)
+	if provider == nil {
+		err = fmt.Errorf("Account not found", "account", account.Address.String())
+		return
+	}
+	return provider.SignHash(account, hash)
+}
+
+func (w *Wallet) SignHash(hash []byte) (sig []byte, err error) {
+	return w.provider.SignHash(w.account, hash)
 }
 
 func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
