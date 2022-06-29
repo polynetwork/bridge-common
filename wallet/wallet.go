@@ -83,6 +83,7 @@ type Provider interface {
 	SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error)
 	Init(accounts.Account) error
 	Accounts() []accounts.Account
+    SignHash(accounts.Account,[]byte) ([]byte, error)
 }
 
 func New(config *Config, sdk *eth.SDK) *Wallet {
