@@ -18,12 +18,53 @@
 package eth
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/polynetwork/bridge-common/util"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )
+
+type Header []byte
+
+type HeaderInfo struct {
+	ParentHash  common.Hash    `json:"parentHash"       gencodec:"required"`
+	Root        common.Hash    `json:"stateRoot"        gencodec:"required"`
+	TxHash      common.Hash    `json:"transactionsRoot" gencodec:"required"`
+	ReceiptHash common.Hash    `json:"receiptsRoot"     gencodec:"required"`
+	Number      *hexutil.Big   `json:"number"           gencodec:"required"`
+}
+
+func (h Header) GetHeight() (height uint64, err error) {
+	info := new(HeaderInfo)
+	err = json.Unmarshal(h, info)
+	if err != nil { return }
+	for _, hash := range []common.Hash{info.ParentHash, info.Root, info.TxHash, info.ReceiptHash} {
+		if util.EmptyBytes(hash.Bytes()) {
+			err = fmt.Errorf("unexpected empty field")
+			return
+		}
+	}
+	if info.Number != nil {
+		height = info.Number.ToInt().Uint64()
+	}
+	return
+}
+
+func (h Header) Verify(height uint64) (err error) {
+	n, err := h.GetHeight()
+	if err != nil {
+		return
+	}
+	if n != height {
+		err = fmt.Errorf("unexpected block number diff %v:%v", n, height)
+	}
+	return
+}
 
 type ETHProof struct {
 	Address       string         `json:"address"`

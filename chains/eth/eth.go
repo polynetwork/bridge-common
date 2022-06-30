@@ -19,9 +19,11 @@ package eth
 
 import (
 	"context"
+	"encoding/json"
 	"math/big"
 	"time"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -50,6 +52,22 @@ func New(url string) *Client {
 
 func (c *Client) Address() string {
 	return c.address
+}
+
+func (c *Client) GetHeader(height uint64) (header Header, err error){
+	head := make(json.RawMessage, 0)
+	err = c.Rpc.CallContext(context.Background(), &head, "eth_getBlockByNumber", util.BlockNumArg(height), false)
+	if err == nil && len(head) == 0 {
+		err = ethereum.NotFound
+	}
+	if err != nil { return }
+	header = Header(head)
+	if height == 0 {
+		_, err = header.GetHeight()
+	} else {
+		err = header.Verify(height)
+	}
+	return
 }
 
 func (c *Client) GetProof(addr string, key string, height uint64) (proof *ETHProof, err error) {

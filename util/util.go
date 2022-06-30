@@ -22,6 +22,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 	"strings"
 	"time"
@@ -116,3 +117,28 @@ func Retry(ctx context.Context, f func() error, interval time.Duration, count in
 func SetDecimals(a *big.Int, decimals int64) *big.Int {
 	return new(big.Int).Mul(a, new(big.Int).Exp(big.NewInt(10), big.NewInt(decimals), nil))
 }
+
+func EmptyBytes(data []byte) bool {
+	zero := make([]byte, len(data))
+	return string(zero) == string(data)
+}
+
+func ToBlockNumArg(number *big.Int) string {
+	if number == nil {
+		return "latest"
+	}
+	pending := big.NewInt(-1)
+	if number.Cmp(pending) == 0 {
+		return "pending"
+	}
+	return hexutil.EncodeBig(number)
+}
+
+func BlockNumArg(n uint64) string {
+	if n == 0 {
+		return "latest"
+	}
+	number := big.NewInt(int64(n))
+	return hexutil.EncodeBig(number)
+}
+
