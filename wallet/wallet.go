@@ -83,7 +83,7 @@ type Provider interface {
 	SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error)
 	Init(accounts.Account) error
 	Accounts() []accounts.Account
-    SignHash(accounts.Account,[]byte) ([]byte, error)
+	SignHash(accounts.Account, []byte) ([]byte, error)
 }
 
 func New(config *Config, sdk *eth.SDK) *Wallet {
@@ -335,6 +335,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		return
 	}
 
+	limit = uint64(1.1 * float32(limit))
 	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(limit)), gasPrice)) == -1 {
 		nonces.Update(false)
 		err = fmt.Errorf("Send tx estimated gas (limit %v, price %s) higher than max limit %s", limit, gasPrice, maxLimit)
