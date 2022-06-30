@@ -263,7 +263,6 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	return
 }
 
-
 func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
 		err = fmt.Errorf("max limit is zero or missing")
@@ -307,6 +306,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		return
 	}
 
+	limit = uint64(1.1 * float32(limit))
 	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(limit)), gasPrice)) == -1 {
 		nonces.Update(false)
 		err = fmt.Errorf("Send tx estimated gas (limit %v, price %s) higher than max limit %s", limit, gasPrice, maxLimit)
