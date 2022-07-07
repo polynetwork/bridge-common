@@ -53,8 +53,8 @@ const (
 	MILKO    uint64 = 34
 	CUBE     uint64 = 35
 	ZKSYNC   uint64 = 100940
-	CELO     uint64 = 100960
-	CLOVER   uint64 = 100970
+	CELO     uint64 = 36
+	CLOVER   uint64 = 37
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
