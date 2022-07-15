@@ -31,12 +31,13 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rlp"
 
-	"github.com/devfans/zion-sdk/contracts/native/go_abi/node_manager_abi"
 	"github.com/devfans/zion-sdk/contracts/native/go_abi/cross_chain_manager_abi"
+	"github.com/devfans/zion-sdk/contracts/native/go_abi/info_sync_abi"
+	"github.com/devfans/zion-sdk/contracts/native/go_abi/node_manager_abi"
+	"github.com/devfans/zion-sdk/contracts/native/go_abi/side_chain_manager_abi"
 	"github.com/devfans/zion-sdk/contracts/native/governance/node_manager"
 	"github.com/devfans/zion-sdk/contracts/native/utils"
 	"github.com/devfans/zion-sdk/core/state"
-	"github.com/devfans/zion-sdk/contracts/native/go_abi/info_sync_abi"
 
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/chains/eth"
@@ -58,6 +59,7 @@ type Client struct {
 	*cross_chain_manager_abi.CrossChainManager
 	*info_sync_abi.InfoSync
 	*node_manager_abi.INodeManager
+	*side_chain_manager_abi.SideChainManager
 }
 
 func ReadChainID() uint64 {
@@ -91,7 +93,11 @@ func New(url string) *Client {
 	if err != nil {
 		log.Fatal("Unexpected abi init failure", "err", err)
 	}
-	client := &Client{*c, ccm, infoSync, nm}
+	sm, err := side_chain_manager_abi.NewSideChainManager(utils.SideChainManagerContractAddress, c)
+	if err != nil {
+		log.Fatal("Unexpected abi init failure", "err", err)
+	}
+	client := &Client{*c, ccm, infoSync, nm, sm}
 	return client
 }
 
