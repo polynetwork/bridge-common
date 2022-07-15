@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -52,7 +53,24 @@ var (
 	EpochProofDigest     = common.HexToHash("e4bf3526f07c80af3a5de1411dd34471c71bdd5d04eedbfa1040da2c96802041")
 
 	_ZION_ID uint64
+
+	NM_ABI   abi.ABI
+	SYNC_ABI abi.ABI
+	SM_ABI   abi.ABI
+	CCM_ABI  abi.ABI
 )
+
+func init() {
+	var err error
+	SM_ABI, err = abi.JSON(strings.NewReader(side_chain_manager_abi.SideChainManagerABI))
+	if err != nil { panic(err) }
+	SYNC_ABI, err = abi.JSON(strings.NewReader(info_sync_abi.InfoSyncABI))
+	if err != nil { panic(err) }
+	NM_ABI, err = abi.JSON(strings.NewReader(node_manager_abi.INodeManagerABI))
+	if err != nil { panic(err) }
+	CCM_ABI, err = abi.JSON(strings.NewReader(cross_chain_manager_abi.CrossChainManagerABI))
+	if err != nil { panic(err) }
+}
 
 type Client struct {
 	eth.Client
