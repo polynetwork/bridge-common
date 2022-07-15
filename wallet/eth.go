@@ -32,7 +32,7 @@ import (
 
 // London upgrade - support
 type EthWallet struct {
-	Wallet
+	*Wallet
 }
 
 // NOTE: gasPrice, gasPriceX used as gas tip here!

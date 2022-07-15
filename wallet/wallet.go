@@ -184,7 +184,7 @@ func (w *Wallet) EstimateWithAccount(account accounts.Account, addr common.Addre
 func (w *Wallet) SignHashWithAccount(account accounts.Account, hash []byte) (sig []byte, err error) {
 	provider, _ := w.GetAccount(account)
 	if provider == nil {
-		err = fmt.Errorf("Account not found", "account", account.Address.String())
+		err = fmt.Errorf("account not found %s", account.Address.String())
 		return
 	}
 	return provider.SignHash(account, hash)
@@ -290,7 +290,7 @@ func (w *Wallet) Select() (accounts.Account, Provider, NonceProvider) {
 }
 
 func (w *Wallet) Upgrade() *EthWallet {
-	return &EthWallet{*w}
+	return &EthWallet{w}
 }
 
 func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error) {
