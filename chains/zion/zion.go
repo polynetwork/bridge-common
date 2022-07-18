@@ -62,7 +62,7 @@ var (
 
 func init() {
 	var err error
-	SM_ABI, err = abi.JSON(strings.NewReader(side_chain_manager_abi.SideChainManagerABI))
+	SM_ABI, err = abi.JSON(strings.NewReader(side_chain_manager_abi.ISideChainManagerABI))
 	if err != nil { panic(err) }
 	SYNC_ABI, err = abi.JSON(strings.NewReader(info_sync_abi.InfoSyncABI))
 	if err != nil { panic(err) }
@@ -77,7 +77,7 @@ type Client struct {
 	*cross_chain_manager_abi.CrossChainManager
 	*info_sync_abi.InfoSync
 	*node_manager_abi.INodeManager
-	*side_chain_manager_abi.SideChainManager
+	*side_chain_manager_abi.ISideChainManager
 }
 
 func ReadChainID() uint64 {
@@ -111,7 +111,7 @@ func New(url string) *Client {
 	if err != nil {
 		log.Fatal("Unexpected abi init failure", "err", err)
 	}
-	sm, err := side_chain_manager_abi.NewSideChainManager(utils.SideChainManagerContractAddress, c)
+	sm, err := side_chain_manager_abi.NewISideChainManager(utils.SideChainManagerContractAddress, c)
 	if err != nil {
 		log.Fatal("Unexpected abi init failure", "err", err)
 	}
