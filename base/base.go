@@ -142,6 +142,9 @@ func GetChainName(id uint64) string {
 		return "Celo"
 	case CLOVER:
 		return "CLV P-Chain"
+	case CONFLUX:
+		return "Conflux"
+
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
