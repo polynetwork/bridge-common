@@ -22,6 +22,7 @@ package base
 
 const (
 	POLY       uint64 = 0
+	ZION       uint64 = POLY
 	BTC        uint64 = 1
 	ETH        uint64 = 2
 	ONT        uint64 = 3
@@ -66,7 +67,7 @@ const (
 )
 
 var CHAINS = []uint64{
-	POLY, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, STARCOIN, ONTEVM, CUBE, KAVA, FLOW,
+	ZION, ETH, ONT, NEO, BSC, HECO, O3, OK, MATIC, METIS, RINKEBY, PIXIE, HSC, HARMONY, BYTOM, STARCOIN, ONTEVM, CUBE, KAVA, FLOW,
 }
 
 var ETH_CHAINS = []uint64{

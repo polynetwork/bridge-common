@@ -22,7 +22,7 @@ package base
 
 const (
 	POLY     uint64 = 0
-	ZION     uint64 = 1
+	ZION     uint64 = POLY
 	ETH      uint64 = 2
 	ONT      uint64 = 3
 	NEO      uint64 = 4
