@@ -55,6 +55,7 @@ const (
 	ZKSYNC   uint64 = 100940
 	CELO     uint64 = 36
 	CLOVER   uint64 = 37
+	CONFLUX  uint64 = 38
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
@@ -62,7 +63,7 @@ const (
 	BCSPALETTE uint64 = 1001001
 	ONTEVM     uint64 = 1001333
 	FLOW       uint64 = 1000444
-	CONFLUX    uint64 = 1000980
+	
 
 	ENV = "mainnet"
 )
