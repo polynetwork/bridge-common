@@ -9,14 +9,13 @@ require (
 	github.com/cespare/cp v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
-	github.com/devfans/zion-sdk v0.0.10
+	github.com/devfans/zion-sdk v0.0.11
 	github.com/ethereum/go-ethereum v1.10.11
 	github.com/go-kit/kit v0.10.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/joeqian10/neo-gogogo v1.4.0
-	github.com/joeqian10/neo3-gogogo v0.3.8
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/novifinancial/serde-reflection/serde-generate/runtime/golang v0.0.0-20211013011333-6820d5b97d8c
