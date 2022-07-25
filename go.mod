@@ -34,3 +34,7 @@ require (
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
 	google.golang.org/protobuf v1.27.1 // indirect
 )
+
+replace github.com/devfans/zion-sdk => github.com/wuyachi/zion-sdk v0.0.0-20220727024926-4a47382fc8e7
+
+//replace github.com/devfans/zion-sdk => ../zion-sdk
