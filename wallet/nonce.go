@@ -19,6 +19,7 @@ package wallet
 
 import (
 	"context"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/polynetwork/bridge-common/chains/eth"
@@ -39,7 +40,7 @@ type RemoteNonceProvider struct {
 }
 
 func (p *RemoteNonceProvider) Acquire() (uint64, error) {
-	return p.sdk.Node().NonceAt(context.Background(), p.address, nil)
+	return p.sdk.Node().NonceAt(context.Background(), p.address, big.NewInt(-1))
 }
 
 func (p *RemoteNonceProvider) Update(success bool) {
