@@ -9,7 +9,7 @@ require (
 	github.com/cespare/cp v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
-	github.com/devfans/zion-sdk v0.0.11
+	github.com/devfans/zion-sdk v0.0.12
 	github.com/ethereum/go-ethereum v1.10.11
 	github.com/go-kit/kit v0.10.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
@@ -34,7 +34,3 @@ require (
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
 	google.golang.org/protobuf v1.27.1 // indirect
 )
-
-replace github.com/devfans/zion-sdk => github.com/wuyachi/zion-sdk v0.0.0-20220727024926-4a47382fc8e7
-
-//replace github.com/devfans/zion-sdk => ../zion-sdk

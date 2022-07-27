@@ -205,7 +205,6 @@ func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo,
 	epochInfo = new(node_manager.EpochInfo)
 	err = rlp.DecodeBytes(data, epochInfo)
 	if err != nil {
-		log.Error("DecodeBytes EpochInfo", "err", err)
 		return nil, err
 	}
 	return
