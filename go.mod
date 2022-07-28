@@ -9,7 +9,7 @@ require (
 	github.com/cespare/cp v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
-	github.com/devfans/zion-sdk v0.0.11
+	github.com/devfans/zion-sdk v0.0.12
 	github.com/ethereum/go-ethereum v1.10.11
 	github.com/go-kit/kit v0.10.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect

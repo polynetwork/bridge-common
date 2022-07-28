@@ -25,8 +25,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -63,19 +63,27 @@ var (
 func init() {
 	var err error
 	SM_ABI, err = abi.JSON(strings.NewReader(side_chain_manager_abi.ISideChainManagerABI))
-	if err != nil { panic(err) }
-	SYNC_ABI, err = abi.JSON(strings.NewReader(info_sync_abi.InfoSyncABI))
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
+	SYNC_ABI, err = abi.JSON(strings.NewReader(info_sync_abi.IInfoSyncABI))
+	if err != nil {
+		panic(err)
+	}
 	NM_ABI, err = abi.JSON(strings.NewReader(node_manager_abi.INodeManagerABI))
-	if err != nil { panic(err) }
-	CCM_ABI, err = abi.JSON(strings.NewReader(cross_chain_manager_abi.CrossChainManagerABI))
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
+	CCM_ABI, err = abi.JSON(strings.NewReader(cross_chain_manager_abi.ICrossChainManagerABI))
+	if err != nil {
+		panic(err)
+	}
 }
 
 type Client struct {
 	eth.Client
-	*cross_chain_manager_abi.CrossChainManager
-	*info_sync_abi.InfoSync
+	*cross_chain_manager_abi.ICrossChainManager
+	*info_sync_abi.IInfoSync
 	*node_manager_abi.INodeManager
 	*side_chain_manager_abi.ISideChainManager
 }
@@ -99,11 +107,11 @@ func New(url string) *Client {
 		return nil
 	}
 	atomic.StoreUint64(&_ZION_ID, id.Uint64())
-	ccm, err := cross_chain_manager_abi.NewCrossChainManager(utils.CrossChainManagerContractAddress, c)
+	ccm, err := cross_chain_manager_abi.NewICrossChainManager(utils.CrossChainManagerContractAddress, c)
 	if err != nil {
 		log.Fatal("Unexpected abi init failure", "err", err)
 	}
-	infoSync, err := info_sync_abi.NewInfoSync(utils.InfoSyncContractAddress, c)
+	infoSync, err := info_sync_abi.NewIInfoSync(utils.InfoSyncContractAddress, c)
 	if err != nil {
 		log.Fatal("Unexpected abi init failure", "err", err)
 	}
@@ -179,28 +187,43 @@ func EpochProofKey(epochId uint64) common.Hash {
 }
 
 func (c *Client) GetEpochInfo(height uint64) (epochInfo *node_manager.EpochInfo, err error) {
+	var data []byte
 	var options *bind.CallOpts
 	if height > 0 {
 		options = &bind.CallOpts{BlockNumber: big.NewInt(int64(height))}
+		data, err = c.INodeManager.GetEpochInfo(options, big.NewInt(0))
+		if err != nil {
+			return
+		}
+	} else {
+		data, err = c.INodeManager.GetCurrentEpochInfo(options)
+		if err != nil {
+			return
+		}
 	}
-	data, err := c.Epoch(options)
-	if err != nil { return }
-	info := new(node_manager.EpochInfo)
-	err = rlp.DecodeBytes(data, info)
-	if err != nil { return }
-	return epochInfo, err
+
+	epochInfo = new(node_manager.EpochInfo)
+	err = rlp.DecodeBytes(data, epochInfo)
+	if err != nil {
+		return nil, err
+	}
+	return
 }
 
 func (c *Client) EpochById(epochId uint64) (epochInfo *node_manager.EpochInfo, err error) {
-	data, err := c.GetEpochByID(nil, epochId)
-	if err != nil { return }
+	data, err := c.INodeManager.GetEpochInfo(nil, big.NewInt(int64(epochId)))
+	if err != nil {
+		return
+	}
 	if len(data) == 0 {
 		return
 	}
-	info := new(node_manager.EpochInfo)
-	err = rlp.DecodeBytes(data, info)
-	if err != nil { return }
-	return epochInfo, err
+	epochInfo = new(node_manager.EpochInfo)
+	err = rlp.DecodeBytes(data, epochInfo)
+	if err != nil {
+		return nil, err
+	}
+	return
 }
 
 type SDK struct {
