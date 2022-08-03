@@ -48,6 +48,7 @@ import (
 
 var (
 	CCM_ADDRESS          = utils.CrossChainManagerContractAddress
+	INFO_SYNC_ADDRESS    = utils.InfoSyncContractAddress
 	NODE_MANAGER_ADDRESS = utils.NodeManagerContractAddress
 	SKP_PROOF            = "st_proof"
 	EpochProofDigest     = common.HexToHash("e4bf3526f07c80af3a5de1411dd34471c71bdd5d04eedbfa1040da2c96802041")
