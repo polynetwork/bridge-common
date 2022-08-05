@@ -144,6 +144,15 @@ func GetChainName(id uint64) string {
 		return "Cube"
 	case KAVA:
 		return "Kava"
+	case ZKSYNC:
+		return "zkSync"
+	case CELO:
+		return "Celo"
+	case CLOVER:
+		return "CLV P-Chain"
+	case CONFLUX:
+		return "Conflux"
+
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}

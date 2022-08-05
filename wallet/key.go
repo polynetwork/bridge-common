@@ -23,11 +23,11 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 type KeyProvider struct {
@@ -66,3 +66,11 @@ func (p *KeyProvider) Save(path, passphrase string) (error) {
 	_, err := ks.ImportECDSA(p.priv, passphrase)
 	return err
 }
+
+func (p *KeyProvider) SignHash(account accounts.Account, hash []byte) (sig []byte, err error) {
+	if !bytes.Equal(account.Address.Bytes(), p.Address.Bytes()) {
+		return nil, fmt.Errorf("unexpected account unmatch %s, %s", account.Address.String(), p.Address.String())
+	}
+	return crypto.Sign(hash, p.priv)
+}
+

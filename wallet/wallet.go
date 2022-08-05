@@ -36,7 +36,7 @@ import (
 type Config struct {
 	ChainId           uint64
 	KeyStoreProviders []*KeyStoreProviderConfig
-	KeyProviders	  []string
+	KeyProviders      []string
 	Nodes             []string
 
 	// NEO wallet
@@ -83,6 +83,7 @@ type Provider interface {
 	SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error)
 	Init(accounts.Account) error
 	Accounts() []accounts.Account
+	SignHash(accounts.Account, []byte) ([]byte, error)
 }
 
 func New(config *Config, sdk *eth.SDK) *Wallet {
@@ -289,7 +290,7 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 		err = fmt.Errorf("Get gas price error %v", err)
 		return
 	}
-	msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+	msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 	if err != nil {
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
@@ -297,7 +298,6 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	}
 	return
 }
-
 
 func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
@@ -322,7 +322,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 	}
 
 	var gasLimit uint64
-	msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+	msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 	if err != nil {
 		nonces.Update(false)
@@ -342,6 +342,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		return
 	}
 
+	limit = uint64(1.1 * float32(limit))
 	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(limit)), gasPrice)) == -1 {
 		nonces.Update(false)
 		err = fmt.Errorf("Send tx estimated gas (limit %v, price %s) higher than max limit %s", limit, gasPrice, maxLimit)
