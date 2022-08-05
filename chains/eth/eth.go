@@ -26,6 +26,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/log"
@@ -135,6 +136,16 @@ type SDK struct {
 
 func (s *SDK) Node() *Client {
 	return s.nodes[s.ChainSDK.Index()]
+}
+
+func (s *SDK) Broadcast(tx *types.Transaction) (err error) {
+	nodes := s.Nodes()
+	for _, idx := range nodes[1:] {
+		go func(id int) {
+			_ = s.nodes[id].SendTransaction(context.Background(), tx)
+		} (idx)
+	}
+	return s.nodes[nodes[0]].SendTransaction(context.Background(), tx)
 }
 
 func (s *SDK) Select() *Client {

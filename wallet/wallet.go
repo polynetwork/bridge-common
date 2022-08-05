@@ -77,6 +77,7 @@ type Wallet struct {
 	accounts  []accounts.Account
 	cursor    int
 	config    *Config
+	Broadcast bool
 }
 
 type Provider interface {
@@ -239,7 +240,13 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 		return
 	}
 	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
-	err = w.sdk.Node().SendTransaction(context.Background(), tx)
+
+	if w.Broadcast {
+		err = w.sdk.Broadcast(tx)
+	} else {
+		err = w.sdk.Node().SendTransaction(context.Background(), tx)
+	}
+
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
 	return tx.Hash().String(), err

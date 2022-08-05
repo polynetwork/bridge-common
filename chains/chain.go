@@ -72,6 +72,18 @@ func (s *ChainSDK) Key() string {
 	return fmt.Sprintf("SDK:%v:%s", s.ChainID, strings.Join(nodes, ":"))
 }
 
+func (s *ChainSDK) Nodes() (nodes []int) {
+	s.RLock()
+	defer s.RUnlock()
+	nodes = append(nodes, s.index)
+	for idx, active := range s.state {
+		if active && idx != s.index {
+			nodes = append(nodes, idx)
+		}
+	}
+	return
+}
+
 func (s *ChainSDK) Height() uint64 {
 	s.RLock()
 	defer s.RUnlock()
