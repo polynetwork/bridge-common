@@ -24,9 +24,9 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/log"
@@ -120,9 +120,7 @@ func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height, co
 				}
 			}
 		}
-		if err != nil {
-			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
-		}
+		log.Info("Wait tx confirmation", "count", count, "hash", hash, "height", height, "latest", current, "pending", pending, "err", err)
 		time.Sleep(time.Second)
 	}
 	return
