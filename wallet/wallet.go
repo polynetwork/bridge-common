@@ -46,9 +46,9 @@ type Config struct {
 	NetFee   float64
 
 	// neo3 wallet
-	WalletPath string
-	WalletPwd  string
-	NeoMagic   uint32
+	Neo3Path  string
+	Neo3Pwd   string
+	Neo3Magic uint32
 
 	// ONT wallet
 	GasPrice uint64
