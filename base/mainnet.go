@@ -63,7 +63,7 @@ const (
 	BCSPALETTE uint64 = 1001001
 	ONTEVM     uint64 = 1001333
 	FLOW       uint64 = 1000444
-	
+	PLT2       uint64 = 1000108
 
 	ENV = "mainnet"
 )
