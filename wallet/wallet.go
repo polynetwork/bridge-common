@@ -36,7 +36,7 @@ import (
 type Config struct {
 	ChainId           uint64
 	KeyStoreProviders []*KeyStoreProviderConfig
-	KeyProviders	  []string
+	KeyProviders      []string
 	Nodes             []string
 
 	// NEO wallet
@@ -44,6 +44,11 @@ type Config struct {
 	Password string
 	SysFee   float64
 	NetFee   float64
+
+	// neo3 wallet
+	Neo3Path  string
+	Neo3Pwd   string
+	Neo3Magic uint32
 
 	// ONT wallet
 	GasPrice uint64
@@ -85,7 +90,7 @@ type Provider interface {
 	SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error)
 	Init(accounts.Account) error
 	Accounts() []accounts.Account
-    SignHash(accounts.Account,[]byte) ([]byte, error)
+	SignHash(accounts.Account, []byte) ([]byte, error)
 }
 
 func New(config *Config, sdk *eth.SDK) *Wallet {
@@ -307,7 +312,6 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	}
 	return
 }
-
 
 func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
