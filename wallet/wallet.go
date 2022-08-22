@@ -327,21 +327,19 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
 		return
 	}
+	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(gasLimit)), gasPrice)) == -1 {
+		nonces.Update(false)
+		err = fmt.Errorf("Send tx estimated gas (limit %v, price %v) higher than max limit %v", gasLimit, gasPrice, maxLimit)
+		return
+	}
 
+	gasLimit = uint64(1.3 * float32(gasLimit))
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
 		nonces.Update(false)
 		err = fmt.Errorf("Send tx estimated gas limit(%v) higher than chain max limit %v", gasLimit, limit)
 		return
 	}
-
-	limit = uint64(1.1 * float32(limit))
-	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(limit)), gasPrice)) == -1 {
-		nonces.Update(false)
-		err = fmt.Errorf("Send tx estimated gas (limit %v, price %s) higher than max limit %s", limit, gasPrice, maxLimit)
-		return
-	}
-
 	tx := types.NewTransaction(nonce, addr, amount, limit, gasPrice, data)
 	tx, err = provider.SignTx(account, tx, big.NewInt(int64(w.chainId)))
 	if err != nil {
