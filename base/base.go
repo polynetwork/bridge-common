@@ -144,6 +144,8 @@ func GetChainName(id uint64) string {
 		return "CLV P-Chain"
 	case CONFLUX:
 		return "Conflux"
+	case ASTAR:
+		return "Astar"
 
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
@@ -181,7 +183,7 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 21
 	case ONT, NEO, NEO3, OK, SWITCHEO:
 		return 1
-	case HARMONY:
+	case HARMONY, ASTAR:
 		return 2
 	case PLT, BCSPALETTE:
 		return 4
