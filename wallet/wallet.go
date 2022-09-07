@@ -20,6 +20,7 @@ package wallet
 import (
 	"context"
 	"fmt"
+	"github.com/polynetwork/bridge-common/base"
 	"math/big"
 	"strings"
 	"sync"
@@ -282,7 +283,7 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	return
 }
 
-func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
+func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
 		err = fmt.Errorf("max limit is zero or missing")
 		return
@@ -323,7 +324,12 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		return
 	}
 
-	gasLimit = uint64(1.3 * float32(gasLimit))
+	if chainId == base.OPTIMISM {
+		gasLimit = uint64(1.4 * float32(gasLimit))
+	} else {
+		gasLimit = uint64(1.3 * float32(gasLimit))
+	}
+
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
 		nonces.Update(false)
