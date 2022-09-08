@@ -328,6 +328,7 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
 		return
 	}
+	log.Info("SendWithMaxLimit", "chainId", chainId, "gasPrice", gasPrice, "estimateGas", gasLimit)
 	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(gasLimit)), gasPrice)) == -1 {
 		nonces.Update(false)
 		err = fmt.Errorf("Send tx estimated gas (limit %v, price %v) higher than max limit %v", gasLimit, gasPrice, maxLimit)
@@ -335,7 +336,7 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 	}
 
 	if chainId == base.OPTIMISM {
-		gasLimit = uint64(1.4 * float32(gasLimit))
+		gasLimit = uint64(2 * float32(gasLimit))
 	} else {
 		gasLimit = uint64(1.3 * float32(gasLimit))
 	}
