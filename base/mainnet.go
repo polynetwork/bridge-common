@@ -56,7 +56,7 @@ const (
 	CELO     uint64 = 36
 	CLOVER   uint64 = 37
 	CONFLUX  uint64 = 38
-	ASTAR    uint64 = 39
+	ASTAR    uint64 = 40
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
