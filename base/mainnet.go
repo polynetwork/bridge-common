@@ -56,6 +56,7 @@ const (
 	CELO     uint64 = 36
 	CLOVER   uint64 = 37
 	CONFLUX  uint64 = 38
+	ASTAR    uint64 = 39
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
@@ -64,7 +65,6 @@ const (
 	ONTEVM     uint64 = 1001333
 	FLOW       uint64 = 1000444
 	PLT2       uint64 = 1000108
-	ASTAR      uint64 = 1000990
 
 	ENV = "mainnet"
 )
