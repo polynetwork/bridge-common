@@ -8,12 +8,11 @@ type AptosWallet struct {
 	sdk        *aptos.SDK
 	Address    string
 	PrivateKey string
-	PublicKey  string
 	config     *Config
 }
 
 func NewAptosWallet(config *Config, sdk *aptos.SDK) *AptosWallet {
-	return &AptosWallet{sdk: sdk, Address: config.Address, PrivateKey: config.PrivateKey, PublicKey: config.PublicKey, config: config}
+	return &AptosWallet{sdk: sdk, Address: config.Address, PrivateKey: config.PrivateKey, config: config}
 }
 
 func (w *AptosWallet) Init() (err error) {
