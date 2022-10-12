@@ -35,7 +35,7 @@ const (
 	OK       uint64 = 200
 	HEIMDALL uint64 = 201
 	MATIC    uint64 = 202
-	ARBITRUM uint64 = 205
+	ARBITRUM uint64 = 215
 	XDAI     uint64 = 206
 	OPTIMISM uint64 = 210
 	FANTOM   uint64 = 208
