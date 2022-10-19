@@ -20,6 +20,7 @@ package wallet
 import (
 	"context"
 	"fmt"
+	"github.com/polynetwork/bridge-common/base"
 	"math/big"
 	"strings"
 	"sync"
@@ -63,7 +64,7 @@ type IWallet interface {
 	Select() (accounts.Account, Provider, NonceProvider)
 	GetBalance(common.Address) (*big.Int, error)
 	EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
-	SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
+	SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 }
 
 type Wallet struct {
@@ -306,7 +307,7 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	return
 }
 
-func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
+func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
 		err = fmt.Errorf("max limit is zero or missing")
 		return
@@ -341,6 +342,18 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
 		return
 	}
+	log.Info("SendWithMaxLimit", "chainId", chainId, "gasPrice", gasPrice, "estimateGas", gasLimit)
+	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(gasLimit)), gasPrice)) == -1 {
+		nonces.Update(false)
+		err = fmt.Errorf("Send tx estimated gas (limit %v, price %v) higher than max limit %v", gasLimit, gasPrice, maxLimit)
+		return
+	}
+
+	if chainId == base.OPTIMISM {
+		gasLimit = uint64(2 * float32(gasLimit))
+	} else {
+		gasLimit = uint64(1.3 * float32(gasLimit))
+	}
 
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
@@ -348,14 +361,6 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		err = fmt.Errorf("Send tx estimated gas limit(%v) higher than chain max limit %v", gasLimit, limit)
 		return
 	}
-
-	limit = uint64(1.1 * float32(limit))
-	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(limit)), gasPrice)) == -1 {
-		nonces.Update(false)
-		err = fmt.Errorf("Send tx estimated gas (limit %v, price %s) higher than max limit %s", limit, gasPrice, maxLimit)
-		return
-	}
-
 	tx := types.NewTransaction(nonce, addr, amount, limit, gasPrice, data)
 	tx, err = provider.SignTx(account, tx, big.NewInt(int64(w.chainId)))
 	if err != nil {

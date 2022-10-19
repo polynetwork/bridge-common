@@ -62,6 +62,7 @@ type ChainSDK struct {
 	interval time.Duration
 	maxGap   uint64
 	sync.RWMutex
+	exit chan struct{}
 }
 
 func (s *ChainSDK) Key() string {
@@ -200,10 +201,21 @@ func (s *ChainSDK) Node() SDK {
 	return s.sdk
 }
 
+func (s *ChainSDK) Stop() {
+	close(s.exit)
+}
+
 func (s *ChainSDK) monitor(interval time.Duration) {
 	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
 	for range ticker.C {
-		s.updateSelection()
+		select {
+		case <-s.exit:
+			log.Info("Exiting nodes monitoring", "chainID", s.ChainID)
+			return
+		default:
+			s.updateSelection()
+		}
 	}
 }
 
@@ -211,7 +223,7 @@ func (s *ChainSDK) Init() error {
 	log.Info("Initializing chain sdk", "chainID", s.ChainID)
 	s.updateSelection()
 	if !s.Available() {
-		return fmt.Errorf("All the nodes are unavailable for chain %v", s.ChainID)
+		return fmt.Errorf("all the nodes are unavailable for chain %v", s.ChainID)
 	}
 	return nil
 }
@@ -233,6 +245,7 @@ func NewChainSDK(chainID uint64, nodes []SDK, interval time.Duration, maxGap uin
 		interval: interval,
 		maxGap:   maxGap,
 		state:    make([]bool, len(nodes)),
+		exit:     make(chan struct{}),
 	}
 	err = sdk.Init()
 	if err == nil {
