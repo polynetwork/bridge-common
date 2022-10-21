@@ -55,6 +55,7 @@ const (
 	ZKSYNC   uint64 = 100940
 	CELO     uint64 = 36
 	CLOVER   uint64 = 37
+	APTOS    uint64 = 41
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
@@ -67,7 +68,6 @@ const (
 	CONFLUX    uint64 = 1000980
 	ASTAR      uint64 = 1000990
 	BRISE      uint64 = 1001010
-	APTOS      uint64 = 1000998
 
 	ENV = "mainnet"
 )
