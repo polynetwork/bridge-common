@@ -60,6 +60,7 @@ const (
 	CLOVER   uint64 = 970
 	CONFLUX  uint64 = 980
 	ASTAR    uint64 = 990
+	APTOS    uint64 = 998
 
 	SWITCHEO   uint64 = 1000
 	BCSPALETTE uint64 = 1001

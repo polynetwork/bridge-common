@@ -1,6 +1,6 @@
 module github.com/polynetwork/bridge-common
 
-go 1.15
+go 1.17
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
@@ -25,6 +25,7 @@ require (
 	github.com/polynetwork/poly v1.3.1
 	github.com/polynetwork/poly-go-sdk v0.0.0-20210114035303-84e1615f4ad4
 	github.com/polynetwork/poly-io-test v0.0.0-20200819093740-8cf514b07750 // indirect
+	github.com/portto/aptos-go-sdk v0.0.0-20220923072903-ff01c1b3e3dc
 	github.com/prometheus/client_golang v1.7.0 // indirect
 	github.com/prometheus/tsdb v0.9.1 // indirect
 	github.com/rjeczalik/notify v0.9.2 // indirect

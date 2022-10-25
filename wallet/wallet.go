@@ -50,9 +50,10 @@ type Config struct {
 	GasPrice uint64
 	GasLimit uint64
 
-	// FLOW wallet
+	// FLOW/Aptos wallet
 	Address    string
 	PrivateKey string
+	PublicKey  string
 }
 
 type IWallet interface {
