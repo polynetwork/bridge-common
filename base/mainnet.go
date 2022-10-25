@@ -58,6 +58,7 @@ const (
 	CONFLUX  uint64 = 38
 	ASTAR    uint64 = 40
 	APTOS    uint64 = 41
+	BRISE    uint64 = 42
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
@@ -66,7 +67,6 @@ const (
 	ONTEVM     uint64 = 1001333
 	FLOW       uint64 = 1000444
 	PLT2       uint64 = 1000108
-	BRISE      uint64 = 1001010
 
 	ENV = "mainnet"
 )
