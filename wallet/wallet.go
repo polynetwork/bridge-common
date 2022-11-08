@@ -251,6 +251,10 @@ func (w *Wallet) GasPrice() (price *big.Int, err error) {
 }
 
 func (w *Wallet) GasTip() (price *big.Int, err error) {
+	if w.sdk.ChainID == base.ASTAR {
+		// astar average price is 60 Gwei while node returns 1 Gwei
+		return big.NewInt(1000000000 * 60), nil
+	}
 	return w.sdk.Node().SuggestGasTipCap(context.Background())
 }
 
