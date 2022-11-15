@@ -71,7 +71,7 @@ func GetChainName(id uint64) string {
 	case POLY:
 		return "Poly"
 	case ETH:
-		return "Ethereum-Ropsten"
+		return "Ethereum"
 	case RINKEBY:
 		return "Ethereum-Rinkeby"
 	case ONT:
@@ -136,8 +136,23 @@ func GetChainName(id uint64) string {
 		return "Cube"
 	case KAVA:
 		return "Kava"
+	case ZKSYNC:
+		return "zkSync"
+	case CELO:
+		return "Celo"
+	case CLOVER:
+		return "CLV P-Chain"
+	case CONFLUX:
+		return "Conflux"
+	case ASTAR:
+		return "Astar"
+	case APTOS:
+		return "Aptos"
+	case BRISE:
+		return "Bitgert"
 	case GOERLI:
 		return "Goerli"
+
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
@@ -155,6 +170,8 @@ func BlocksToSkip(chainId uint64) uint64 {
 		return 8
 	case PLT, BCSPALETTE:
 		return 5
+	case ONT:
+		return 0
 	case PIXIE:
 		return 2
 	case STARCOIN:
@@ -172,7 +189,7 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 21
 	case ZION, ONT, NEO, NEO3, OK, SWITCHEO:
 		return 1
-	case HARMONY:
+	case HARMONY, ASTAR:
 		return 2
 	case PLT, BCSPALETTE:
 		return 4

@@ -20,6 +20,7 @@ package wallet
 import (
 	"context"
 	"fmt"
+	"github.com/polynetwork/bridge-common/base"
 	"math/big"
 	"strings"
 	"sync"
@@ -54,9 +55,10 @@ type Config struct {
 	GasPrice uint64
 	GasLimit uint64
 
-	// FLOW wallet
+	// FLOW/Aptos wallet
 	Address    string
 	PrivateKey string
+	PublicKey  string
 }
 
 type IWallet interface {
@@ -70,7 +72,7 @@ type IWallet interface {
 	SignHashWithAccount(accounts.Account, []byte) ([]byte, error)
 	SignHash([]byte) ([]byte, error)
 	EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
-	SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
+	SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 }
 
 type Wallet struct {
@@ -217,7 +219,7 @@ func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common
 		return
 	}
 	if gasLimit == 0 {
-		msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+		msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 		if err != nil {
 			nonces.Update(false)
@@ -252,7 +254,7 @@ func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash().String(), "account", account.Address, "nonce", nonce, "gas_price", gasPrice.String(), "gas_limit", limit)
+	log.Info("Compose dst chain tx", "hash", tx.Hash().String(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
@@ -266,10 +268,18 @@ func (w *Wallet) Account() (accounts.Account, Provider, NonceProvider) {
 }
 
 func (w *Wallet) GasPrice() (price *big.Int, err error) {
+	if w.sdk.ChainID == base.ASTAR {
+		// astar average price is 60 Gwei while node returns 1 Gwei
+		return big.NewInt(1000000000 * 60), nil
+	}
 	return w.sdk.Node().SuggestGasPrice(context.Background())
 }
 
 func (w *Wallet) GasTip() (price *big.Int, err error) {
+	if w.sdk.ChainID == base.ASTAR {
+		// astar average price is 60 Gwei while node returns 1 Gwei
+		return big.NewInt(1000000000 * 60), nil
+	}
 	return w.sdk.Node().SuggestGasTipCap(context.Background())
 }
 
@@ -304,7 +314,7 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 		err = fmt.Errorf("Get gas price error %v", err)
 		return
 	}
-	msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+	msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 	if err != nil {
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
@@ -312,8 +322,7 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	}
 	return
 }
-
-func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
+func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
 		err = fmt.Errorf("max limit is zero or missing")
 		return
@@ -336,7 +345,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 	}
 
 	var gasLimit uint64
-	msg := ethereum.CallMsg{From: account.Address, To: &addr, GasPrice: gasPrice, Value: amount, Data: data}
+	msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 	if err != nil {
 		nonces.Update(false)
@@ -348,6 +357,18 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
 		return
 	}
+	log.Info("SendWithMaxLimit", "chainId", chainId, "gasPrice", gasPrice, "estimateGas", gasLimit)
+	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(gasLimit)), gasPrice)) == -1 {
+		nonces.Update(false)
+		err = fmt.Errorf("Send tx estimated gas (limit %v, price %v) higher than max limit %v", gasLimit, gasPrice, maxLimit)
+		return
+	}
+
+	if chainId == base.OPTIMISM {
+		gasLimit = uint64(2 * float32(gasLimit))
+	} else {
+		gasLimit = uint64(1.3 * float32(gasLimit))
+	}
 
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
@@ -355,13 +376,6 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		err = fmt.Errorf("Send tx estimated gas limit(%v) higher than chain max limit %v", gasLimit, limit)
 		return
 	}
-
-	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(limit)), gasPrice)) == -1 {
-		nonces.Update(false)
-		err = fmt.Errorf("Send tx estimated gas (limit %v, price %s) higher than max limit %s", limit, gasPrice, maxLimit)
-		return
-	}
-
 	tx := types.NewTransaction(nonce, addr, amount, limit, gasPrice, data)
 	tx, err = provider.SignTx(account, tx, big.NewInt(int64(w.chainId)))
 	if err != nil {
@@ -369,7 +383,7 @@ func (w *Wallet) SendWithMaxLimit(account accounts.Account, addr common.Address,
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
+	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
