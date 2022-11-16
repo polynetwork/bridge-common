@@ -20,6 +20,8 @@ package eth
 import (
 	"context"
 	"encoding/json"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/polynetwork/bridge-common/base"
 	"math/big"
 	"time"
 
@@ -175,6 +177,59 @@ func (c *Client) GetNFTOwner(asset string, tokenId int64) (owner common.Address,
 		return common.Address{}, err
 	}
 	return cm.OwnerOf(nil, big.NewInt(tokenId))
+}
+
+func (c *Client) GetBlockTimeByNumber(chainId, number uint64) (timestamp uint64, err error) {
+	type Header struct {
+		Time string `json:"timestamp"`
+	}
+
+	var header interface{}
+	switch chainId {
+	case base.ZKSYNC, base.CELO:
+		header = &Header{}
+	default:
+		header = &types.Header{}
+	}
+
+	var newNumber *big.Int
+	if number < 0 {
+		newNumber = nil
+	} else {
+		newNumber = big.NewInt(int64(number))
+	}
+
+	err = c.Rpc.CallContext(context.Background(), &header, "eth_getBlockByNumber", toBlockNumArg(newNumber), false)
+	for err != nil {
+		return 0, err
+	}
+	switch chainId {
+	case base.ZKSYNC, base.CELO:
+		if res, ok := header.(*Header); ok {
+			timestamp, err = hexutil.DecodeUint64(res.Time)
+		}
+	default:
+		if res, ok := header.(*types.Header); ok {
+			timestamp = res.Time
+		}
+	}
+	return
+}
+
+func (c *Client) FilterLog(FromBlock *big.Int, ToBlock *big.Int, Addresses []common.Address) ([]types.Log, error) {
+	ctx := context.Background()
+	var filterQuery ethereum.FilterQuery
+	filterQuery.FromBlock = FromBlock
+	filterQuery.ToBlock = ToBlock
+	filterQuery.Addresses = Addresses
+	return c.FilterLogs(ctx, filterQuery)
+}
+
+func toBlockNumArg(number *big.Int) string {
+	if number == nil {
+		return "latest"
+	}
+	return hexutil.EncodeBig(number)
 }
 
 type SDK struct {
