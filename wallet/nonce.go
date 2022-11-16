@@ -19,10 +19,9 @@ package wallet
 
 import (
 	"context"
-	"math/big"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/polynetwork/bridge-common/chains/eth"
+	"math/big"
 )
 
 type NonceProvider interface {

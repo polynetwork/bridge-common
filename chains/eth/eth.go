@@ -29,6 +29,8 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 
+	erc20 "github.com/polynetwork/bridge-common/abi/mintable_erc20_abi"
+	nftmapping "github.com/polynetwork/bridge-common/abi/nft_mapping_abi"
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
@@ -54,13 +56,15 @@ func (c *Client) Address() string {
 	return c.address
 }
 
-func (c *Client) GetHeader(height uint64) (header Header, err error){
+func (c *Client) GetHeader(height uint64) (header Header, err error) {
 	head := make(json.RawMessage, 0)
 	err = c.Rpc.CallContext(context.Background(), &head, "eth_getBlockByNumber", util.BlockNumArg(height), false)
 	if err == nil && len(head) == 0 {
 		err = ethereum.NotFound
 	}
-	if err != nil { return }
+	if err != nil {
+		return
+	}
 	header = Header(head)
 	if height == 0 {
 		_, err = header.GetHeight()
@@ -146,6 +150,31 @@ func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height, co
 		time.Sleep(time.Second * 3)
 	}
 	return
+}
+
+func (c *Client) GetBalance(token, owner string) (balance *big.Int, err error) {
+	tokenAddress := common.HexToAddress(token)
+	ownerAddr := common.HexToAddress(owner)
+	if token == "0000000000000000000000000000000000000000" {
+		var result hexutil.Big
+		err = c.Rpc.CallContext(context.Background(), &result, "eth_getBalance", "0x"+owner, "latest")
+		balance = (*big.Int)(&result)
+	} else {
+		var contract *erc20.ERC20Extended
+		contract, err = erc20.NewERC20Mintable(tokenAddress, c)
+		if err == nil {
+			balance, err = contract.BalanceOf(nil, ownerAddr)
+		}
+	}
+	return
+}
+
+func (c *Client) GetNFTOwner(asset string, tokenId int64) (owner common.Address, err error) {
+	cm, err := nftmapping.NewCrossChainNFTMapping(common.HexToAddress(asset), c)
+	if err != nil {
+		return common.Address{}, err
+	}
+	return cm.OwnerOf(nil, big.NewInt(tokenId))
 }
 
 type SDK struct {
