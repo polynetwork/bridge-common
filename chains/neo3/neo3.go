@@ -19,6 +19,9 @@ package neo3
 
 import (
 	"fmt"
+	"github.com/joeqian10/neo3-gogogo/helper"
+	"github.com/joeqian10/neo3-gogogo/nep17"
+	"math/big"
 	"time"
 
 	"github.com/joeqian10/neo3-gogogo/rpc"
@@ -51,6 +54,19 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 		return 0, fmt.Errorf("%s", res.GetErrorInfo())
 	}
 	return uint64(res.Result), nil
+}
+
+func (c *Client) GetBalance(token, owner string) (balance *big.Int, err error) {
+	scriptHash, err := helper.UInt160FromString(token)
+	if err != nil {
+		return nil, err
+	}
+	nep17Helper := nep17.NewNep17Helper(scriptHash, c)
+	addrHash, err := helper.UInt160FromString(owner)
+	if err != nil {
+		return nil, err
+	}
+	return nep17Helper.BalanceOf(addrHash)
 }
 
 type SDK struct {

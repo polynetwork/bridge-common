@@ -19,6 +19,8 @@ package neo
 
 import (
 	"fmt"
+	"github.com/joeqian10/neo-gogogo/nep5"
+	"math/big"
 	"time"
 
 	"github.com/joeqian10/neo-gogogo/helper"
@@ -78,6 +80,20 @@ func (c *Client) GetPolyEpochHeight(ccm string, chainId uint64) (height uint64, 
 		height++ // means the next block header needs to be synced
 	}
 	return
+}
+
+func (c *Client) GetBalance(token, owner string) (balance *big.Int, err error) {
+	scriptHash, err := helper.UInt160FromString(token)
+	if err != nil {
+		return nil, err
+	}
+	nep5Helper := nep5.NewNep5Helper(scriptHash, c.address)
+	addrHash, err := helper.UInt160FromString(owner)
+	if err != nil {
+		return nil, err
+	}
+	amount, err := nep5Helper.BalanceOf(addrHash)
+	return new(big.Int).SetUint64(amount), nil
 }
 
 type SDK struct {

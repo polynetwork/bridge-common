@@ -21,7 +21,7 @@ require (
 	github.com/ontio/ontology v1.11.1-0.20200812075204-26cf1fa5dd47
 	github.com/ontio/ontology-crypto v1.2.1 // indirect
 	github.com/ontio/ontology-go-sdk v1.11.4
-	github.com/portto/aptos-go-sdk v0.0.0-20220923072903-ff01c1b3e3dc
+	github.com/portto/aptos-go-sdk v0.0.0-20221025115549-5c74acafa193
 	github.com/prometheus/tsdb v0.9.1 // indirect
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/rs/cors v1.7.0
