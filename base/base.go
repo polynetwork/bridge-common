@@ -156,6 +156,10 @@ func GetChainName(id uint64) string {
 		return "Conflux"
 	case ASTAR:
 		return "Astar"
+	case APTOS:
+		return "Aptos"
+	case BRISE:
+		return "Bitgert"
 
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)

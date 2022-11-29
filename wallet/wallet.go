@@ -20,7 +20,6 @@ package wallet
 import (
 	"context"
 	"fmt"
-	"github.com/polynetwork/bridge-common/base"
 	"math/big"
 	"strings"
 	"sync"
@@ -31,6 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/polynetwork/bridge-common/chains/eth"
 	"github.com/polynetwork/bridge-common/log"
+	"github.com/polynetwork/bridge-common/base"
 	"github.com/polynetwork/bridge-common/util"
 )
 
@@ -50,9 +50,10 @@ type Config struct {
 	GasPrice uint64
 	GasLimit uint64
 
-	// FLOW wallet
+	// FLOW/Aptos wallet
 	Address    string
 	PrivateKey string
+	PublicKey  string
 }
 
 type IWallet interface {
@@ -240,8 +241,8 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
 
+	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	if w.Broadcast {
 		err = w.sdk.Broadcast(tx)
 	} else {
@@ -368,7 +369,7 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address)
+	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
