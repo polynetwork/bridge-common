@@ -53,7 +53,6 @@ type Config struct {
 	// FLOW/Aptos wallet
 	Address    string
 	PrivateKey string
-	PublicKey  string
 }
 
 type IWallet interface {
