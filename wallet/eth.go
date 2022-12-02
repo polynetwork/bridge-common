@@ -98,7 +98,7 @@ func (w *EthWallet) SendWithAccount(account accounts.Account, addr common.Addres
 		nonces.Update(false)
 		return "", fmt.Errorf("Sign tx error %v", err)
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash().String(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
+	log.Info("Compose dst chain tx", "chain", w.chainId, "hash", tx.Hash().String(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)

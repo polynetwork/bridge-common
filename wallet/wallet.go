@@ -254,7 +254,7 @@ func (w *Wallet) sendWithAccount(dry bool, account accounts.Account, addr common
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash().String(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
+	log.Info("Compose dst chain tx", "chain", w.chainId, "hash", tx.Hash().String(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
@@ -383,7 +383,7 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
+	log.Info("Compose dst chain tx", "chain", w.chainId, "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	//TODO: Check err here before update nonces
 	nonces.Update(true)
