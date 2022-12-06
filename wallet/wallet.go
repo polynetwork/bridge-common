@@ -344,7 +344,7 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		return
 	}
 
-	if chainId == base.OPTIMISM {
+	if chainId == base.OPTIMISM || chainId == base.BSC {
 		gasLimit = uint64(2 * float32(gasLimit))
 	} else {
 		gasLimit = uint64(1.3 * float32(gasLimit))
