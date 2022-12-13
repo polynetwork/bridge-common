@@ -185,7 +185,7 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 12
 	case BSC, HECO, HSC, BYTOM, KCC:
 		return 21
-	case ZION, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO:
+	case ZION, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA:
 		return 1
 	case HARMONY, ASTAR:
 		return 2
