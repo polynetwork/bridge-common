@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+
 func TestApt(t *testing.T) {
 	sdk, err := apt.WithOptions(0, []string{"https://testnet.aptoslabs.com"}, time.Minute, 1000)
 	assert.NoError(t, err)

@@ -235,6 +235,8 @@ github.com/deckarep/golang-set v1.7.1 h1:SCQV0S6gTtp6itiFrTqI+pfmJ4LN85S1YzhDf9r
 github.com/deckarep/golang-set v1.7.1/go.mod h1:93vsz/8Wt4joVM7c2AVqh+YRMiUSc14yDtF28KmMOgQ=
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
+github.com/devfans/aptos-go-sdk v0.0.0-20221201035408-07471b70486e h1:I7JRHVMDO+Z37JhpNfopdiITTP8STfF63VIfLKhU8tM=
+github.com/devfans/aptos-go-sdk v0.0.0-20221201035408-07471b70486e/go.mod h1:8+XTYv0iwHE5fjS8G6231LUhy2GYwl2BTlzxIqjIxyU=
 github.com/devfans/ontology-go-sdk v1.11.4-fix h1:6LWUILza57Sp5cQt5iZIvGokigV0hsoME6GkTTi0/ac=
 github.com/devfans/ontology-go-sdk v1.11.4-fix/go.mod h1:fRhHYhFfYiUuIlTVtcXLVziiXOneBwVCSAX72+N7XVI=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
