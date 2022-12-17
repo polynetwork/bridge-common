@@ -138,7 +138,10 @@ func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, pa
 }
 
 func NewAptWallet(config *Config, sdk *apt.SDK) (w *AptWallet) {
-	data, err := ioutil.ReadFile(config.Path)
+	if config.ReadFile == nil {
+		config.ReadFile = ioutil.ReadFile
+	}
+	data, err := config.ReadFile(config.Path)
 	if err != nil {
 		log.Error("Failed to load wallet file", "path", config.Path)
 		return

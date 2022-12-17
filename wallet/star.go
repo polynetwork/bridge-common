@@ -67,7 +67,10 @@ func (w *StarWallet) Send(ctx context.Context, account *types.AccountAddress, pa
 }
 
 func NewStarWallet(config *Config, sdk *star.SDK) (w *StarWallet) {
-	data, err := ioutil.ReadFile(config.Path)
+	if config.ReadFile == nil {
+		config.ReadFile = ioutil.ReadFile
+	}
+	data, err := config.ReadFile(config.Path)
 	if err != nil {
 		log.Error("Failed to load wallet file", "path", config.Path)
 		return

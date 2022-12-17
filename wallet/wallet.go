@@ -35,6 +35,8 @@ import (
 )
 
 type Config struct {
+	ReadFile func(string) ([]byte, error) `json:"-"`
+
 	ChainId           uint64
 	KeyStoreProviders []*KeyStoreProviderConfig
 	KeyProviders      []string
