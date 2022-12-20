@@ -128,7 +128,7 @@ func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, pa
 	}
 
 	resp, err := w.sdk.Node().SubmitTransaction(ctx, tx.UserTransaction)
-	log.Info("Sent apt tx", "limit", resps[0].MaxGasAmount, "gas_price", resps[0].GasUnitPrice, "err", err)
+	log.Info("Sent apt tx", "limit", resps[0].MaxGasAmount, "gas_price", resps[0].GasUnitPrice, "seq", info.SequenceNumber, "err", err)
 	if err != nil {
 		return
 	}
