@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/portto/aptos-go-sdk/client"
@@ -19,6 +20,17 @@ import (
 
 var APT_ADDR0x1 models.AccountAddress
 var APT_TOKEN_TAG models.TypeTagStruct
+
+type (
+	AptAccountAddress = models.AccountAddress
+	AptTypeTagStruct = models.TypeTagStruct
+	AptTransactionPayload = models.TransactionPayload
+)
+
+const (
+	APT_GAS_PRICE = "100"
+	APT_GAS_LIMIT = "2000000"
+)
 
 func init () {
 	APT_ADDR0x1, _ = models.HexToAccountAddress("0x1")
@@ -34,6 +46,41 @@ type AptWallet struct {
 	ChainID  uint8
 	config   *Config
 	accounts map[models.AccountAddress]models.PrivateKey
+	nonces   map[models.AccountAddress]string
+	sync.Mutex
+}
+
+func (w *AptWallet) GetNonce(account models.AccountAddress) (nonce string, err error) {
+	var ok bool
+	w.Lock()
+	nonce, ok = w.nonces[account]
+	if ok {
+		delete(w.nonces, account)
+	}
+	w.Unlock()
+	
+	if !ok {
+		info, err := w.GetAccountInfo(account)
+		if err != nil {
+			return "", err
+		}
+		log.Info("Apt wallet fetching account seq", "account", account.PrefixZeroTrimmedHex(), "seq", info.SequenceNumber)
+		return info.SequenceNumber, nil
+	} 
+	return
+}
+
+func (w *AptWallet) UpdateNonce(account models.AccountAddress, _success bool) (err error) {
+	info, err := w.GetAccountInfo(account)
+	if err != nil {
+		return
+	}
+
+	log.Info("Apt wallet updating account", "account", account.PrefixZeroTrimmedHex(), "seq", info.SequenceNumber)
+	w.Lock()
+	w.nonces[account] = info.SequenceNumber
+	w.Unlock()
+	return
 }
 
 func (w *AptWallet) Accounts() (list []models.AccountAddress) {
@@ -72,6 +119,87 @@ func (w *AptWallet) CreateAccount(ctx context.Context, account *models.AccountAd
 	return w.Send(ctx, account, payload, ttl)
 }
 
+func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, ttl time.Duration, seq, limit, price string) (hash string, err error) {
+	if account == nil {
+		if len(w.accounts) == 0 {
+			err = fmt.Errorf("no apt account available")
+			return
+		}
+		for addr := range w.accounts {
+			account = &addr
+			break
+		}
+		// clear seq
+		seq = ""
+	}
+
+	key, ok := w.accounts[*account]
+	if !ok {
+		err = fmt.Errorf("account not found in wallet, %x", (*account)[:])
+		return
+	}
+
+	if seq == "" {
+		info, err := w.GetAccountInfo(*account)
+		if err != nil {
+			return "", err
+		}
+		seq = info.SequenceNumber
+	}
+
+	tx := new(models.Transaction)
+	err = tx.SetChainID(w.ChainID).
+		SetSender(hex.EncodeToString((*account)[:])).
+		SetPayload(payload).
+		SetExpirationTimestampSecs(uint64(time.Now().Add(ttl).Unix())).
+		SetSequenceNumber(seq).Error()
+	if err != nil {
+		return
+	}
+
+	siger := models.NewSingleSigner(key)
+
+	tx.Authenticator = models.TransactionAuthenticatorEd25519{
+		PublicKey: siger.PublicKey,
+	}
+
+	if limit == "" {
+		resps, err := w.sdk.Node().SimulateTransaction(ctx, tx.UserTransaction, true, true)
+		if err != nil || len(resps) == 0 || !resps[0].Success {
+			if len(resps) > 0 {
+				err = fmt.Errorf("SimulateTransaction failure, vm_status: %s", resps[0].VmStatus)
+			} else {
+				err = fmt.Errorf("SimulateTransaction error: %v", err)
+			}
+			return "", err
+		}
+		limit = resps[0].MaxGasAmount
+		if price == "" {
+			price = resps[0].GasUnitPrice
+		}
+	} else if price == "" {
+		price = APT_GAS_PRICE
+	}
+
+	err = tx.SetMaxGasAmount(limit).SetGasUnitPrice(price).Error()
+	if err != nil {
+		return
+	}
+
+	err = siger.Sign(tx).Error()
+	if err != nil {
+		return
+	}
+
+	resp, err := w.sdk.Node().SubmitTransaction(ctx, tx.UserTransaction)
+	if err != nil {
+		return
+	}
+	hash = resp.Hash
+	log.Info("Sent apt tx", "limit", limit, "gas_price", price, "seq", seq, "hash", hash, "err", err)
+	return
+}
+
 func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, ttl time.Duration) (hash string, err error) {
 	if account == nil {
 		if len(w.accounts) == 0 {
@@ -95,7 +223,7 @@ func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, pa
 		return
 	}
 
-	tx := &models.Transaction{}
+	tx := new(models.Transaction)
 	err = tx.SetChainID(w.ChainID).
 		SetSender(hex.EncodeToString((*account)[:])).
 		SetPayload(payload).
@@ -112,8 +240,12 @@ func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, pa
 	}
 
 	resps, err := w.sdk.Node().SimulateTransaction(ctx, tx.UserTransaction, true, true)
-	if err != nil {
-		err = fmt.Errorf("SimulateTransaction error: %v", err)
+	if err != nil || len(resps) == 0 || !resps[0].Success {
+		if len(resps) > 0 {
+			err = fmt.Errorf("SimulateTransaction failure, vm_status: %s", resps[0].VmStatus)
+		} else {
+			err = fmt.Errorf("SimulateTransaction error: %v", err)
+		}
 		return
 	}
 
@@ -128,14 +260,12 @@ func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, pa
 	}
 
 	resp, err := w.sdk.Node().SubmitTransaction(ctx, tx.UserTransaction)
-	log.Info("Sent apt tx", "limit", resps[0].MaxGasAmount, "gas_price", resps[0].GasUnitPrice, "seq", info.SequenceNumber, "err", err)
 	if err != nil {
 		return
 	}
-
 	hash = resp.Hash
+	log.Info("Sent apt tx", "limit", resps[0].MaxGasAmount, "gas_price", resps[0].GasUnitPrice, "seq", info.SequenceNumber, "hash", hash, "err", err)
 	return
-
 }
 
 func NewAptWallet(config *Config, sdk *apt.SDK) (w *AptWallet) {
@@ -160,7 +290,8 @@ func NewAptWallet(config *Config, sdk *apt.SDK) (w *AptWallet) {
 	}
 
 	w = &AptWallet{
-		sdk, info.ChainID, config, map[models.AccountAddress]models.PrivateKey{},
+		sdk: sdk, ChainID: info.ChainID, config: config, accounts: make(map[models.AccountAddress]models.PrivateKey),
+		nonces: make(map[models.AccountAddress]string),
 	}
 
 	for addrHex, keyHex := range payload {
