@@ -204,7 +204,7 @@ func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.Account
 		return
 	}
 	hash = resp.Hash
-	log.Info("Sent apt tx", "limit", limit, "gas_price", price, "seq", seq, "hash", hash, "err", err)
+	log.Info("Sent apt tx", "limit", resp.MaxGasAmount, "gas_price", resp.GasUnitPrice, "seq", resp.SequenceNumber, "hash", hash, "err", err)
 	return
 }
 

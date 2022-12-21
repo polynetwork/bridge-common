@@ -237,6 +237,8 @@ github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0
 github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f/go.mod h1:xH/i4TFMt8koVQZ6WFms69WAsDWr2XsYL3Hkl7jkoLE=
 github.com/devfans/aptos-go-sdk v0.0.0-20221201035408-07471b70486e h1:I7JRHVMDO+Z37JhpNfopdiITTP8STfF63VIfLKhU8tM=
 github.com/devfans/aptos-go-sdk v0.0.0-20221201035408-07471b70486e/go.mod h1:8+XTYv0iwHE5fjS8G6231LUhy2GYwl2BTlzxIqjIxyU=
+github.com/devfans/aptos-go-sdk v0.0.0-20221221161724-c03a4ef50f7b h1:yado4csNDQt8Cv6BRxE+6J9+IUdhLH0w6lfW/UxM6Qs=
+github.com/devfans/aptos-go-sdk v0.0.0-20221221161724-c03a4ef50f7b/go.mod h1:8+XTYv0iwHE5fjS8G6231LUhy2GYwl2BTlzxIqjIxyU=
 github.com/devfans/ontology-go-sdk v1.11.4-fix h1:6LWUILza57Sp5cQt5iZIvGokigV0hsoME6GkTTi0/ac=
 github.com/devfans/ontology-go-sdk v1.11.4-fix/go.mod h1:fRhHYhFfYiUuIlTVtcXLVziiXOneBwVCSAX72+N7XVI=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
