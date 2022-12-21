@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -58,7 +59,6 @@ func (w *AptWallet) GetNonce(account models.AccountAddress) (nonce string, err e
 		delete(w.nonces, account)
 	}
 	w.Unlock()
-	
 	if !ok {
 		info, err := w.GetAccountInfo(account)
 		if err != nil {
@@ -119,7 +119,7 @@ func (w *AptWallet) CreateAccount(ctx context.Context, account *models.AccountAd
 	return w.Send(ctx, account, payload, ttl)
 }
 
-func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, ttl time.Duration, seq, limit, price string) (hash string, err error) {
+func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, ttl time.Duration, seq, limit, price string, priceX float64) (hash string, err error) {
 	if account == nil {
 		if len(w.accounts) == 0 {
 			err = fmt.Errorf("no apt account available")
@@ -180,8 +180,16 @@ func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.Account
 	} else if price == "" {
 		price = APT_GAS_PRICE
 	}
+	
+    gasPrice, err := strconv.ParseUint(price, 10, 0)
+	if err != nil { 
+		return
+	}
+	if priceX > 0 {
+		gasPrice = uint64(float64(gasPrice) * priceX)
+	}
 
-	err = tx.SetMaxGasAmount(limit).SetGasUnitPrice(price).Error()
+	err = tx.SetMaxGasAmount(limit).SetGasUnitPrice(gasPrice).Error()
 	if err != nil {
 		return
 	}
