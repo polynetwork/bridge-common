@@ -90,6 +90,10 @@ func (s *SDK) Node() *Client {
 	return s.nodes[s.ChainSDK.Index()]
 }
 
+func (s *SDK) AllNodes() []*Client {
+	return s.nodes
+}
+
 func (s *SDK) Select() *Client {
 	return s.nodes[s.ChainSDK.Select()]
 }

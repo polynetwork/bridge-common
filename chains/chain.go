@@ -45,6 +45,7 @@ type SDK interface {
 
 type Nodes interface {
 	Height() uint64
+	Delta() int64
 	WaitTillHeight(context.Context, uint64, time.Duration) (uint64, bool)
 	Available() bool
 	Node() SDK
@@ -59,6 +60,7 @@ type ChainSDK struct {
 	cursor   int
 	status   int // SDK nodes status: 1. available, 0. all down
 	height   uint64
+	delta    int64
 	interval time.Duration
 	maxGap   uint64
 	sync.RWMutex
@@ -77,6 +79,12 @@ func (s *ChainSDK) Height() uint64 {
 	s.RLock()
 	defer s.RUnlock()
 	return s.height
+}
+
+func (s *ChainSDK) Delta() int64 {
+	s.RLock()
+	defer s.RUnlock()
+	return s.delta
 }
 
 func (s *ChainSDK) WaitTillHeight(ctx context.Context, height uint64, interval time.Duration) (uint64, bool) {
@@ -127,6 +135,7 @@ func (s *ChainSDK) updateSelection() {
 	s.Lock()
 	s.sdk = sdk
 	s.status = status
+	s.delta = int64(height) - int64(s.height)
 	s.height = height
 	s.index = index
 	for i, h := range state {
