@@ -45,7 +45,7 @@ func (c *Client) Balance(account models.AccountAddress, coin models.TypeTagStruc
 }
 
 var (
-	COIN_STORE_RE = regexp.MustCompile(`0x1::coin::CoinStore<([\w:]+)\>`)
+	COIN_STORE_RE = regexp.MustCompile(`0x1::coin::CoinStore<(\w*)::(\w*)::(\w*)\>`)
 )
 
 func (c *Client) Balances(account models.AccountAddress) (balances map[string]uint64, err error) {
@@ -54,12 +54,14 @@ func (c *Client) Balances(account models.AccountAddress) (balances map[string]ui
 		balances = make(map[string]uint64)
 		for _, res := range resp {
 			ret := COIN_STORE_RE.FindStringSubmatch(res.Type)
-			if len(ret) != 2 {
+			if len(ret) != 4 {
 				continue
 			}
 			balance, err := strconv.ParseUint(res.Data.CoinStoreResource.Coin.Value, 10, 0)
 			if err != nil { return nil, err }
-			balances[ret[1]] = balance
+			addr, err := models.HexToAccountAddress(ret[1])
+			if err != nil { return nil, err }
+			balances[models.TypeTagStruct{Address: addr, Module: ret[2], Name: ret[3]}.ToString()] = balance
 		}
 	}
 	return
