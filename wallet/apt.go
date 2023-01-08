@@ -51,15 +51,6 @@ type AptWallet struct {
 	sync.Mutex
 }
 
-func (w *AptWallet) Balance(account models.AccountAddress, coin AptTypeTagStruct) (balance uint64, err error) {
-	resp := new(struct { Data client.CoinStoreResource })
-	err = w.sdk.Node().GetResource(context.Background(), hex.EncodeToString(account[:]), fmt.Sprintf("0x1::coin::CoinStore<%s>", coin.ToString()), resp)
-	if err == nil {
-		balance, err = strconv.ParseUint(resp.Data.Coin.Value, 10, 0)
-	}
-	return
-}
-
 func (w *AptWallet) GetNonce(account models.AccountAddress) (nonce string, err error) {
 	var ok bool
 	w.Lock()

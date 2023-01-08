@@ -2,10 +2,14 @@ package apt
 
 import (
 	"context"
+	"encoding/hex"
+	"fmt"
+	"regexp"
 	"strconv"
 	"time"
 
 	"github.com/portto/aptos-go-sdk/client"
+	"github.com/portto/aptos-go-sdk/models"
 
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
@@ -29,6 +33,36 @@ func New(url string) *Client {
 
 func (c *Client) Address() string {
 	return c.address
+}
+
+func (c *Client) Balance(account models.AccountAddress, coin models.TypeTagStruct) (balance uint64, err error) {
+	resp := new(struct { Data client.CoinStoreResource })
+	err = c.GetResource(context.Background(), hex.EncodeToString(account[:]), fmt.Sprintf("0x1::coin::CoinStore<%s>", coin.ToString()), resp)
+	if err == nil {
+		balance, err = strconv.ParseUint(resp.Data.Coin.Value, 10, 0)
+	}
+	return
+}
+
+var (
+	COIN_STORE_RE = regexp.MustCompile(`0x1::coin::CoinStore<([\w:]+)\>`)
+)
+
+func (c *Client) Balances(account models.AccountAddress) (balances map[string]uint64, err error) {
+	resp, err := c.GetAccountResources(context.Background(), hex.EncodeToString(account[:]), nil)
+	if err == nil {
+		balances = make(map[string]uint64)
+		for _, res := range resp {
+			ret := COIN_STORE_RE.FindStringSubmatch(res.Type)
+			if len(ret) != 2 {
+				continue
+			}
+			balance, err := strconv.ParseUint(res.Data.CoinStoreResource.Coin.Value, 10, 0)
+			if err != nil { return nil, err }
+			balances[ret[1]] = balance
+		}
+	}
+	return
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
