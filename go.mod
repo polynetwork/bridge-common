@@ -32,6 +32,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
+	github.com/polynetwork/ripple-sdk  v0.0.0-20220616022641-d64d4aa053fe
 )
 
 require (
