@@ -29,7 +29,7 @@ const (
 	HECO     uint64 = 7
 	BSC      uint64 = 79
 	O3       uint64 = 82
-	NEO3     uint64 = 88
+	NEO3     uint64 = 888
 	PLT      uint64 = 107
 	ZILLIQA  uint64 = 111
 	OK       uint64 = 200

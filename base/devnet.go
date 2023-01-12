@@ -30,7 +30,7 @@ const (
 	BSC        uint64 = 6
 	HECO       uint64 = 7
 	O3         uint64 = 80
-	NEO3       uint64 = 88
+	NEO3       uint64 = 888
 	OK         uint64 = 90
 	MATIC      uint64 = 13
 	METIS      uint64 = 300
