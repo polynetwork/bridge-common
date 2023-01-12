@@ -14,13 +14,14 @@ require (
 	github.com/go-kit/kit v0.10.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/joeqian10/neo-gogogo v1.4.0
-	github.com/joeqian10/neo3-gogogo v1.1.2
+	github.com/joeqian10/neo3-gogogo v1.2.1
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/novifinancial/serde-reflection/serde-generate/runtime/golang v0.0.0-20211013011333-6820d5b97d8c
 	github.com/ontio/ontology v1.11.1-0.20200812075204-26cf1fa5dd47
 	github.com/ontio/ontology-crypto v1.2.1 // indirect
 	github.com/ontio/ontology-go-sdk v1.11.4
+	github.com/polynetwork/ripple-sdk v0.0.0-20220616022641-d64d4aa053fe
 	github.com/portto/aptos-go-sdk v0.0.0-20221025115549-5c74acafa193
 	github.com/prometheus/tsdb v0.9.1 // indirect
 	github.com/rjeczalik/notify v0.9.2 // indirect
@@ -32,13 +33,13 @@ require (
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b
-	github.com/polynetwork/ripple-sdk  v0.0.0-20220616022641-d64d4aa053fe
 )
 
 require (
 	github.com/FactomProject/basen v0.0.0-20150613233007-fe3947df716e // indirect
 	github.com/JohnCGriffin/overflow v0.0.0-20170615021017-4d914c927216 // indirect
 	github.com/VictoriaMetrics/fastcache v1.6.0 // indirect
+	github.com/bits-and-blooms/bitset v1.2.1 // indirect
 	github.com/blocktree/go-owcrypt v1.1.10 // indirect
 	github.com/btcsuite/btcd v0.22.0-beta // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
@@ -48,6 +49,7 @@ require (
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect
+	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.1.5 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
@@ -64,6 +66,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rubblelabs/ripple v0.0.0-20220222071018-38c1a8b14c18 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect

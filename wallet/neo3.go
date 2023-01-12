@@ -65,11 +65,11 @@ func (w *Neo3Wallet) SendTransactionWithAccount(script []byte, account *wallet.N
 	if err != nil {
 		return EMPTY, fmt.Errorf("WalletHelper.GetBalanceFromAccount error: %v", err)
 	}
-	pair := wallet.AccountAndBalance{
+	pair := &wallet.AccountAndBalance{
 		Account: a,
 		Value:   gasAmount,
 	}
-	trx, err := wh.MakeTransaction(script, nil, []tx.ITransactionAttribute{}, []wallet.AccountAndBalance{pair})
+	trx, err := wh.MakeTransaction(script, nil, []tx.ITransactionAttribute{}, []*wallet.AccountAndBalance{pair})
 	if err != nil {
 		return EMPTY, fmt.Errorf("WalletHelper.MakeTransaction: %v", err)
 	}
