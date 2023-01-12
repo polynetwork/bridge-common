@@ -103,7 +103,7 @@ func Init(config *LogConfig) {
 func Json(lvl log.Lvl, body interface{}) {
 	v, _ := json.Marshal(body)
 	if output != nil {
-		log.Output(string(v), lvl, 0, nil)
+		log.Output(string(v), lvl, 0)
 		return
 	}
 	if lvl <= VERBOSITY {
