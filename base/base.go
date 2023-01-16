@@ -68,8 +68,8 @@ func GetStateName(state int) string {
 
 func GetChainName(id uint64) string {
 	switch id {
-	case POLY:
-		return "Poly"
+	case ZION, ZIONCHAIN:
+		return "Zion"
 	case ETH:
 		return "Ethereum"
 	case ONT:
@@ -187,7 +187,7 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 12
 	case BSC, HECO, HSC, BYTOM, KCC:
 		return 21
-	case ZION, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA:
+	case ZION, ZIONCHAIN, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA:
 		return 1
 	case HARMONY, ASTAR:
 		return 2

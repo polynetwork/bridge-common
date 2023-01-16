@@ -161,7 +161,7 @@ func (c *Client) ConfirmWait(hash common.Hash, blocks uint64, count int) (height
 		}
 		// TODO: Check confirm here
 		if err != nil && !strings.Contains(err.Error(), "not found") {
-			log.Info("Wait poly tx confirmation error", "count", count, "hash", hash, "err", err)
+			log.Info("Wait zion tx confirmation error", "count", count, "hash", hash, "err", err)
 		}
 		time.Sleep(time.Second)
 	}
