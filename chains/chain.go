@@ -114,7 +114,7 @@ func (s *ChainSDK) updateSelection() {
 	var height uint64
 	var sdk SDK
 	var index int
-	var perf time.Duration
+	var perf, best time.Duration
 	state := make([]uint64, len(s.nodes))
 	timer := time.After(time.Second * 10)
 	ch := make(chan [2]uint64, len(s.nodes))
@@ -136,13 +136,17 @@ func (s *ChainSDK) updateSelection() {
 		case <- timer:
 			break LOOP
 		case res := <- ch:
+			elapse := time.Since(target)
+			if res[1] > 0 && best == 0 {
+				best = elapse
+			}
 			count--
 			state[int(res[0])] = res[1]
 			if res[1] > height {
 				index = int(res[0])
 				height = res[1]
 				sdk = s.nodes[index]
-				perf = time.Since(target)
+				perf = elapse
 			}
 			if count == 0 {
 				break LOOP
@@ -170,7 +174,7 @@ func (s *ChainSDK) updateSelection() {
 	}
 	s.Unlock()
 	if changed && status == 1 {
-		log.Info("Changing best node", "chain_id", s.ChainID, "height", height, "elapse", perf, "addr", sdk.Address())
+		log.Info("Changing best node", "chain_id", s.ChainID, "height", height, "elapse", perf, "delta", perf-best, "addr", sdk.Address())
 	}
 }
 
