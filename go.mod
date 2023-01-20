@@ -24,7 +24,7 @@ require (
 )
 
 replace github.com/ontio/ontology-go-sdk v1.11.4 => github.com/devfans/ontology-go-sdk v1.11.4-fix
-replace github.com/portto/aptos-go-sdk v0.0.0-20221018092344-0c7a8cbbaef5 => github.com/devfans/aptos-go-sdk v0.0.0-20221222072301-6996fafa6236
+replace github.com/portto/aptos-go-sdk v0.0.0-20221018092344-0c7a8cbbaef5 => github.com/devfans/aptos-go-sdk v0.0.0-20230118023145-c9b0b8c9ae3f
 
 require (
 	github.com/99designs/keyring v1.1.6 // indirect

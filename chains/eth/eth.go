@@ -19,7 +19,10 @@ package eth
 
 import (
 	"context"
+	"fmt"
 	"math/big"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -37,6 +40,12 @@ type Client struct {
 	Rpc *rpc.Client
 	*ethclient.Client
 	address string
+
+	ws *ethclient.Client
+	sync.RWMutex
+	subsOn bool
+	subs []chan<-uint64
+	url string
 }
 
 func New(url string) *Client {
@@ -49,6 +58,98 @@ func New(url string) *Client {
 	}
 }
 
+func (c *Client) WsClient() (r *ethclient.Client, a string) {
+	c.RLock()
+	r = c.ws
+	a = c.url
+	c.RUnlock()
+	return
+}
+
+// Update ws client
+func (c *Client) Connect(url string) (err error) {
+	if !strings.HasPrefix(url, "ws") {
+		return fmt.Errorf("invalid ws url, %s", url)
+	}
+
+	r, a := c.WsClient()
+	if a == url {
+		log.Info("ws was already connected", "url", url)
+		return
+	} else if a != "" {
+		log.Warn("ws client will be updated", "url", a, "new_url", url)
+	}
+
+	ws, err := ethclient.Dial(url)
+	if err != nil {
+		return fmt.Errorf("ws connect failure, err %v", err)
+	}
+
+	if r != nil {
+		r.Close()
+	}
+
+	c.Lock()
+	defer c.Unlock()
+	c.url = url
+	c.ws = ws
+	return
+}
+
+
+func (c *Client) dispatch(ch <-chan *types.Header) {
+	for header := range ch {
+		height := header.Number.Uint64()
+		c.RLock()
+		subs := c.subs
+		c.RUnlock()
+		for _, sink := range subs {
+			select {
+			case sink <- height:
+			default:
+			}
+		}
+	}
+}
+
+func (c *Client) listen(ch chan <- *types.Header) {
+	for {
+		ws, url := c.WsClient()
+		if ws == nil {
+			log.Warn("ws client is not conneced")
+			time.Sleep(time.Second * 10)
+			continue
+		}
+		log.Info("Subscribing eth chain update", "url", url)
+		sub, err := ws.SubscribeNewHead(context.Background(), ch)
+		if err != nil {
+			log.Error("ws subscribe new head failure", "url", url, "err", err)
+		} else {
+			err = <- sub.Err()
+			log.Error("ws subscription closed", "url", url, "err", err)
+			sub.Unsubscribe()
+		}
+		time.Sleep(time.Second * 2)
+	}
+}
+
+func (c *Client) Listen(url string) (err error) {
+	err = c.Connect(url)
+	if err != nil { return }
+	c.Lock()
+	if c.subsOn {
+		err = fmt.Errorf("ws client was already listening, url %s new url %s", c.url, url)
+	} else {
+		c.subsOn = true
+	}
+	c.Unlock()
+	if err != nil { return }
+	ch := make(chan *types.Header, 10)
+	go c.dispatch(ch)
+	go c.listen(ch)
+	return
+}
+
 func (c *Client) Address() string {
 	return c.address
 }
@@ -58,6 +159,44 @@ func (c *Client) GetProof(addr string, key string, height uint64) (proof *ETHPro
 	proof = &ETHProof{}
 	err = c.Rpc.CallContext(context.Background(), &proof, "eth_getProof", addr, []string{key}, heightHex)
 	return
+}
+
+func(c *Client) Subscribe(ch chan <-uint64) {
+	c.Lock()
+	has := false
+	for _, sub := range c.subs {
+		if sub == ch {
+			has = true
+			break
+		}
+	}
+	if !has {
+		c.subs = append(c.subs, ch)
+	}
+	c.Unlock()
+}
+
+func(c *Client) Unsubscribe(ch chan <-uint64) {
+	c.Lock()
+	defer c.Unlock()
+	index := len(c.subs)
+	for i, sub := range c.subs {
+		if sub == ch {
+			index = i
+			break
+		}
+	}
+	if index == len(c.subs) {
+		return
+	}
+	start := 0
+	end := len(c.subs) - 1
+	if index == start {
+		start = 1
+	} else if index < end {
+		copy(c.subs[index: len(c.subs)-1], c.subs[index+1: len(c.subs)])
+	}
+	c.subs = c.subs[start: end]
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {

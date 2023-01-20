@@ -11,7 +11,7 @@ import (
 )
 
 func TestAptBalance(t *testing.T) {
-	sdk, err := apt.WithOptions(0, []string{"https://fullnode.mainnet.aptoslabs.com"}, time.Minute, 1000)
+	sdk, err := apt.WithOptions(0, []string{"https://fullnode.mainnet.aptoslabs.com/v1"}, time.Minute, 1000)
 	assert.NoError(t, err)
 	from, _ := models.HexToAccountAddress("0xe69e1d1069f086aca14daccbd3183848a1a446f5c3d3ea09bfa964e9324798c")
 	asset, _ := models.HexToAccountAddress("0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa")
@@ -21,7 +21,7 @@ func TestAptBalance(t *testing.T) {
 }
 
 func TestAptBalances(t *testing.T) {
-	sdk, err := apt.WithOptions(0, []string{"https://fullnode.mainnet.aptoslabs.com"}, time.Minute, 1000)
+	sdk, err := apt.WithOptions(0, []string{"https://fullnode.mainnet.aptoslabs.com/v1"}, time.Minute, 1000)
 	assert.NoError(t, err)
 	from, _ := models.HexToAccountAddress("0xe69e1d1069f086aca14daccbd3183848a1a446f5c3d3ea09bfa964e9324798c")
 	bal, err := sdk.Node().Balances(from)
@@ -29,7 +29,7 @@ func TestAptBalances(t *testing.T) {
 }
 
 func TestApt(t *testing.T) {
-	sdk, err := apt.WithOptions(0, []string{"https://testnet.aptoslabs.com"}, time.Minute, 1000)
+	sdk, err := apt.WithOptions(0, []string{"https://testnet.aptoslabs.com/v1"}, time.Minute, 1000)
 	assert.NoError(t, err)
 	w := NewAptWallet(&Config{
 		Path: "../.apt.dat",

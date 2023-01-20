@@ -241,6 +241,8 @@ github.com/devfans/aptos-go-sdk v0.0.0-20221221161724-c03a4ef50f7b h1:yado4csNDQ
 github.com/devfans/aptos-go-sdk v0.0.0-20221221161724-c03a4ef50f7b/go.mod h1:8+XTYv0iwHE5fjS8G6231LUhy2GYwl2BTlzxIqjIxyU=
 github.com/devfans/aptos-go-sdk v0.0.0-20221222072301-6996fafa6236 h1:ZHT89LL/iN+ERltFi3khCAoOClgiyvSSsDRq1dhSC3o=
 github.com/devfans/aptos-go-sdk v0.0.0-20221222072301-6996fafa6236/go.mod h1:8+XTYv0iwHE5fjS8G6231LUhy2GYwl2BTlzxIqjIxyU=
+github.com/devfans/aptos-go-sdk v0.0.0-20230118023145-c9b0b8c9ae3f h1:OtMAyYLul0zKtsUkXZ7qxE/0sQ0Iw6uRJgqgkfkoGSM=
+github.com/devfans/aptos-go-sdk v0.0.0-20230118023145-c9b0b8c9ae3f/go.mod h1:8+XTYv0iwHE5fjS8G6231LUhy2GYwl2BTlzxIqjIxyU=
 github.com/devfans/ontology-go-sdk v1.11.4-fix h1:6LWUILza57Sp5cQt5iZIvGokigV0hsoME6GkTTi0/ac=
 github.com/devfans/ontology-go-sdk v1.11.4-fix/go.mod h1:fRhHYhFfYiUuIlTVtcXLVziiXOneBwVCSAX72+N7XVI=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
