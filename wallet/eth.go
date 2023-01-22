@@ -32,7 +32,7 @@ import (
 
 // London upgrade - support
 type EthWallet struct {
-	Wallet
+	*Wallet
 }
 
 // NOTE: gasPrice, gasPriceX used as gas tip here!
@@ -107,6 +107,6 @@ func (w *EthWallet) SendWithAccount(account accounts.Account, addr common.Addres
 	}
 	
 	//TODO: Check err here before update nonces
-	nonces.Update(true)
+	nonces.Update(err == nil)
 	return tx.Hash().String(), err
 }

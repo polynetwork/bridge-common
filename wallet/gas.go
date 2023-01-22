@@ -18,9 +18,14 @@
 package wallet
 
 import (
+	"context"
 	"math/big"
+	"sync"
+	"time"
 
 	"github.com/polynetwork/bridge-common/base"
+	"github.com/polynetwork/bridge-common/chains/eth"
+	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
 )
 
@@ -65,4 +70,44 @@ func HasBalance(chain uint64, balance *big.Int) bool {
 		limit = util.SetDecimals(big.NewInt(1), 17)
 	}
 	return balance != nil && balance.Cmp(limit) >= 0
+}
+
+type GasPriceOracle interface {
+	Price() *big.Int
+}
+
+type RemoteGasPriceOracle struct {
+	sdk *eth.SDK
+	price *big.Int
+	sync.RWMutex
+}
+
+func NewRemoteGasPriceOracle(sdk *eth.SDK, interval time.Duration) (o *RemoteGasPriceOracle, err error) {
+	price, err := sdk.Node().SuggestGasPrice(context.Background())
+	if err != nil {
+		return
+	}
+	o = &RemoteGasPriceOracle{sdk: sdk, price: price}
+	go o.update(interval)
+	return
+}
+
+func (o *RemoteGasPriceOracle) update(interval time.Duration) {
+	timer := time.NewTicker(interval)
+	for range timer.C {
+		price, err := o.sdk.Node().SuggestGasPrice(context.Background())
+		if err != nil {
+			log.Error("Failed to update gas price", "err", err)
+		} else {
+			o.Lock()
+			o.price = price
+			o.Unlock()
+		}
+	}
+}
+
+func (o *RemoteGasPriceOracle) Price() *big.Int {
+	o.RLock()
+	defer o.RUnlock()
+	return o.price
 }

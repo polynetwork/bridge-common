@@ -19,13 +19,16 @@ package wallet
 
 import (
 	"context"
+	"sync"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/polynetwork/bridge-common/chains/eth"
+	"github.com/polynetwork/bridge-common/log"
 )
 
 type NonceProvider interface {
 	Acquire() (uint64, error)
-	Update(bool)
+	Update(bool) error
 }
 
 func NewRemoteNonceProvider(sdk *eth.SDK, address common.Address) *RemoteNonceProvider {
@@ -41,5 +44,45 @@ func (p *RemoteNonceProvider) Acquire() (uint64, error) {
 	return p.sdk.Node().NonceAt(context.Background(), p.address, nil)
 }
 
-func (p *RemoteNonceProvider) Update(success bool) {
+func (p *RemoteNonceProvider) Update(success bool) error {
+	return nil
+}
+
+func NewCacheNonceProvider(sdk *eth.SDK, address common.Address) *CacheNonceProvider {
+	p := &CacheNonceProvider{sdk: sdk, address: address}
+	go p.Update(true)
+	return p
+}
+
+type CacheNonceProvider struct {
+	sdk     *eth.SDK
+	address common.Address
+	sync.Mutex
+	nonce *uint64
+}
+
+func (p *CacheNonceProvider) Acquire() (uint64, error) {
+	p.Lock()
+	nonce := p.nonce
+	if nonce != nil {
+		p.nonce = nil
+	}
+	p.Unlock()
+	if nonce != nil {
+		return *nonce, nil
+	}
+	return p.sdk.Node().NonceAt(context.Background(), p.address, nil)
+}
+
+func (p *CacheNonceProvider) Update(_success bool) (err error) {
+	nonce, err := p.sdk.Node().NonceAt(context.Background(), p.address, nil)
+	if err != nil {
+		log.Error("Failed to fetch nonce for account", "err", err)
+	} else {
+		p.Lock()
+		p.nonce = &nonce
+		p.Unlock()
+		log.Info("Updated account nonce cache", "account", p.address, "nonce", nonce)
+	}
+	return
 }

@@ -121,6 +121,18 @@ func (w *Wallet) Accounts() []accounts.Account {
 	return w.accounts
 }
 
+// Should be called after Init and before uses
+func (w *Wallet) SetCacheNonces(accounts... accounts.Account) (err error) {
+	for _, account := range accounts {
+		_, ok := w.nonces[account]
+		if !ok {
+			return fmt.Errorf("Missing account in wallet %s", account.Address)
+		}
+		w.nonces[account] = NewCacheNonceProvider(w.sdk, account.Address)
+	}
+	return
+}
+
 func (w *Wallet) Init() (err error) {
 	{
 		for _, k := range w.config.KeyProviders {
@@ -251,7 +263,7 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 	}
 
 	//TODO: Check err here before update nonces
-	nonces.Update(true)
+	nonces.Update(err == nil)
 	return tx.Hash().String(), err
 }
 
@@ -273,7 +285,7 @@ func (w *Wallet) updateAccounts() {
 	w.Lock()
 	defer w.Unlock()
 	accounts := []accounts.Account{}
-	for a, _ := range w.providers {
+	for a := range w.providers {
 		accounts = append(accounts, a)
 		w.nonces[a] = NewRemoteNonceProvider(w.sdk, a.Address)
 	}
@@ -291,7 +303,7 @@ func (w *Wallet) Select() (accounts.Account, Provider, NonceProvider) {
 }
 
 func (w *Wallet) Upgrade() *EthWallet {
-	return &EthWallet{*w}
+	return &EthWallet{w}
 }
 
 func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error) {
@@ -371,8 +383,12 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		return
 	}
 	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
-	err = w.sdk.Node().SendTransaction(context.Background(), tx)
+	if w.Broadcast {
+		err = w.sdk.Broadcast(tx)
+	} else {
+		err = w.sdk.Node().SendTransaction(context.Background(), tx)
+	}
 	//TODO: Check err here before update nonces
-	nonces.Update(true)
+	nonces.Update(err == nil)
 	return tx.Hash().String(), err
 }
