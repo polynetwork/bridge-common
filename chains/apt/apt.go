@@ -87,6 +87,16 @@ func (s *SDK) Select() *Client {
 	return s.nodes[s.ChainSDK.Select()]
 }
 
+func (s *SDK) Broadcast(ctx context.Context, tx models.UserTransaction, opts ...interface{}) (resp *client.TransactionResp, err error) {
+	nodes := s.Nodes()
+	for _, idx := range nodes[1:] {
+		go func(id int) {
+			_, _ = s.nodes[id].SubmitTransaction(ctx, tx)
+		} (idx)
+	}
+	return s.nodes[nodes[0]].SubmitTransaction(ctx, tx, opts...)
+}
+
 func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
 
 	clients := make([]*Client, len(urls))

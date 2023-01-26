@@ -44,6 +44,7 @@ func init () {
 
 type AptWallet struct {
 	sdk      *apt.SDK
+	Broadcast bool
 	ChainID  uint8
 	config   *Config
 	accounts map[models.AccountAddress]models.PrivateKey
@@ -199,7 +200,12 @@ func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.Account
 		return
 	}
 
-	resp, err := w.sdk.Node().SubmitTransaction(ctx, tx.UserTransaction)
+	var resp *client.TransactionResp
+	if w.Broadcast {
+		resp, err = w.sdk.Broadcast(ctx, tx.UserTransaction)
+	} else {
+		resp, err = w.sdk.Node().SubmitTransaction(ctx, tx.UserTransaction)
+	}
 	if err != nil {
 		return
 	}
@@ -267,7 +273,12 @@ func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, pa
 		return
 	}
 
-	resp, err := w.sdk.Node().SubmitTransaction(ctx, tx.UserTransaction)
+	var resp *client.TransactionResp
+	if w.Broadcast {
+		resp, err = w.sdk.Broadcast(ctx, tx.UserTransaction)
+	} else {
+		resp, err = w.sdk.Node().SubmitTransaction(ctx, tx.UserTransaction)
+	}
 	if err != nil {
 		return
 	}
