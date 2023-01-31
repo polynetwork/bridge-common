@@ -60,6 +60,7 @@ const (
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
 	GOERLI     uint64 = 1000502
+	SEPOLIA    uint64 = 1000602
 	PIXIE      uint64 = 2000000
 	BCSPALETTE uint64 = 1001001
 	ONTEVM     uint64 = 1001333

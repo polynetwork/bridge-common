@@ -76,6 +76,8 @@ func GetChainName(id uint64) string {
 		return "Ethereum-Rinkeby"
 	case GOERLI:
 		return "Ethereum-Goerli"
+	case SEPOLIA:
+		return "Ethereum-Sepolia"
 	case ONT:
 		return "Ontology"
 	case NEO:
