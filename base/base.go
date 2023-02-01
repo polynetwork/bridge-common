@@ -160,10 +160,10 @@ func GetChainName(id uint64) string {
 
 func BlocksToSkip(chainId uint64) uint64 {
 	switch chainId {
+	case ETH, GOERLI:
+		return 64
 	case MATIC:
 		return 120
-	case ETH, KOVAN, GOERLI:
-		return 8
 	case BSC, HECO, HSC, BYTOM, KCC:
 		return 20
 	case O3:
