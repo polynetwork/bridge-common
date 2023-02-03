@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/polynetwork/bridge-common/base"
+	"github.com/polynetwork/bridge-common/chains/apt"
 	"github.com/polynetwork/bridge-common/chains/eth"
 	"github.com/polynetwork/bridge-common/log"
 	"github.com/polynetwork/bridge-common/util"
@@ -110,4 +111,46 @@ func (o *RemoteGasPriceOracle) Price() *big.Int {
 	o.RLock()
 	defer o.RUnlock()
 	return o.price
+}
+
+type AptGasPriceOracle interface {
+	Price() (uint64, uint64, uint64)
+}
+
+type RemoteAptGasPriceOracle struct {
+	sdk *apt.SDK
+	price, low, high uint64
+	sync.RWMutex
+}
+
+func NewRemoteAptGasPriceOracle(sdk *apt.SDK, interval time.Duration) (o *RemoteAptGasPriceOracle, err error) {
+	price, low, high, err := sdk.Node().EstimateGasPrice(context.Background())
+	if err != nil {
+		return
+	}
+	o = &RemoteAptGasPriceOracle{sdk: sdk, price: price, low: low, high: high}
+	go o.update(interval)
+	return
+}
+
+func (o *RemoteAptGasPriceOracle) update(interval time.Duration) {
+	timer := time.NewTicker(interval)
+	for range timer.C {
+		price, low, high, err := o.sdk.Node().EstimateGasPrice(context.Background())
+		if err != nil {
+			log.Error("Failed to update gas price", "err", err)
+		} else {
+			o.Lock()
+			o.price = price
+			o.low = low
+			o.high = high
+			o.Unlock()
+		}
+	}
+}
+
+func (o *RemoteAptGasPriceOracle) Price() (uint64, uint64, uint64) {
+	o.RLock()
+	defer o.RUnlock()
+	return o.price, o.low, o.high
 }

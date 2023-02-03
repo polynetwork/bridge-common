@@ -29,7 +29,7 @@ type (
 )
 
 const (
-	APT_GAS_PRICE = "100"
+	APT_GAS_PRICE uint64 = 100
 	APT_GAS_LIMIT = "2000000"
 )
 
@@ -120,7 +120,7 @@ func (w *AptWallet) CreateAccount(ctx context.Context, account *models.AccountAd
 	return w.Send(ctx, account, payload, ttl)
 }
 
-func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, ttl time.Duration, seq, limit, price string, priceX float64) (hash string, err error) {
+func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, ttl time.Duration, seq, limit string, price uint64, priceX float64) (hash string, err error) {
 	if account == nil {
 		if len(w.accounts) == 0 {
 			err = fmt.Errorf("no apt account available")
@@ -175,22 +175,18 @@ func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.Account
 			return "", err
 		}
 		limit = resps[0].MaxGasAmount
-		if price == "" {
-			price = resps[0].GasUnitPrice
+		if price == 0 {
+			price, _ = strconv.ParseUint(resps[0].GasUnitPrice, 10, 0)
 		}
-	} else if price == "" {
+	} else if price == 0 {
 		price = APT_GAS_PRICE
 	}
-	
-    gasPrice, err := strconv.ParseUint(price, 10, 0)
-	if err != nil { 
-		return
-	}
+
 	if priceX > 0 {
-		gasPrice = uint64(float64(gasPrice) * priceX)
+		price = uint64(float64(price) * priceX)
 	}
 
-	err = tx.SetMaxGasAmount(limit).SetGasUnitPrice(gasPrice).Error()
+	err = tx.SetMaxGasAmount(limit).SetGasUnitPrice(price).Error()
 	if err != nil {
 		return
 	}
