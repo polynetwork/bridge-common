@@ -120,6 +120,61 @@ func (w *AptWallet) CreateAccount(ctx context.Context, account *models.AccountAd
 	return w.Send(ctx, account, payload, ttl)
 }
 
+func (w *AptWallet) Estimate(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, prioritize bool, seq string, ttl time.Duration) (res *client.TransactionResp, err error) {
+	if account == nil {
+		if len(w.accounts) == 0 {
+			err = fmt.Errorf("no apt account available")
+			return
+		}
+		for addr := range w.accounts {
+			account = &addr
+			break
+		}
+		// clear seq
+		seq = ""
+	}
+
+	key, ok := w.accounts[*account]
+	if !ok {
+		err = fmt.Errorf("account not found in wallet, %x", (*account)[:])
+		return
+	}
+	
+	if seq == "" {
+		info, err := w.GetAccountInfo(*account)
+		if err != nil {
+			return nil, err
+		}
+		seq = info.SequenceNumber
+	}
+
+	tx := new(models.Transaction)
+	err = tx.SetChainID(w.ChainID).
+		SetSender(hex.EncodeToString((*account)[:])).
+		SetPayload(payload).
+		SetExpirationTimestampSecs(uint64(time.Now().Add(ttl).Unix())).
+		SetSequenceNumber(seq).Error()
+	if err != nil {
+		return
+	}
+
+	siger := models.NewSingleSigner(key)
+	tx.Authenticator = models.TransactionAuthenticatorEd25519{
+		PublicKey: siger.PublicKey,
+	}
+
+	resps, err := w.sdk.Node().SimulateTransaction(ctx, tx.UserTransaction, true, true, prioritize)
+	if err != nil || len(resps) == 0 || !resps[0].Success {
+		if len(resps) > 0 {
+			err = fmt.Errorf("SimulateTransaction failure, vm_status: %s", resps[0].VmStatus)
+		} else {
+			err = fmt.Errorf("SimulateTransaction error: %v", err)
+		}
+		return nil, err
+	}
+	return &resps[0], nil
+}
+
 func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.AccountAddress, payload models.TransactionPayload, ttl time.Duration, seq, limit string, price uint64, priceX float64) (hash string, err error) {
 	if account == nil {
 		if len(w.accounts) == 0 {
@@ -165,7 +220,7 @@ func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.Account
 	}
 
 	if limit == "" {
-		resps, err := w.sdk.Node().SimulateTransaction(ctx, tx.UserTransaction, true, true)
+		resps, err := w.sdk.Node().SimulateTransaction(ctx, tx.UserTransaction, true, true, false)
 		if err != nil || len(resps) == 0 || !resps[0].Success {
 			if len(resps) > 0 {
 				err = fmt.Errorf("SimulateTransaction failure, vm_status: %s", resps[0].VmStatus)
@@ -249,7 +304,7 @@ func (w *AptWallet) Send(ctx context.Context, account *models.AccountAddress, pa
 		PublicKey: siger.PublicKey,
 	}
 
-	resps, err := w.sdk.Node().SimulateTransaction(ctx, tx.UserTransaction, true, true)
+	resps, err := w.sdk.Node().SimulateTransaction(ctx, tx.UserTransaction, true, true, false)
 	if err != nil || len(resps) == 0 || !resps[0].Success {
 		if len(resps) > 0 {
 			err = fmt.Errorf("SimulateTransaction failure, vm_status: %s", resps[0].VmStatus)
