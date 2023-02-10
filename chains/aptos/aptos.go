@@ -1,9 +1,11 @@
 package aptos
 
 import (
+	"context"
 	"github.com/polynetwork/bridge-common/chains"
 	"github.com/polynetwork/bridge-common/util"
 	"github.com/portto/aptos-go-sdk/client"
+	"github.com/portto/aptos-go-sdk/models"
 	"net/http"
 	"strconv"
 	"time"
@@ -41,6 +43,14 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 	}
 	heightStr := res.Header.Get("x-aptos-block-height")
 	return strconv.ParseUint(heightStr, 10, 64)
+}
+
+func (c *Client) GetEvents(filter *EventFilter) ([]models.Event, error) {
+	return c.GetEventsByCreationNumber(context.Background(), filter.Address, filter.CreationNumber, filter.Query)
+}
+
+func (c *Client) GetTxByVersion(version uint64) (*client.TransactionResp, error) {
+	return c.GetTransactionByVersion(context.Background(), version)
 }
 
 type SDK struct {
