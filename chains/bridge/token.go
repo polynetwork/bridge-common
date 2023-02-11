@@ -24,14 +24,36 @@ type TokenBasic struct {
 	Precision int
 }
 
+type TokenMap struct {
+	SrcTokenHash string
+	DstTokenHash string
+	DstToken *TokenRequest
+	Property int
+}
+
 type TokenRequest struct {
 	ChainId        uint64
+	Precision      int
 	Hash           string
 	Name           string      `json:",omitempty"`
 	TokenBasicName string      `json:",omitempty"`
 	TokenBasic     *TokenBasic `json:",omitempty"`
+	TokenMaps      []*TokenMap
 }
 
 func (c *Client) Token(req *TokenRequest) (err error) {
 	return tools.PostJsonFor(c.address+"/token/", req, req)
+}
+
+
+func (c *Client) Tokens(chainID uint64) (resp TokensResponse, err error) {
+	req := map[string]uint64 {"ChainId": chainID}
+	err = tools.PostJsonFor(c.address+"/tokens", req, &resp)
+	return
+}
+
+
+type TokensResponse struct {
+	TotalCount int
+	Tokens []*TokenRequest
 }
