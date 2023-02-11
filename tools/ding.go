@@ -178,5 +178,5 @@ func GetJsonAs(url string, construct func(*http.Request), result interface{}) er
 	} else {
 		log.Debug("GetJson response", "url", url, "Body", string(respBody))
 	}
-	return nil
+	return err
 }
