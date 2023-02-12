@@ -191,17 +191,15 @@ func (s *ChainSDK) Index() int {
 }
 
 func (s *ChainSDK) Select() int {
-	s.RLock()
-	defer s.RUnlock()
+	s.Lock()
+	defer s.Unlock()
 	cursor := s.cursor % len(s.nodes)
-	s.cursor++
-	c := s.cursor % len(s.nodes)
+	c := (cursor + 1) % len(s.nodes)
 	for c != cursor {
 		if s.state[c] {
 			break
 		}
-		s.cursor++
-		c = s.cursor % len(s.nodes)
+		c = (c + 1) % len(s.nodes)
 	}
 	s.cursor = c
 	return c
