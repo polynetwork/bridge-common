@@ -222,3 +222,12 @@ func SameAsETH(chainId uint64) bool {
 	}
 	return false
 }
+
+func UseDynamicFeeTx(chainId uint64) bool {
+	switch chainId {
+	case ETH, MATIC:
+		return true
+	default:
+		return false
+	}
+}
