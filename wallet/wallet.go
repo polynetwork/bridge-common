@@ -67,6 +67,8 @@ type IWallet interface {
 	GetBalance(common.Address) (*big.Int, error)
 	EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
 	SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
+	QuickSendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, price GasPriceOracle, gasPriceX *big.Float, data []byte) (hash string, err error)
+	QuickSendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, price GasPriceOracle, gasPriceX *big.Float, data []byte) (hash string, err error)
 }
 
 type Wallet struct {
@@ -190,6 +192,10 @@ func (w *Wallet) SendWithAccount(account accounts.Account, addr common.Address, 
 	return w.sendWithAccount(false, true, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
 }
 
+func (w *Wallet) QuickSendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, price GasPriceOracle, gasPriceX *big.Float, data []byte) (hash string, err error) {
+	return w.sendWithAccount(false, true, account, addr, amount, gasLimit, price.Price(), gasPriceX, data)
+}
+
 func (w *Wallet) SendWithAccountFix(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	return w.sendWithAccount(false, false, account, addr, amount, gasLimit, gasPrice, gasPriceX, data)
 }
@@ -210,11 +216,6 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 		}
 	}
 
-	provider, nonces := w.GetAccount(account)
-	nonce, err := nonces.Acquire()
-	if err != nil {
-		return
-	}
 	if gasLimit == 0 {
 		msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 		if estimateWithGas {
@@ -222,7 +223,6 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 		}
 		gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 		if err != nil {
-			nonces.Update(false)
 			if strings.Contains(err.Error(), "has been executed") {
 				log.Info("Transaction already executed")
 				return "", nil
@@ -235,16 +235,20 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 
 	if dry {
 		fmt.Printf(
-			"Estimated tx successfully account %s gas_price %s gas_limit %v nonce %v target %s amount %s data %x\n",
-			account.Address, gasPrice, gasLimit, nonce, addr, amount, data)
+			"Estimated tx successfully account %s gas_price %s gas_limit %v target %s amount %s data %x\n",
+			account.Address, gasPrice, gasLimit, addr, amount, data)
 		return
 	}
 
 	gasLimit = uint64(1.3 * float32(gasLimit))
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
-		nonces.Update(false)
 		err = fmt.Errorf("Send tx estimated gas limit(%v) higher than max %v", gasLimit, limit)
+		return
+	}
+	provider, nonces := w.GetAccount(account)
+	nonce, err := nonces.Acquire()
+	if err != nil {
 		return
 	}
 	tx := types.NewTransaction(nonce, addr, amount, limit, gasPrice, data)
@@ -255,15 +259,14 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 		return
 	}
 
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	if w.Broadcast {
 		err = w.sdk.Broadcast(tx)
 	} else {
 		err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	}
-
 	//TODO: Check err here before update nonces
 	nonces.Update(err == nil)
+	log.Info("Sending tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice(), "err", err)
 	return tx.Hash().String(), err
 }
 
@@ -321,6 +324,10 @@ func (w *Wallet) EstimateGasWithAccount(account accounts.Account, addr common.Ad
 	return
 }
 
+func (w *Wallet) QuickSendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, price GasPriceOracle, gasPriceX *big.Float, data []byte) (hash string, err error) {
+	return w.SendWithMaxLimit(chainId, account, addr, amount, maxLimit, price.Price(), gasPriceX, data)
+}
+
 func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error) {
 	if maxLimit == nil || maxLimit.Sign() <= 0 {
 		err = fmt.Errorf("max limit is zero or missing")
@@ -337,17 +344,10 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		}
 	}
 
-	provider, nonces := w.GetAccount(account)
-	nonce, err := nonces.Acquire()
-	if err != nil {
-		return
-	}
-
 	var gasLimit uint64
 	msg := ethereum.CallMsg{From: account.Address, To: &addr, Value: amount, Data: data}
 	gasLimit, err = w.sdk.Node().EstimateGas(context.Background(), msg)
 	if err != nil {
-		nonces.Update(false)
 		if strings.Contains(err.Error(), "has been executed") {
 			log.Info("Transaction already executed")
 			return "", nil
@@ -356,23 +356,28 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		err = fmt.Errorf("Estimate gas limit error %v, account %s", err, account.Address)
 		return
 	}
-	log.Info("SendWithMaxLimit", "chainId", chainId, "gasPrice", gasPrice, "estimateGas", gasLimit)
-	if maxLimit.Cmp(new(big.Int).Mul(big.NewInt(int64(gasLimit)), gasPrice)) == -1 {
-		nonces.Update(false)
-		err = fmt.Errorf("Send tx estimated gas (limit %v, price %v) higher than max limit %v", gasLimit, gasPrice, maxLimit)
-		return
-	}
 
 	if chainId == base.OPTIMISM {
 		gasLimit = uint64(2 * float32(gasLimit))
 	} else {
-		gasLimit = uint64(1.3 * float32(gasLimit))
+		gasLimit = uint64(1.2 * float32(gasLimit))
 	}
 
 	limit := GetChainGasLimit(w.chainId, gasLimit)
 	if limit < gasLimit {
-		nonces.Update(false)
 		err = fmt.Errorf("Send tx estimated gas limit(%v) higher than chain max limit %v", gasLimit, limit)
+		return
+	}
+
+	delta := new(big.Int).Sub(maxLimit, new(big.Int).Mul(big.NewInt(int64(gasLimit)), gasPrice))
+	if delta.Sign() < 0 {
+		err = fmt.Errorf("Send tx estimated gas (limit %v, price %s) higher than max limit %s", gasLimit, gasPrice, maxLimit)
+		return
+	}
+
+	provider, nonces := w.GetAccount(account)
+	nonce, err := nonces.Acquire()
+	if err != nil {
 		return
 	}
 	tx := types.NewTransaction(nonce, addr, amount, limit, gasPrice, data)
@@ -382,7 +387,6 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		err = fmt.Errorf("Sign tx error %v", err)
 		return
 	}
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	if w.Broadcast {
 		err = w.sdk.Broadcast(tx)
 	} else {
@@ -390,5 +394,7 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 	}
 	//TODO: Check err here before update nonces
 	nonces.Update(err == nil)
+	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
+	log.Info("Sent tx with limit", "chainId", chainId, "hash", hash, "delta", delta, "err", err)
 	return tx.Hash().String(), err
 }

@@ -75,36 +75,55 @@ func HasBalance(chain uint64, balance *big.Int) bool {
 
 type GasPriceOracle interface {
 	Price() *big.Int
+	PriceWithTip() (*big.Int, *big.Int)
 }
 
 type RemoteGasPriceOracle struct {
 	sdk *eth.SDK
-	price *big.Int
+	price, tip *big.Int
 	sync.RWMutex
+	upgrade bool
 }
 
-func NewRemoteGasPriceOracle(sdk *eth.SDK, interval time.Duration) (o *RemoteGasPriceOracle, err error) {
+func NewRemoteGasPriceOracle(sdk *eth.SDK, upgrade bool, interval time.Duration) (o *RemoteGasPriceOracle, err error) {
 	price, err := sdk.Node().SuggestGasPrice(context.Background())
 	if err != nil {
 		return
 	}
-	o = &RemoteGasPriceOracle{sdk: sdk, price: price}
-	go o.update(interval)
+	var tip *big.Int
+	if upgrade {
+		tip, err = sdk.Node().SuggestGasTipCap(context.Background())
+		if err != nil { return}
+	}
+	o = &RemoteGasPriceOracle{sdk: sdk, price: price, upgrade: upgrade, tip: tip}
+	go o.update(interval, upgrade)
 	return
 }
 
-func (o *RemoteGasPriceOracle) update(interval time.Duration) {
+func (o *RemoteGasPriceOracle) update(interval time.Duration, upgrade bool) {
 	timer := time.NewTicker(interval)
 	for range timer.C {
+		var tip *big.Int
 		price, err := o.sdk.Node().SuggestGasPrice(context.Background())
+		if err == nil && upgrade {
+			tip, err = o.sdk.Node().SuggestGasTipCap(context.Background())
+		}
+
 		if err != nil {
 			log.Error("Failed to update gas price", "err", err)
 		} else {
 			o.Lock()
 			o.price = price
+			o.tip = tip
 			o.Unlock()
 		}
 	}
+}
+
+func (o *RemoteGasPriceOracle) PriceWithTip() (price *big.Int, tip *big.Int) {
+	o.RLock()
+	defer o.RUnlock()
+	return o.price, o.tip
 }
 
 func (o *RemoteGasPriceOracle) Price() *big.Int {
