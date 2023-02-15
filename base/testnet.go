@@ -56,7 +56,7 @@ const (
 	FLOW     uint64 = 910
 	KAVA     uint64 = 920
 	CUBE     uint64 = 930
-	ZKSYNC   uint64 = 940
+	ZKSYNC   uint64 = 941
 	CELO     uint64 = 960
 	CLOVER   uint64 = 970
 	CONFLUX  uint64 = 980

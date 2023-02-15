@@ -49,7 +49,7 @@ const (
 	BCSPALETTE uint64 = 1001
 	STARCOIN   uint64 = 318
 	RIPPLE     uint64 = 101
-	ZKSYNC     uint64 = 940
+	ZKSYNC     uint64 = 941
 	CELO       uint64 = 960
 	CLOVER     uint64 = 970
 	CONFLUX    uint64 = 980
