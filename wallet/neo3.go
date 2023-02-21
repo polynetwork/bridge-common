@@ -82,7 +82,7 @@ func (w *Neo3Wallet) SendTransactionWithAccount(script []byte, account *wallet.N
 		return EMPTY, fmt.Errorf("neo3.SendRawTransaction error: %s", res.GetErrorInfo())
 	}
 	hash := trx.GetHash().String()
-	log.Info("send neo3 transaction, hash: %s", hash)
+	log.Info("send neo3 transaction", "hash", hash)
 	return hash, nil
 }
 
