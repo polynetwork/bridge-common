@@ -394,7 +394,8 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 	}
 	//TODO: Check err here before update nonces
 	nonces.Update(err == nil)
-	log.Info("Compose dst chain tx", "hash", tx.Hash(), "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
+	hash = tx.Hash().String()
+	log.Info("Compose dst chain tx", "hash", hash, "account", account.Address, "nonce", tx.Nonce(), "limit", tx.Gas(), "gasPrice", tx.GasPrice())
 	log.Info("Sent tx with limit", "chainId", chainId, "hash", hash, "delta", delta, "err", err)
-	return tx.Hash().String(), err
+	return hash, err
 }
