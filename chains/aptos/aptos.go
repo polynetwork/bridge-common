@@ -6,7 +6,6 @@ import (
 	"github.com/polynetwork/bridge-common/util"
 	"github.com/portto/aptos-go-sdk/client"
 	"github.com/portto/aptos-go-sdk/models"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -31,18 +30,11 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) GetLatestHeight() (uint64, error) {
-	url := c.address + "/v1/-/healthy"
-	httpClient := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
+	ledgerInfo, err := c.LedgerInformation(context.Background())
 	if err != nil {
 		return 0, err
 	}
-	res, err := httpClient.Do(req)
-	if err != nil {
-		return 0, err
-	}
-	heightStr := res.Header.Get("x-aptos-block-height")
-	return strconv.ParseUint(heightStr, 10, 64)
+	return strconv.ParseUint(ledgerInfo.LedgerVersion, 10, 64)
 }
 
 func (c *Client) GetEvents(filter *EventFilter) ([]models.Event, error) {
@@ -51,6 +43,18 @@ func (c *Client) GetEvents(filter *EventFilter) ([]models.Event, error) {
 
 func (c *Client) GetTxByVersion(version uint64) (*client.TransactionResp, error) {
 	return c.GetTransactionByVersion(context.Background(), version)
+}
+
+func (c *Client) GetTxByHash(hash string) (*client.TransactionResp, error) {
+	return c.GetTransactionByHash(context.Background(), hash)
+}
+
+func (c *Client) GetVersionByTx(hash string) (uint64, error) {
+	tx, err := c.GetTransactionByHash(context.Background(), hash)
+	if err != nil {
+		return 0, err
+	}
+	return strconv.ParseUint(tx.Version, 10, 64)
 }
 
 type SDK struct {
