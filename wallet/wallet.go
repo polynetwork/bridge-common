@@ -338,10 +338,11 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		if err != nil {
 			err = fmt.Errorf("Get gas price error %v", err)
 			return
-		}
-		if gasPriceX != nil {
-			gasPrice, _ = new(big.Float).Mul(new(big.Float).SetInt(gasPrice), gasPriceX).Int(nil)
-		}
+		}	
+	}
+
+	if gasPriceX != nil {
+		gasPrice, _ = new(big.Float).Mul(new(big.Float).SetInt(gasPrice), gasPriceX).Int(nil)
 	}
 
 	var gasLimit uint64
