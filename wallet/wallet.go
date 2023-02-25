@@ -135,6 +135,15 @@ func (w *Wallet) SetCacheNonces(accounts... accounts.Account) (err error) {
 	return
 }
 
+func (w *Wallet) SetNonceProvider(account accounts.Account, provider NonceProvider) (err error) {
+	_, ok := w.nonces[account]
+	if !ok {
+		return fmt.Errorf("Missing account in wallet %s", account.Address)
+	}
+	w.nonces[account] = provider
+	return
+}
+
 func (w *Wallet) Init() (err error) {
 	{
 		for _, k := range w.config.KeyProviders {

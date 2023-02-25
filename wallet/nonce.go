@@ -48,6 +48,10 @@ func (p *RemoteNonceProvider) Update(success bool) error {
 	return nil
 }
 
+type DummyNonceProvider uint64
+func (p DummyNonceProvider) Acquire() (uint64, error) { return uint64(p), nil }
+func (p DummyNonceProvider) Update(_success bool) (err error) { return nil }
+
 func NewCacheNonceProvider(sdk *eth.SDK, address common.Address) *CacheNonceProvider {
 	p := &CacheNonceProvider{sdk: sdk, address: address}
 	go p.Update(true)
