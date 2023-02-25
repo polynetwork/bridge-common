@@ -65,6 +65,8 @@ type IWallet interface {
 	Accounts() []accounts.Account
 	Select() (accounts.Account, Provider, NonceProvider)
 	GetBalance(common.Address) (*big.Int, error)
+	SetNonceProvider(account accounts.Account, provider NonceProvider) (err error)
+	SetCacheNonces(accounts... accounts.Account) (err error)
 	EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
 	SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
 	QuickSendWithAccount(account accounts.Account, addr common.Address, amount *big.Int, gasLimit uint64, price GasPriceOracle, gasPriceX *big.Float, data []byte) (hash string, err error)
