@@ -160,7 +160,8 @@ func GetChainName(id uint64) string {
 		return "Aptos"
 	case BRISE:
 		return "Bitgert"
-
+	case CORE:
+		return "CoreDao"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
