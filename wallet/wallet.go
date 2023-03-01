@@ -66,6 +66,7 @@ type IWallet interface {
 	Select() (accounts.Account, Provider, NonceProvider)
 	GetBalance(common.Address) (*big.Int, error)
 	SetNonceProvider(account accounts.Account, provider NonceProvider) (err error)
+	GetNonceProvider(account accounts.Account) NonceProvider
 	SetCacheNonces(accounts... accounts.Account) (err error)
 	EstimateGasWithAccount(account accounts.Account, addr common.Address, amount *big.Int, data []byte) (gasPrice *big.Int, gasLimit uint64, err error)
 	SendWithMaxLimit(chainId uint64, account accounts.Account, addr common.Address, amount *big.Int, maxLimit *big.Int, gasPrice *big.Int, gasPriceX *big.Float, data []byte) (hash string, err error)
@@ -127,6 +128,8 @@ func (w *Wallet) Accounts() []accounts.Account {
 
 // Should be called after Init and before uses
 func (w *Wallet) SetCacheNonces(accounts... accounts.Account) (err error) {
+	w.Lock()
+	defer w.Unlock()
 	for _, account := range accounts {
 		_, ok := w.nonces[account]
 		if !ok {
@@ -137,7 +140,15 @@ func (w *Wallet) SetCacheNonces(accounts... accounts.Account) (err error) {
 	return
 }
 
+func (w *Wallet) GetNonceProvider(account accounts.Account) NonceProvider {
+	w.RLock()
+	defer w.RUnlock()
+	return w.nonces[account]
+}
+
 func (w *Wallet) SetNonceProvider(account accounts.Account, provider NonceProvider) (err error) {
+	w.Lock()
+	defer w.Unlock()
 	_, ok := w.nonces[account]
 	if !ok {
 		return fmt.Errorf("Missing account in wallet %s", account.Address)
