@@ -154,6 +154,8 @@ func GetChainName(id uint64) string {
 		return "Brise"
 	case APTOS:
 		return "Aptos"
+	case APTOS2:
+		return "Aptos"
 	case DEXIT:
 		return "Dexit"
 	case CLOUDTX:

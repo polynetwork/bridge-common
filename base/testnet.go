@@ -62,7 +62,8 @@ const (
 	CONFLUX  uint64 = 980
 	ASTAR    uint64 = 990
 	BRISE    uint64 = 1010
-	APTOS    uint64 = 997
+	APTOS2   uint64 = 997
+	APTOS    uint64 = 998
 	DEXIT    uint64 = 1020
 	CLOUDTX  uint64 = 1030
 
