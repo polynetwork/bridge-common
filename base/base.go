@@ -150,6 +150,8 @@ func GetChainName(id uint64) string {
 		return "Bitgert"
 	case GOERLI:
 		return "Goerli"
+	case SEPOLIA:
+		return "Sepolia"
 	case RIPPLE:
 		return "Ripple"
 
@@ -160,7 +162,7 @@ func GetChainName(id uint64) string {
 
 func BlocksToSkip(chainId uint64) uint64 {
 	switch chainId {
-	case ETH, GOERLI:
+	case ETH:
 		return 64
 	case MATIC:
 		return 120
@@ -184,7 +186,9 @@ func BlocksToSkip(chainId uint64) uint64 {
 func BlocksToWait(chainId uint64) uint64 {
 	switch chainId {
 	case ETH, KOVAN, GOERLI:
-		return 12
+		return 64
+	case SEPOLIA:
+		return 2
 	case BSC, HECO, HSC, BYTOM, KCC:
 		return 21
 	case ZION, ZIONCHAIN, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA, APTOS:
