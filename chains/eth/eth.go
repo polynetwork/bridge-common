@@ -46,6 +46,7 @@ type Client struct {
 	subsOn bool
 	subs []chan<-uint64
 	url string
+	index int
 }
 
 func New(url string) *Client {
@@ -265,6 +266,10 @@ func (c *Client) Confirm(hash common.Hash, blocks uint64, count int) (height, co
 	return
 }
 
+func (c *Client) Index() int {
+	return c.index
+}
+
 type SDK struct {
 	*chains.ChainSDK
 	nodes   []*Client
@@ -295,6 +300,7 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 	nodes := make([]chains.SDK, len(urls))
 	for i, url := range urls {
 		client := New(url)
+		client.index = i
 		nodes[i] = client
 		clients[i] = client
 	}

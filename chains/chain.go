@@ -110,6 +110,27 @@ func (s *ChainSDK) WaitTillHeight(ctx context.Context, height uint64, interval t
 	}
 }
 
+func (s *ChainSDK) ReportDown(index int) {
+	s.Lock()
+	down := s.nodes[index].Address()
+	s.state[index] = false
+	if s.index == index {
+		for i, good := range s.state {
+			if i != index && good {
+				s.index = i
+				s.sdk = s.nodes[i]
+				break
+			}
+		}
+	}
+	if s.index == index {
+		s.status = 0
+	}
+	best := s.sdk.Address()
+	s.Unlock()
+	log.Info("Node marked down as reported", "addr", down, "best", best)
+}
+
 func (s *ChainSDK) updateSelection() {
 	var height uint64
 	var sdk SDK
