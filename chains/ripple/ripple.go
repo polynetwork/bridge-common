@@ -33,6 +33,18 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 	return uint64(h), err
 }
 
+func (c *Client) GetFee() (float64, error) {
+	fee, err := c.GetRpcClient().GetFee()
+	if err != nil {
+		return 0, err
+	}
+	rippleFee, err := fee.Drops.OpenLedgerFee.NonNative()
+	if err != nil {
+		return 0, err
+	}
+	return rippleFee.Float(), nil
+}
+
 type SDK struct {
 	*chains.ChainSDK
 	nodes   []*Client
