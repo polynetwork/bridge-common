@@ -52,7 +52,7 @@ const (
 	CLOVER     uint64 = 970
 	CONFLUX    uint64 = 980
 	ASTAR      uint64 = 990
-	APTOS      uint64 = 998
+	APTOS      uint64 = 997
 	BRISE      uint64 = 1010
 
 	// Invalid chain ids
