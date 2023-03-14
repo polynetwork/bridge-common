@@ -185,19 +185,19 @@ func BlocksToSkip(chainId uint64) uint64 {
 
 func BlocksToWait(chainId uint64) uint64 {
 	switch chainId {
-	case ETH, KOVAN, GOERLI:
+	case ETH:
 		return 64
-	case SEPOLIA:
+	case KOVAN, GOERLI, SEPOLIA:
 		return 2
 	case BSC, HECO, HSC, BYTOM, KCC:
 		return 21
-	case ZION, ZIONCHAIN, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA, APTOS:
+	case ZION, ZIONCHAIN, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA, APTOS, FANTOM, OASIS, RIPPLE:
 		return 1
 	case HARMONY, ASTAR:
 		return 2
 	case PLT, BCSPALETTE:
 		return 4
-	case O3:
+	case O3, AVA, ARBITRUM:
 		return 12
 	case MATIC:
 		return 128
