@@ -49,7 +49,6 @@ type rpcTransaction struct {
 type txExtraInfo struct {
 	BlockNumber *string         `json:"blockNumber,omitempty"`
 	BlockHash   *common.Hash    `json:"blockHash,omitempty"`
-	From        *common.Address `json:"from,omitempty"`
 }
 
 // senderFromServer is a types.Signer that remembers the sender address returned by the RPC
