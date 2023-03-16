@@ -132,7 +132,7 @@ func (s *ChainSDK) ReportDown(index int) (available bool) {
 	best := s.sdk.Address()
 	s.Unlock()
 	
-	log.Info("Node marked down as reported", "addr", down, "best", best)
+	log.Warn("Node marked down as reported", "addr", down, "best", best)
 	return
 }
 
