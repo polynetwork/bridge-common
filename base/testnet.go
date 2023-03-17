@@ -21,51 +21,52 @@
 package base
 
 const (
-	POLY     uint64 = 0
-	BTC      uint64 = 1
-	ETH      uint64 = 2
-	ONT      uint64 = 3
-	NEO      uint64 = 5
-	HECO     uint64 = 7
-	BSC      uint64 = 79
-	O3       uint64 = 82
-	NEO3     uint64 = 88
-	PLT      uint64 = 107
-	ZILLIQA  uint64 = 111
-	OK       uint64 = 200
-	HEIMDALL uint64 = 201
-	MATIC    uint64 = 202
-	ARBITRUM uint64 = 215
-	XDAI     uint64 = 206
-	OPTIMISM uint64 = 210
-	FANTOM   uint64 = 208
-	AVA      uint64 = 209
-	METIS    uint64 = 300
-	PIXIE    uint64 = 316
-	BOBA     uint64 = 400
-	RINKEBY  uint64 = 402
-	GOERLI   uint64 = 502
-	SEPOLIA  uint64 = 602
-	OASIS    uint64 = 500
-	HSC      uint64 = 603
-	BYTOM    uint64 = 701
-	HARMONY  uint64 = 800
-	KCC      uint64 = 900
-	ONTEVM   uint64 = 333
-	MILKO    uint64 = 810
-	FLOW     uint64 = 910
-	KAVA     uint64 = 920
-	CUBE     uint64 = 930
-	ZKSYNC   uint64 = 941
-	CELO     uint64 = 960
-	CLOVER   uint64 = 970
-	CONFLUX  uint64 = 980
-	ASTAR    uint64 = 990
-	BRISE    uint64 = 1010
-	APTOS2   uint64 = 997
-	APTOS    uint64 = 998
-	DEXIT    uint64 = 1020
-	CLOUDTX  uint64 = 1030
+	POLY      uint64 = 0
+	BTC       uint64 = 1
+	ETH       uint64 = 2
+	ONT       uint64 = 3
+	NEO       uint64 = 5
+	HECO      uint64 = 7
+	BSC       uint64 = 79
+	O3        uint64 = 82
+	NEO3      uint64 = 88
+	PLT       uint64 = 107
+	ZILLIQA   uint64 = 111
+	OK        uint64 = 200
+	HEIMDALL  uint64 = 201
+	MATIC     uint64 = 202
+	ARBITRUM  uint64 = 215
+	XDAI      uint64 = 206
+	OPTIMISM  uint64 = 210
+	FANTOM    uint64 = 208
+	AVA       uint64 = 209
+	METIS     uint64 = 300
+	PIXIE     uint64 = 316
+	BOBA      uint64 = 400
+	RINKEBY   uint64 = 402
+	GOERLI    uint64 = 502
+	SEPOLIA   uint64 = 602
+	OASIS     uint64 = 500
+	HSC       uint64 = 603
+	BYTOM     uint64 = 701
+	HARMONY   uint64 = 800
+	KCC       uint64 = 900
+	ONTEVM    uint64 = 333
+	MILKO     uint64 = 810
+	FLOW      uint64 = 910
+	KAVA      uint64 = 920
+	CUBE      uint64 = 930
+	ZKSYNC    uint64 = 941
+	CELO      uint64 = 960
+	CLOVER    uint64 = 970
+	CONFLUX   uint64 = 980
+	ASTAR     uint64 = 990
+	BRISE     uint64 = 1010
+	APTOS2    uint64 = 997
+	APTOS     uint64 = 998
+	DEXIT     uint64 = 1020
+	CLOUDTX   uint64 = 1030
+	POLYGONZK uint64 = 1040
 
 	SWITCHEO   uint64 = 1000
 	BCSPALETTE uint64 = 1001
@@ -78,11 +79,11 @@ const (
 var CHAINS = []uint64{
 	POLY, ETH, BSC, HECO, OK, ONT, NEO, NEO3, HEIMDALL, MATIC, SWITCHEO, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA,
 	METIS, RINKEBY, GOERLI, SEPOLIA, BOBA, PIXIE, OASIS, HSC, HARMONY, BYTOM, BCSPALETTE, STARCOIN, ONTEVM, KCC, MILKO,
-	CUBE, KAVA, FLOW, RIPPLE, ZKSYNC, CELO, CLOVER, CONFLUX, ASTAR, BRISE, DEXIT, CLOUDTX,
+	CUBE, KAVA, FLOW, RIPPLE, ZKSYNC, CELO, CLOVER, CONFLUX, ASTAR, BRISE, DEXIT, CLOUDTX, POLYGONZK,
 }
 
 var ETH_CHAINS = []uint64{
 	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, RINKEBY, GOERLI, SEPOLIA, BOBA,
 	PIXIE, OASIS, HSC, HARMONY, HARMONY, BYTOM, BCSPALETTE, KCC, ONTEVM, MILKO, CUBE, KAVA, ZKSYNC, CELO, CLOVER,
-	CONFLUX, ASTAR, BRISE, DEXIT, CLOUDTX,
+	CONFLUX, ASTAR, BRISE, DEXIT, CLOUDTX, POLYGONZK,
 }
