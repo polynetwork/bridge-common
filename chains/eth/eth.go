@@ -47,6 +47,8 @@ type Client struct {
 	subs []chan<-uint64
 	url string
 	index int
+
+	namespace string
 }
 
 func New(url string) *Client {
@@ -155,6 +157,22 @@ func (c *Client) Address() string {
 	return c.address
 }
 
+func (c *Client) CallContext(ctx context.Context, result interface{}, method string, args ...interface{}) error {
+	return c.Rpc.CallContext(ctx, result, c.Method(method),  args...)
+}
+
+func (c *Client) Method(method string) string {
+	if c.namespace == "" {
+		return fmt.Sprintf("eth_%s", method)
+	} else {
+		return fmt.Sprintf("%s_%s", c.namespace, method)
+	}
+}
+
+func (c *Client) SetNameSpace(ns string) {
+	c.namespace = ns
+}
+
 func (c *Client) GetProof(addr string, key string, height uint64) (proof *ETHProof, err error) {
 	heightHex := hexutil.EncodeBig(big.NewInt(int64(height)))
 	proof = &ETHProof{}
@@ -200,18 +218,48 @@ func(c *Client) Unsubscribe(ch chan <-uint64) {
 	c.subs = c.subs[start: end]
 }
 
+func (c *Client) GetConfluxStatus() (uint64, uint64, error) {
+	var result struct {
+		BlockNumber hexutil.Uint64
+		ChainId hexutil.Uint64
+	}
+	err := c.CallContext(context.Background(), &result, "getStatus")
+	for err != nil {
+		return 0, 0, err
+	}
+	return uint64(result.BlockNumber), uint64(result.ChainId), err
+}
+
 func (c *Client) GetLatestHeight() (uint64, error) {
+	if c.namespace == "cfx" {
+		h, _, err := c.GetConfluxStatus()
+		return h, err
+	}
 	var result hexutil.Big
-	err := c.Rpc.CallContext(context.Background(), &result, "eth_blockNumber")
+	err := c.CallContext(context.Background(), &result, "blockNumber")
 	for err != nil {
 		return 0, err
 	}
 	return (*big.Int)(&result).Uint64(), err
 }
 
+// ChainId retrieves the current chain ID for transaction replay protection.
+func (c *Client) ChainID(ctx context.Context) (*big.Int, error) {
+	if c.namespace == "cfx" {
+		_, id, err := c.GetConfluxStatus()
+		return big.NewInt(int64(id)), err
+	}
+	var result hexutil.Big
+	err := c.CallContext(ctx, &result, "chainId")
+	if err != nil {
+		return nil, err
+	}
+	return (*big.Int)(&result), err
+}
+
 // TransactionByHash returns the transaction with the given hash.
 func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Hash) (json *rpcTransaction, err error) {
-	err = c.Rpc.CallContext(ctx, &json, "eth_getTransactionByHash", hash)
+	err = c.Rpc.CallContext(ctx, &json, c.Method("getTransactionByHash"), hash)
 	return
 	/*
 		if err != nil {
@@ -274,6 +322,7 @@ type SDK struct {
 	*chains.ChainSDK
 	nodes   []*Client
 	options *chains.Options
+	namespace string
 }
 
 func (s *SDK) Node() *Client {
@@ -295,12 +344,16 @@ func (s *SDK) Select() *Client {
 }
 
 func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
-
+	return NewSDKWithNameSpace(chainID, "", urls, interval, maxGap)
+}
+	
+func NewSDKWithNameSpace(chainID uint64, namespace string, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {	
 	clients := make([]*Client, len(urls))
 	nodes := make([]chains.SDK, len(urls))
 	for i, url := range urls {
 		client := New(url)
 		client.index = i
+		client.SetNameSpace(namespace)
 		nodes[i] = client
 		clients[i] = client
 	}
@@ -312,6 +365,10 @@ func NewSDK(chainID uint64, urls []string, interval time.Duration, maxGap uint64
 }
 
 func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
+	return WithOptionsAndNameSpace(chainID, "", urls, interval, maxGap)
+}
+
+func WithOptionsAndNameSpace(chainID uint64, namespace string, urls []string, interval time.Duration, maxGap uint64) (*SDK, error) {
 	sdk, err := util.Single(&SDK{
 		options: &chains.Options{
 			ChainID:  chainID,
@@ -319,6 +376,7 @@ func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap u
 			Interval: interval,
 			MaxGap:   maxGap,
 		},
+		namespace: namespace,
 	})
 	if err != nil {
 		return nil, err
@@ -327,7 +385,7 @@ func WithOptions(chainID uint64, urls []string, interval time.Duration, maxGap u
 }
 
 func (s *SDK) Create() (interface{}, error) {
-	return NewSDK(s.options.ChainID, s.options.Nodes, s.options.Interval, s.options.MaxGap)
+	return NewSDKWithNameSpace(s.options.ChainID, s.namespace, s.options.Nodes, s.options.Interval, s.options.MaxGap)
 }
 
 func (s *SDK) Key() string {
