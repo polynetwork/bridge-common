@@ -160,6 +160,8 @@ func GetChainName(id uint64) string {
 		return "Dexit"
 	case CLOUDTX:
 		return "CloudTx"
+	case POLYGONZK:
+		return "polygonZK EVM"
 	case NAUTILUS:
 		return "Nautilus"
 	case XINFIN:
