@@ -350,6 +350,7 @@ func (s *SDK) BatchCall(ctx context.Context, b []rpc.BatchElem) (int, error) {
 	nodes := s.Nodes()
 	for _, idx := range nodes[1:] {
 		go func(id int) {
+			defer func() { recover() } ()
 			_ = s.nodes[id].Rpc.BatchCallContext(ctx, b)
 		} (idx)
 	}
