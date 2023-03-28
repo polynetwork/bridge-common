@@ -52,13 +52,15 @@ const (
 	KAVA     uint64 = 32
 	MILKO    uint64 = 34
 	CUBE     uint64 = 35
-	ZKSYNC   uint64 = 100940
 	CELO     uint64 = 36
 	CLOVER   uint64 = 37
 	CONFLUX  uint64 = 38
 	ASTAR    uint64 = 40
 	APTOS    uint64 = 41
 	BRISE    uint64 = 42
+	DEXIT    uint64 = 43
+	CLOUDTX  uint64 = 44
+	ZKSYNC   uint64 = 45
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
@@ -93,4 +95,5 @@ var CHAINS = []uint64{
 var ETH_CHAINS = []uint64{
 	ETH, BSC, HECO, OK, MATIC, O3, PLT, ARBITRUM, XDAI, OPTIMISM, FANTOM, AVA, METIS, BOBA, PIXIE, OASIS, HSC, HARMONY,
 	BYTOM, BCSPALETTE, KCC, ONTEVM, MILKO, CUBE, KAVA, ZKSYNC, CELO, CLOVER, CONFLUX, ASTAR, BRISE, CORE, KLAY, CANTO, XDC,
+	DEXIT, CLOUDTX, ZKSYNC,
 }

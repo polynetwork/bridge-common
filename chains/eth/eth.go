@@ -50,8 +50,14 @@ type Client struct {
 }
 
 func New(url string) *Client {
-	rpcClient, _ := rpc.Dial(url)
-	rawClient, _ := ethclient.Dial(url)
+	rpcClient, err := rpc.Dial(url)
+	if err != nil {
+		panic(fmt.Sprintf("failed to dial %s, err %v", url, err))
+	}
+	rawClient, err := ethclient.Dial(url)
+	if err != nil {
+		panic(fmt.Sprintf("failed to eth dial %s, err %v", url, err))
+	}
 	return &Client{
 		Rpc:     rpcClient,
 		Client:  rawClient,
