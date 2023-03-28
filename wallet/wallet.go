@@ -282,7 +282,7 @@ func (w *Wallet) sendWithAccount(dry bool, estimateWithGas bool, account account
 	}
 
 	if w.Broadcast {
-		err = w.sdk.Broadcast(tx)
+		_, err = w.sdk.Broadcast(context.Background(), tx)
 	} else {
 		err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	}
@@ -411,7 +411,7 @@ func (w *Wallet) SendWithMaxLimit(chainId uint64, account accounts.Account, addr
 		return
 	}
 	if w.Broadcast {
-		err = w.sdk.Broadcast(tx)
+		_, err = w.sdk.Broadcast(context.Background(), tx)
 	} else {
 		err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	}

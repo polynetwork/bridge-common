@@ -109,7 +109,7 @@ func (w *EthWallet) QuikcSendWithAccount(account accounts.Account, addr common.A
 	}
 
 	if w.Broadcast {
-		err = w.sdk.Broadcast(tx)
+		_, err = w.sdk.Broadcast(context.Background(), tx)
 	} else {
 		err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	}
@@ -163,7 +163,7 @@ func (w *EthWallet) QuickSendWithMaxLimit(chainId uint64, account accounts.Accou
 	}
 
 	if w.Broadcast {
-		err = w.sdk.Broadcast(tx)
+		_, err = w.sdk.Broadcast(context.Background(), tx)
 	} else {
 		err = w.sdk.Node().SendTransaction(context.Background(), tx)
 	}

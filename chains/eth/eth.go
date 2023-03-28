@@ -280,14 +280,14 @@ func (s *SDK) Node() *Client {
 	return s.nodes[s.ChainSDK.Index()]
 }
 
-func (s *SDK) Broadcast(tx *types.Transaction) (err error) {
+func (s *SDK) Broadcast(ctx context.Context, tx *types.Transaction) (best int, err error) {
 	nodes := s.Nodes()
 	for _, idx := range nodes[1:] {
 		go func(id int) {
-			_ = s.nodes[id].SendTransaction(context.Background(), tx)
+			_ = s.nodes[id].SendTransaction(ctx, tx)
 		} (idx)
 	}
-	return s.nodes[nodes[0]].SendTransaction(context.Background(), tx)
+	return nodes[0], s.nodes[nodes[0]].SendTransaction(ctx, tx)
 }
 
 func (s *SDK) Select() *Client {
@@ -340,12 +340,12 @@ func (s *SDK) Key() string {
 	}
 }
 
-func (s *SDK) BatchCall(ctx context.Context, b []rpc.BatchElem) error {
+func (s *SDK) BatchCall(ctx context.Context, b []rpc.BatchElem) (int, error) {
 	nodes := s.Nodes()
 	for _, idx := range nodes[1:] {
 		go func(id int) {
 			_ = s.nodes[id].Rpc.BatchCallContext(ctx, b)
 		} (idx)
 	}
-	return s.nodes[nodes[0]].Rpc.BatchCallContext(ctx, b)
+	return nodes[0], s.nodes[nodes[0]].Rpc.BatchCallContext(ctx, b)
 }
