@@ -339,3 +339,13 @@ func (s *SDK) Key() string {
 		panic("Unable to identify the sdk")
 	}
 }
+
+func (s *SDK) BatchCall(ctx context.Context, b []rpc.BatchElem) error {
+	nodes := s.Nodes()
+	for _, idx := range nodes[1:] {
+		go func(id int) {
+			_ = s.nodes[id].Rpc.BatchCallContext(ctx, b)
+		} (idx)
+	}
+	return s.nodes[nodes[0]].Rpc.BatchCallContext(ctx, b)
+}
