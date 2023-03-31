@@ -166,6 +166,8 @@ func GetChainName(id uint64) string {
 		return "Nautilus"
 	case XINFIN:
 		return "XinFin"
+	case GOSHEN:
+		return "Goshen"
 
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
