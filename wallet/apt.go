@@ -229,7 +229,8 @@ func (w *AptWallet) SendWithOptions(ctx context.Context, account *models.Account
 			}
 			return "", err
 		}
-		limit = resps[0].MaxGasAmount
+		gas, _ := strconv.ParseUint(resps[0].GasUsed, 10, 64)
+		limit = strconv.FormatUint(gas * 12 / 10, 10)
 		if price == 0 {
 			price, _ = strconv.ParseUint(resps[0].GasUnitPrice, 10, 0)
 		}
