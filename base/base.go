@@ -162,6 +162,12 @@ func GetChainName(id uint64) string {
 		return "Bitgert"
 	case CORE:
 		return "CoreDao"
+	case XDC:
+		return "XDC"
+	case POLYGONZK:
+		return "PolygonZK"
+	case FEVM:
+		return "FIL"
 	default:
 		return fmt.Sprintf("Unknown(%d)", id)
 	}
