@@ -197,7 +197,7 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 2
 	case PLT, BCSPALETTE:
 		return 4
-	case O3, AVA, ARBITRUM, METIS:
+	case O3, AVA, ARBITRUM:
 		return 12
 	case MATIC:
 		return 128
@@ -207,6 +207,12 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 72
 	case CONFLUX:
 		return 50
+	case METIS:
+		if ENV == "testnet" {
+			return 0
+		} else {
+			return 12
+		}
 	default:
 		return 100000000
 	}
