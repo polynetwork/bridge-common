@@ -191,13 +191,13 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 2
 	case BSC, HECO, HSC, BYTOM, KCC:
 		return 21
-	case ZION, ZIONCHAIN, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA, APTOS, FANTOM, OASIS, RIPPLE:
+	case ZION, ZIONCHAIN, ONT, ONTEVM, NEO, NEO3, OK, SWITCHEO, ZILLIQA, APTOS, FANTOM, OASIS, RIPPLE, CELO, BRISE:
 		return 1
 	case HARMONY, ASTAR:
 		return 2
 	case PLT, BCSPALETTE:
 		return 4
-	case O3, AVA, ARBITRUM:
+	case O3, AVA, ARBITRUM, METIS:
 		return 12
 	case MATIC:
 		return 128
@@ -205,6 +205,8 @@ func BlocksToWait(chainId uint64) uint64 {
 		return 3
 	case STARCOIN:
 		return 72
+	case CONFLUX:
+		return 50
 	default:
 		return 100000000
 	}
