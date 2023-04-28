@@ -95,6 +95,20 @@ func (c *Client) GetLatestHeight() (uint64, error) {
 	return (*big.Int)(&result).Uint64(), err
 }
 
+func (c *Client) GetLatestFinalizedHeight() (height uint64, err error) {
+	head := make(json.RawMessage, 0)
+	err = c.Rpc.CallContext(context.Background(), &head, "eth_getBlockByNumber", "finalized", false)
+	if err == nil && len(head) == 0 {
+		err = ethereum.NotFound
+	}
+	if err != nil {
+		return
+	}
+	header := Header(head)
+
+	return header.GetHeight()
+}
+
 // TransactionByHash returns the transaction with the given hash.
 func (c *Client) TransactionWithExtraByHash(ctx context.Context, hash common.Hash) (json *rpcTransaction, err error) {
 	err = c.Rpc.CallContext(ctx, &json, "eth_getTransactionByHash", hash)

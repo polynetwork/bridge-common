@@ -30,6 +30,7 @@ import (
 type Options struct {
 	ChainID  uint64
 	Nodes    []string
+	L1Node   string
 	Interval time.Duration
 	MaxGap   uint64
 }
