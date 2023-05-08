@@ -47,7 +47,7 @@ const (
 	HARMONY    uint64 = 801
 	BCSPALETTE uint64 = 1001
 	STARCOIN   uint64 = 318
-	ZKSYNC     uint64 = 940
+	ZKSYNC     uint64 = 941
 	CELO       uint64 = 960
 	CLOVER     uint64 = 970
 	CONFLUX    uint64 = 980
