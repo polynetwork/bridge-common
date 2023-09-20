@@ -50,7 +50,7 @@ const (
 	BYTOM    uint64 = 701
 	HARMONY  uint64 = 800
 	KCC      uint64 = 900
-	ONTEVM   uint64 = 333
+	ONTEVM   uint64 = 334
 	MILKO    uint64 = 810
 	FLOW     uint64 = 910
 	KAVA     uint64 = 920
