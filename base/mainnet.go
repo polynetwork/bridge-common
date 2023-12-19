@@ -62,12 +62,12 @@ const (
 	CLOUDTX  uint64 = 44
 	ZKSYNC   uint64 = 45
 	XINFIN   uint64 = 46
+	ONTEVM   uint64 = 47
 
 	// Invalid chain IDs
 	RINKEBY    uint64 = 1000000
 	PIXIE      uint64 = 2000000
 	BCSPALETTE uint64 = 1001001
-	ONTEVM     uint64 = 1001333
 	FLOW       uint64 = 1000444
 	PLT2       uint64 = 1000108
 
